@@ -58,7 +58,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const getAVRRecords = () => {
         setIsLoading(true);
         const request = {
-            page: 1,
+            page: 0,
             pageSize: 10
         }
         props.onGetAVPRecords(request);
