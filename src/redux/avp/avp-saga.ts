@@ -1,9 +1,19 @@
 import {all, call, put, takeLatest} from "redux-saga/effects";
 import {ServerResponse} from "http";
-import {ADD_AVP_RECORD_API, EDIT_AVP_RECORD_API, GET_AVP_RECORD_API, GET_AVP_RECORDS_API} from "./avp-api";
+import {
+    ADD_AVP_RECORD_API,
+    DELETE_AVP_RECORD_API,
+    EDIT_AVP_RECORD_API,
+    GET_AVP_RECORD_API,
+    GET_AVP_RECORDS_API
+} from "./avp-api";
 import {
     addAvpRecord,
-    addAvpRecordSuccess, editAvpRecord, editAvpRecordSuccess,
+    addAvpRecordSuccess,
+    deleteAvpRecord,
+    deleteAvpRecordSuccess,
+    editAvpRecord,
+    editAvpRecordSuccess,
     getAllAvpRecords,
     getAllAvpRecordsSuccess,
     getAvpRecord,
@@ -60,9 +70,26 @@ function* handleEditAvpRecord(action: { payload: {} }) {
     }
 }
 
+function* handleDeleteAvpRecord(action: { payload: {} }) {
+    try {
+        const response: ServerResponse = yield call(
+            DELETE_AVP_RECORD_API.delete,
+            action.payload
+        );
+        yield put(deleteAvpRecordSuccess(response));
+    } catch (e) {
+        yield put(getError(e));
+    }
+}
+
+function* watchDeleteAvpRecord() {
+    yield takeLatest<any>(deleteAvpRecord.type, handleDeleteAvpRecord);
+}
+
 function* watchEditAvpRecord() {
     yield takeLatest<any>(editAvpRecord.type, handleEditAvpRecord);
 }
+
 function* watchAddingAvpRecord() {
     yield takeLatest<any>(addAvpRecord.type, handleAddAvpRecord);
 }
@@ -75,6 +102,6 @@ function* watchGetAvpRecord() {
     yield takeLatest<any>(getAvpRecord.type, handleGetAvpRecords);
 }
 
-export default function* TaskSaga() {
-    yield all([watchAddingAvpRecord(), watchGetAvpAllRecords(), watchGetAvpRecord(), watchEditAvpRecord()]);
+export default function* AVPSaga() {
+    yield all([watchAddingAvpRecord(), watchGetAvpAllRecords(), watchGetAvpRecord(), watchEditAvpRecord(), watchDeleteAvpRecord()]);
 }

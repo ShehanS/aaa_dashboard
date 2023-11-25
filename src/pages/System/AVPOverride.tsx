@@ -11,11 +11,12 @@ import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {CircularProgress, Snackbar, Stack} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
-import {getAllAvpRecords, getAvpRecord} from "../../redux/avp/avp-slice";
+import {deleteAvpRecord, getAllAvpRecords, getAvpRecord} from "../../redux/avp/avp-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchBar from "../../components/SearchBar";
+import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 
 export interface IAVPAttribute {
     attrgroup_id: number;
@@ -31,6 +32,7 @@ type StateObj = {
     avpRecordsResponse: any;
     avpRecordEditResponse: any;
     records: number;
+    avpRecordDeleteResponse: any;
 }
 
 
@@ -54,7 +56,8 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         avpRecordAddResponse: null,
         avpRecordsResponse: null,
         avpRecordEditResponse: null,
-        records: 0
+        records: 0,
+        avpRecordDeleteResponse: null
     });
     const [avpRecords, setAvpRecords] = useState<IAVPAttribute[]>([]);
 
@@ -97,6 +100,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
             }
         }
     }, [props.avpRecordsResponse]);
+
 
     useEffect(() => {
         if ((stateObj.avpRecordsResponse === null && props.avpRecordResponseSuccess !== null) || (stateObj.avpRecordsResponse !== props.avpRecordResponseSuccess)) {
@@ -151,6 +155,38 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         }
     }, [props.avpRecordEditResponse]);
 
+    useEffect(() => {
+        if ((stateObj.avpRecordDeleteResponse === null && props.avpRecordDeleteResponse !== null) || (stateObj.avpRecordDeleteResponse !== props.avpRecordDeleteResponse)) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                avpRecordDeleteResponse: props.avpRecordDeleteResponse,
+                records: 0
+            });
+            if (props.avpRecordDeleteResponse?.code === "DELETE_AVP_RECORD_SUCCESS") {
+                getAVRRecords(searchId);
+                setSearchId(undefined);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Record Deleted!!!!`
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false
+                });
+            } else if (props.avpRecordDeleteResponse?.code === "DELETE_AVP_RECORD_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Opps!!. Record couldn't get records due ${props.avpRecordDeleteResponse?.error ?? ""}`
+                });
+            }
+        }
+    }, [props.avpRecordDeleteResponse]);
+
 
     useEffect(() => {
         if ((stateObj.avpRecordAddResponse === null && props.avpRecordAddResponse !== null) || (stateObj.avpRecordAddResponse !== props.avpRecordAddResponse)) {
@@ -190,7 +226,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
             ...appDataContext,
             isOpenDialog: true,
             dialogContent: <AVPManageDialog type={DialogType.add}/>
-        })
+        });
     }
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
@@ -218,6 +254,18 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const onSelectSearch = (record: any) => {
         setSearchId(record.attrgroup_id);
         props.onGetAvpRecord(record.attrgroup_id);
+    }
+
+    const handleDelete = (id: string) => {
+        props.onDelete(id);
+    }
+
+    const openDeleteDelete = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <DeleteDialog id={props.attrgroup_id} onDelete={handleDelete}/>
+        });
     }
 
     return (
@@ -358,7 +406,8 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                                                 onClick={() => openAvpEditDialog(row)}>
                                             Edit
                                         </Button>
-                                        <Button size="sm" variant="soft" color="danger">
+                                        <Button onClick={() => openDeleteDelete(row)} size="sm" variant="soft"
+                                                color="danger">
                                             Delete
                                         </Button>
                                     </Box>
@@ -405,7 +454,8 @@ const mapStateToProps = (state: RootState) => {
         avpRecordAddResponse: state.avp.avpRecordAddResponse,
         avpRecordsResponse: state.avp.avpRecordsResponse,
         avpRecordResponseSuccess: state.avp.avpRecordResponseSuccess,
-        avpRecordEditResponse: state.avp.avpRecordEditResponse
+        avpRecordEditResponse: state.avp.avpRecordEditResponse,
+        avpRecordDeleteResponse: state.avp.avpRecordDeleteResponse
     };
 };
 
@@ -413,6 +463,7 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetAVPRecords: (payload: any) => dispatch(getAllAvpRecords(payload)),
         onGetAvpRecord: (payload: any) => dispatch(getAvpRecord(payload)),
+        onDelete: (payload: any) => dispatch(deleteAvpRecord(payload)),
     };
 };
 

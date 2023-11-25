@@ -15,8 +15,8 @@ const EDIT_AVP_RECORD_API = {
 };
 
 const DELETE_AVP_RECORD_API = {
-    edit: (payload: any) =>
-        axios.post(`/api/avp/record/delete`, payload).then((response: { data: any }) => {
+    delete: (payload: any) =>
+        axios.delete(`/api/avp/record/delete/id/${payload}`).then((response: { data: any }) => {
             return response.data;
         }),
 };
