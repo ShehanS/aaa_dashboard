@@ -34,8 +34,8 @@ const SideMenu = () => {
                     <Sidebar.ItemGroup>
                         <Sidebar.Collapse href="#" icon={SettingsSuggestRoundedIcon} label={"System"}>
 
-                            <SideMenuButton href={ROUTES.Test} buttonIndex={1} index={index} setIndex={setIndexValue}
-                                            title={"Test"}/>
+                            <SideMenuButton href={ROUTES.Account} buttonIndex={1} index={index} setIndex={setIndexValue}
+                                            title={"Account"}/>
                             <SideMenuButton href={ROUTES.AVPOverride} buttonIndex={2} index={index}
                                             setIndex={setIndexValue}
                                             title={"AVP Override"}/>

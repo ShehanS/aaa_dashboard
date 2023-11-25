@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import {ROUTES} from "./constants/routes";
 import './App.css'
 import AVPOverride from "./pages/System/AVPOverride";
-import Test from "./pages/System/Test";
+import Accounting from "./pages/System/Accounting";
 import COA from "./pages/COA/COA";
 import {AppDataContextProvider} from "./context/AppDataContext";
 import React from "react"
@@ -17,7 +17,7 @@ function App() {
                         <Home>
                             <Routes>
                                 <Route path={ROUTES.AVPOverride} element={<AVPOverride/>}/>
-                                <Route path={ROUTES.Test} element={<Test/>}/>
+                                <Route path={ROUTES.Account} element={<Accounting/>}/>
                                 <Route path={ROUTES.COA} element={<COA/>}/>
                             </Routes>
                         </Home>

@@ -10,7 +10,8 @@ type OwnProps = {
     columns: string;
     table: string;
     onSelectSearch: (props: any) => void;
-    onSearchClear?: ()=>void
+    onSearchClear?: () => void;
+    displayAttr: string;
 }
 
 type StateObj = {
@@ -20,13 +21,14 @@ type StateObj = {
 type ReduxProps = ConnectedProps<typeof connector>;
 type Props = OwnProps & ReduxProps;
 const SearchBar: FC<Props> = (props: any) => {
-
     const [query, setQuery] = useState<string>("")
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [stateObj, setStateObj] = useState<StateObj>({
         searchResponse: null
     });
     const [results, setResults] = useState<any[]>([]);
+
+
 
     useEffect(() => {
         if ((stateObj.searchResponse === null && props.searchResponse !== null) || (stateObj.searchResponse !== props.searchResponse)) {
@@ -84,7 +86,7 @@ const SearchBar: FC<Props> = (props: any) => {
                             {results?.map((r: any) => (
                                 <ListItem>
                                     <ListItemButton onClick={() => onSelectSearch(r)}>
-                                        <ListItemDecorator><SearchRoundedIcon/></ListItemDecorator> {r?.vp_name ?? ""}
+                                        <ListItemDecorator><SearchRoundedIcon/></ListItemDecorator> {r?.[props?.displayAttr] ?? ""}
                                     </ListItemButton>
                                 </ListItem>
                             ))}

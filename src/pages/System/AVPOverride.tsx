@@ -62,8 +62,9 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const [avpRecords, setAvpRecords] = useState<IAVPAttribute[]>([]);
 
 
-    const getAVRRecords = (id?: string) => {
+    const initLoad = (id?: string) => {
         setIsLoading(true);
+       // setSearchId(undefined);
         if (id !== undefined) {
             props.onGetAvpRecord(id);
         } else {
@@ -76,11 +77,12 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     }
 
     useEffect(() => {
-        getAVRRecords();
+        initLoad();
     }, []);
 
     const {appDataContext, setAppDataContext} = useAppDataContext();
     useEffect(() => {
+        setAvpRecords([]);
         if ((stateObj.avpRecordsResponse === null && props.avpRecordsResponse !== null) || (stateObj.avpRecordsResponse !== props.avpRecordsResponse)) {
             setIsLoading(false);
             setStateObj({
@@ -132,8 +134,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                 records: 0
             });
             if (props.avpRecordEditResponse?.code === "UPDATE_AVP_RECORD_SUCCESS") {
-                getAVRRecords(searchId);
-                setSearchId(undefined);
+                initLoad(searchId);
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
@@ -164,8 +165,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                 records: 0
             });
             if (props.avpRecordDeleteResponse?.code === "DELETE_AVP_RECORD_SUCCESS") {
-                getAVRRecords(searchId);
-                setSearchId(undefined);
+                initLoad(searchId);
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
@@ -204,7 +204,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                     isOpenDialog: false
                 });
                 setSnackBar({...snackBar, isOpen: true, color: "success", message: "New AVP record added!!"});
-                getAVRRecords();
+                initLoad();
             } else if (props.avpRecordAddResponse?.code === "ADD_AVP_RECORD_FAILED") {
                 setSnackBar({
                     ...snackBar,
@@ -306,7 +306,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                     justifyContent: 'center'
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
-                        <SearchBar onSearchClear={getAVRRecords} table={"bb_attrgroup_accounting_avp_override"}
+                        <SearchBar displayAttr={"vp_name"} onSearchClear={initLoad} table={"bb_attrgroup_accounting_avp_override"}
                                    columns={"vp_name,extract_sscanf,attrgroup_id"} onSelectSearch={onSelectSearch}/>
                         <Button onClick={openAvpAddDialog}>Add Record</Button>
                     </Stack>

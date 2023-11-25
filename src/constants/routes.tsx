@@ -3,6 +3,6 @@ export const ROUTES = {
     login: "/login",
     home: "/home",
     AVPOverride:"/home/avp-override",
-    Test:"/home/test",
+    Account:"/home/account",
     COA:"/home/coa"
 }
