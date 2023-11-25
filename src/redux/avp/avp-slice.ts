@@ -9,6 +9,7 @@ export interface IAVPState {
     avpRecordDeleteResponse: any;
     avpRecordsResponse: any;
     error: any;
+    avpRecordResponseSuccess: any;
 
 }
 
@@ -18,7 +19,8 @@ const initialState: IAVPState = {
     avpRecordEditResponse: null,
     avpRecordDeleteResponse: null,
     avpRecordsResponse: null,
-    error: null
+    error: null,
+    avpRecordResponseSuccess: null
 }
 
 export const AVPSlice = createSlice({
@@ -57,6 +59,14 @@ export const AVPSlice = createSlice({
             avpRecordsResponse: action.payload,
             error: null
         }),
+        getAvpRecord: (state, action: PayloadAction<any>) => ({
+            payload: action.payload,
+            error: null
+        }),
+        getAvpRecordSuccess: (state, action: PayloadAction<any>) => ({
+            avpRecordResponseSuccess: action.payload,
+            error: null
+        }),
         getError: (state) => ({
             error: null
         })
@@ -65,6 +75,8 @@ export const AVPSlice = createSlice({
 })
 
 export const {
+    getAvpRecord,
+    getAvpRecordSuccess,
     getError,
     addAvpRecord,
     editAvpRecord,

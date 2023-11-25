@@ -11,10 +11,11 @@ import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {CircularProgress, Snackbar, Stack} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
-import {getAllAvpRecords} from "../../redux/avp/avp-slice";
+import {getAllAvpRecords, getAvpRecord} from "../../redux/avp/avp-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import SearchBar from "../../components/SearchBar";
 
 export interface IAVPAttribute {
     attrgroup_id: number;
@@ -28,6 +29,7 @@ export interface IAVPAttribute {
 type StateObj = {
     avpRecordAddResponse: any;
     avpRecordsResponse: any;
+    avpRecordEditResponse: any;
     records: number;
 }
 
@@ -42,6 +44,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 const AVPOverride: FC<ReduxProps> = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -50,18 +53,23 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const [stateObj, setStateObj] = useState<StateObj>({
         avpRecordAddResponse: null,
         avpRecordsResponse: null,
+        avpRecordEditResponse: null,
         records: 0
     });
     const [avpRecords, setAvpRecords] = useState<IAVPAttribute[]>([]);
 
 
-    const getAVRRecords = () => {
+    const getAVRRecords = (id?: string) => {
         setIsLoading(true);
-        const request = {
-            page: 0,
-            pageSize: 10
+        if (id !== undefined) {
+            props.onGetAvpRecord(id);
+        } else {
+            const request = {
+                page: currentPage-1,
+                pageSize: 10
+            }
+            props.onGetAVPRecords(request);
         }
-        props.onGetAVPRecords(request);
     }
 
     useEffect(() => {
@@ -77,7 +85,6 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                 avpRecordsResponse: props.avpRecordsResponse,
                 records: props.avpRecordsResponse?.data?.count ?? 0
             });
-            setAvpRecords(props.avpRecordsResponse?.data?.records ?? [])
             if (props.avpRecordsResponse?.code === "GET_ALL_AVP_RECORD_SUCCESS") {
                 setAvpRecords(props.avpRecordsResponse?.data?.records ?? [])
             } else if (props.avpRecordsResponse?.code === "GET_ALL_AVP_RECORD_FAILED") {
@@ -90,6 +97,61 @@ const AVPOverride: FC<ReduxProps> = (props) => {
             }
         }
     }, [props.avpRecordsResponse]);
+
+    useEffect(() => {
+        if ((stateObj.avpRecordsResponse === null && props.avpRecordResponseSuccess !== null) || (stateObj.avpRecordsResponse !== props.avpRecordResponseSuccess)) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                avpRecordsResponse: props.avpRecordResponseSuccess,
+                records: 0
+            });
+            if (props.avpRecordResponseSuccess?.code === "GET_AVP_RECORD_SUCCESS") {
+                setAvpRecords(props.avpRecordResponseSuccess?.data ?? [])
+            } else if (props.avpRecordResponseSuccess?.code === "GET_AVP_RECORD_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Opps!!. Record couldn't get records due ${props.avpRecordResponseSuccess?.error ?? ""}`
+                });
+            }
+        }
+    }, [props.avpRecordResponseSuccess]);
+
+    useEffect(() => {
+        if ((stateObj.avpRecordEditResponse === null && props.avpRecordEditResponse !== null) || (stateObj.avpRecordEditResponse !== props.avpRecordEditResponse)) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                avpRecordEditResponse: props.avpRecordEditResponse,
+                records: 0
+            });
+            if (props.avpRecordEditResponse?.code === "UPDATE_AVP_RECORD_SUCCESS") {
+                getAVRRecords(searchId);
+                setSearchId(undefined);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Record updated!!!!`
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false
+                });
+            } else if (props.avpRecordResponseSuccess?.code === "UPDATE_AVP_RECORD_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Opps!!. Record couldn't get records due ${props.avpRecordEditResponse?.error ?? ""}`
+                });
+            }
+        }
+    }, [props.avpRecordEditResponse]);
+
+
     useEffect(() => {
         if ((stateObj.avpRecordAddResponse === null && props.avpRecordAddResponse !== null) || (stateObj.avpRecordAddResponse !== props.avpRecordAddResponse)) {
             setStateObj({...stateObj, avpRecordAddResponse: props.avpRecordAddResponse});
@@ -153,6 +215,11 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         return pageCount;
     };
 
+    const onSelectSearch = (record: any) => {
+        setSearchId(record.attrgroup_id);
+        props.onGetAvpRecord(record.attrgroup_id);
+    }
+
     return (
         <React.Fragment>
             <Snackbar
@@ -176,38 +243,54 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                 {snackBar.message ?? ""}
             </Snackbar>
             <HeaderText title={"AVP Override"} subTitle={"Add/Edit avop records"}/>
-
-            <Box sx={{width: '80%'}}>
-                <Button onClick={openAvpAddDialog}>Add Record</Button>
-                <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
-                </Typography>
-                {isLoading &&
-                    <Stack direction={"row"} sx={{display: 'flex', justifyContent: 'center', width: '100%', p: 2}}>
-                        <Stack direction={"column"} alignItems={"center"}>
-                            <CircularProgress color="success"/>
-                            <Typography level="body-sm" style={{
-                                fontFamily: 'CustomUbuntu',
-                                fontSize: '1rem',
-                                color: 'gray',
-                                paddingRight: '10px'
-                            }}>Just wait....</Typography>
-                        </Stack>
-                    </Stack>}
-                <Sheet
-                    variant="outlined"
-                    sx={{
-                        '--TableCell-height': '40px',
-                        // the number is the amount of the header rows.
-                        '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-                        '--Table-firstColumnWidth': '80px',
-                        '--Table-lastColumnWidth': '144px',
-                        // background needs to have transparency to show the scrolling shadows
-                        '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
-                        '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
-                        overflow: 'auto',
-                        background: (
-                            theme,
-                        ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+            <Box sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                <Box sx={{
+                    width: '80%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
+                        <SearchBar onSearchClear={getAVRRecords} table={"bb_attrgroup_accounting_avp_override"}
+                                   columns={"vp_name,extract_sscanf,attrgroup_id"} onSelectSearch={onSelectSearch}/>
+                        <Button onClick={openAvpAddDialog}>Add Record</Button>
+                    </Stack>
+                    <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
+                    </Typography>
+                    {isLoading &&
+                        <Stack direction={"row"} sx={{display: 'flex', justifyContent: 'center', width: '100%', p: 2}}>
+                            <Stack direction={"column"} alignItems={"center"}>
+                                <CircularProgress color="success"/>
+                                <Typography level="body-sm" style={{
+                                    fontFamily: 'CustomUbuntu',
+                                    fontSize: '1rem',
+                                    color: 'gray',
+                                    paddingRight: '10px'
+                                }}>Just wait....</Typography>
+                            </Stack>
+                        </Stack>}
+                    <Sheet
+                        variant="outlined"
+                        sx={{
+                            '--TableCell-height': '40px',
+                            // the number is the amount of the header rows.
+                            '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                            '--Table-firstColumnWidth': '80px',
+                            '--Table-lastColumnWidth': '144px',
+                            // background needs to have transparency to show the scrolling shadows
+                            '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                            '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
+                            overflow: 'auto',
+                            background: (
+                                theme,
+                            ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
             linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
             radial-gradient(
               farthest-side at 0 50%,
@@ -284,32 +367,33 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                         ))}
                         </tbody>
                     </Table>
-                </Sheet>
-                <Stack direction={"row"} sx={{
-                    position: 'absolute',
-                    width: '80%',
-                    bottom: '-50px',
-                    justifyItems: 'center',
-                    alignItem: "center",
-                    display: "flex",
-                    justifyContent: 'space-between',
-                    pt: 1
-                }}>
-                    <Typography level={"body-sm"}>
-                        Page Navigation
-                    </Typography>
-                    <Pagination
-                        count={getPageCount(stateObj.records, 10)}
-                        page={currentPage}
-                        onChange={handlePageChange}
-                        renderItem={(item) => (
-                            <PaginationItem
-                                slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
-                                {...item}
-                            />
-                        )}
-                    />
-                </Stack>
+                    </Sheet>
+                    <Stack direction={"row"} sx={{
+                        position: 'absolute',
+                        width: '80%',
+                        bottom: '-50px',
+                        justifyItems: 'center',
+                        alignItem: "center",
+                        display: "flex",
+                        justifyContent: 'space-between',
+                        pt: 1
+                    }}>
+                        <Typography level={"body-sm"}>
+                            Page Navigation
+                        </Typography>
+                        <Pagination
+                            count={getPageCount(stateObj.records, 10)}
+                            page={currentPage}
+                            onChange={handlePageChange}
+                            renderItem={(item) => (
+                                <PaginationItem
+                                    slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
+                                    {...item}
+                                />
+                            )}
+                        />
+                    </Stack>
+                </Box>
             </Box>
 
         </React.Fragment>
@@ -319,13 +403,16 @@ const AVPOverride: FC<ReduxProps> = (props) => {
 const mapStateToProps = (state: RootState) => {
     return {
         avpRecordAddResponse: state.avp.avpRecordAddResponse,
-        avpRecordsResponse: state.avp.avpRecordsResponse
+        avpRecordsResponse: state.avp.avpRecordsResponse,
+        avpRecordResponseSuccess: state.avp.avpRecordResponseSuccess,
+        avpRecordEditResponse: state.avp.avpRecordEditResponse
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetAVPRecords: (payload: any) => dispatch(getAllAvpRecords(payload)),
+        onGetAvpRecord: (payload: any) => dispatch(getAvpRecord(payload)),
     };
 };
 

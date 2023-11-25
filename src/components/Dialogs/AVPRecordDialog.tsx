@@ -6,7 +6,7 @@ import {useAppDataContext} from "../../context/AppDataContext";
 import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input} from "@mui/joy";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
-import {addAvpRecord} from "../../redux/avp/avp-slice";
+import {addAvpRecord, editAvpRecord} from "../../redux/avp/avp-slice";
 
 export enum DialogType {
     add,
@@ -46,7 +46,7 @@ const AVPRecordDialog: FC<Props> = (props) => {
     }
 
     const handleCloseAndUpdate = () => {
-        props.onAddAvpRecord(input.inputData);
+        props.onEditAvpRecord(input.inputData);
     }
 
     const handleInput = (event: any) => {
@@ -122,7 +122,7 @@ const AVPRecordDialog: FC<Props> = (props) => {
             {props.type === DialogType.add &&
                 <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
             {props.type === DialogType.edit &&
-                <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>UPDATE</Button>}
+                <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
             <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
         </DialogActions>
     </React.Fragment>);
@@ -136,6 +136,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onAddAvpRecord: (payload: any) => dispatch(addAvpRecord(payload)),
+        onEditAvpRecord: (payload: any) => dispatch(editAvpRecord(payload)),
     };
 };
 
