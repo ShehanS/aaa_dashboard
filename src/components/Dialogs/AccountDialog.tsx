@@ -3,7 +3,7 @@ import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input} from "@mui/joy";
+import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {addAccount, editAccount} from "../../redux/account/account-slice";
@@ -61,7 +61,7 @@ const AccountDialog: FC<Props> = (props) => {
             ...prevInput,
             inputData: {
                 ...prevInput.inputData,
-                [event.target.name]: event.target.value,
+                [event.nativeEvent.target.name]: event.nativeEvent.target.value,
             },
         }));
     }
@@ -70,6 +70,18 @@ const AccountDialog: FC<Props> = (props) => {
             ...appDataContext,
             isOpenDialog: false
         });
+    }
+
+    const handleAccountType = (event: any, value: any): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "acct_status_type",
+                    value: value
+                }
+            }
+        }
+        return data;
     }
 
 
@@ -98,19 +110,27 @@ const AccountDialog: FC<Props> = (props) => {
                            onChange={handleInput}/>
 
                 </FormControl>
-                <FormControl>
+                <FormControl sx={{width:"280px"}}>
                     <FormLabel>
                         ACC.State Type:
                     </FormLabel>
-                    <Input type={"number"} name={"acct_status_type"}
-                           value={input?.inputData?.['acct_status_type'] ?? ""} onChange={handleInput}/>
+
+                    <Select onChange={(event, value) => handleInput(handleAccountType(event, value))}
+                            value={input?.inputData?.['acct_status_type'] ?? ""}>
+                        <Option value={1}>Active</Option>
+                        <Option value={2}>Deactivate</Option>
+                    </Select>
+
+                    {/*<Input type={"number"} name={"acct_status_type"}*/}
+                    {/*       value={input?.inputData?.['acct_status_type'] ?? ""} onChange={handleInput}/>*/}
 
                 </FormControl>
                 <FormControl>
                     <FormLabel>
                         ACC Input Octets:
                     </FormLabel>
-                    <Input type={"number"}  name={"acct_input_octets"} value={input?.inputData?.['acct_input_octets'] ?? ""}
+                    <Input type={"number"} name={"acct_input_octets"}
+                           value={input?.inputData?.['acct_input_octets'] ?? ""}
                            onChange={handleInput}/>
 
                 </FormControl>
@@ -118,7 +138,8 @@ const AccountDialog: FC<Props> = (props) => {
                     <FormLabel>
                         ACC Output Octets:
                     </FormLabel>
-                    <Input type={"number"}  name={"acct_output_octets"} value={input?.inputData?.['acct_output_octets'] ?? ""}
+                    <Input type={"number"} name={"acct_output_octets"}
+                           value={input?.inputData?.['acct_output_octets'] ?? ""}
                            onChange={handleInput}/>
 
                 </FormControl>
@@ -126,7 +147,8 @@ const AccountDialog: FC<Props> = (props) => {
                     <FormLabel>
                         ACC Input Gigwords:
                     </FormLabel>
-                    <Input type={"number"} value={input?.inputData?.['acct_input_gigawords'] ?? ""} name={"acct_input_gigawords"}
+                    <Input type={"number"} value={input?.inputData?.['acct_input_gigawords'] ?? ""}
+                           name={"acct_input_gigawords"}
                            onChange={handleInput}/>
 
                 </FormControl>
@@ -134,7 +156,8 @@ const AccountDialog: FC<Props> = (props) => {
                     <FormLabel>
                         ACC Output Gigwords:
                     </FormLabel>
-                    <Input type={"number"}  value={input?.inputData?.['acct_output_gigawords'] ?? ""} name={"acct_output_gigawords"}
+                    <Input type={"number"} value={input?.inputData?.['acct_output_gigawords'] ?? ""}
+                           name={"acct_output_gigawords"}
                            onChange={handleInput}/>
 
                 </FormControl>

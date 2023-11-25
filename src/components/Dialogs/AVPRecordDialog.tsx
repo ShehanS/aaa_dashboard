@@ -54,7 +54,7 @@ const AVPRecordDialog: FC<Props> = (props) => {
             ...prevInput,
             inputData: {
                 ...prevInput.inputData,
-                [event.target.name]: event.target.value,
+                [event.nativeEvent.target.name]: event.nativeEvent.target.value,
             },
         }));
     }

@@ -292,18 +292,18 @@ const AVPOverride: FC<ReduxProps> = (props) => {
             </Snackbar>
             <HeaderText title={"AVP Override"} subTitle={"Add/Edit avop records"}/>
             <Box sx={{
-                width: '100%',
+                width: "100%",
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center'
+                alignItems: 'start',
+                justifyContent: 'start',
             }}>
                 <Box sx={{
-                    width: '80%',
+                    width: "100%",
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+                    alignItems: 'start',
+                    justifyContent: 'start',
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
                         <SearchBar displayAttr={"vp_name"} onSearchClear={initLoad} table={"bb_attrgroup_accounting_avp_override"}
@@ -419,8 +419,9 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                     </Sheet>
                     <Stack direction={"row"} sx={{
                         position: 'absolute',
-                        width: '80%',
+                        width: '100%',
                         bottom: '-50px',
+                        right:0,
                         justifyItems: 'center',
                         alignItem: "center",
                         display: "flex",

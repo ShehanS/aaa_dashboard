@@ -311,7 +311,7 @@ const Accounting: FC = (props: any) => {
 
             }}>
                 <Box sx={{
-                    width: "70%",
+                    width: "100%",
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'start',
@@ -417,7 +417,7 @@ const Accounting: FC = (props: any) => {
                                         <td>{row.subscriber_id ?? ""}</td>
                                         <td>{row.username ?? ""}</td>
                                         <td>{row.acct_session_id ?? ""}</td>
-                                        <td>{row.acct_status_type ?? ""}</td>
+                                        <td>{row.acct_status_type ==1 ? "Active": "Deactivate"}</td>
                                         <td>{row.acct_input_octets ?? ""}</td>
                                         <td>{row.acct_output_octets ?? ""}</td>
                                         <td>{row.acct_input_gigawords ?? ""}</td>
@@ -455,8 +455,9 @@ const Accounting: FC = (props: any) => {
                     </Sheet>
                     <Stack direction={"row"} sx={{
                         position: 'absolute',
-                        width: '70%',
+                        width: '100%',
                         bottom: '-50px',
+                        right:0,
                         justifyItems: 'center',
                         alignItem: "center",
                         display: "flex",

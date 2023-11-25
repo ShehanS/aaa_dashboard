@@ -23,7 +23,7 @@ const Home: FC<Props> = ({children}) => {
                 <SideMenu/>
             </Grid>
             <Grid md={11} sm={11} lg={11}>
-                <Box sx={{position: 'absolute', left: 300, top: 100}}>
+                <Box sx={{position: 'absolute', left: 300, top: 100, width:"80%"}}>
                     {children}
                 </Box>
             </Grid>
