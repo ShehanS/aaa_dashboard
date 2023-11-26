@@ -117,8 +117,8 @@ const AccountDialog: FC<Props> = (props) => {
 
                     <Select onChange={(event, value) => handleInput(handleAccountType(event, value))}
                             value={input?.inputData?.['acct_status_type'] ?? ""}>
-                        <Option value={1}>Active</Option>
-                        <Option value={2}>Deactivate</Option>
+                        <Option value={1}>Enabled</Option>
+                        <Option value={2}>Disabled</Option>
                     </Select>
 
                     {/*<Input type={"number"} name={"acct_status_type"}*/}

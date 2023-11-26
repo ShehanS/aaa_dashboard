@@ -28,18 +28,22 @@ export const AVPSlice = createSlice({
     initialState,
     reducers: {
         addAvpRecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         editAvpRecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         deleteAvpRecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         addAvpRecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             avpRecordAddResponse: action.payload,
             error: null
         }),
@@ -48,10 +52,12 @@ export const AVPSlice = createSlice({
             error: null
         }),
         deleteAvpRecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             avpRecordDeleteResponse: action.payload,
             error: null
         }),
         getAllAvpRecords: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
@@ -60,10 +66,12 @@ export const AVPSlice = createSlice({
             error: null
         }),
         getAvpRecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         getAvpRecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             avpRecordResponseSuccess: action.payload,
             error: null
         }),

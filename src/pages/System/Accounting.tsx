@@ -382,9 +382,6 @@ const Accounting: FC = (props: any) => {
         props.onGetAccount(record.subscriber_id);
     }
 
-    const handleDelete = (id: string) => {
-        props.onDelete(id);
-    }
 
 
     const openAccountEditDialog = (record: IAccountingData) => {
@@ -403,7 +400,12 @@ const Accounting: FC = (props: any) => {
         });
     }
 
-    const openDeleteDelete = (props: any) => {
+    const handleDelete = (id: string) => {
+        props.onDelete(id);
+    }
+
+
+    const openDeleteDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
@@ -629,7 +631,7 @@ const Accounting: FC = (props: any) => {
                                                     Edit
                                                 </Button>
                                                 <Button
-                                                    onClick={() => openDeleteDelete}
+                                                    onClick={() => openDeleteDialog(row)}
                                                     size="sm"
                                                     variant="soft"
                                                     color="danger"
