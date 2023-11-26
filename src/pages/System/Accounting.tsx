@@ -71,6 +71,7 @@ type StateObj = {
 
 const Accounting: FC = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [currentPageFilter, setCurrentPageFilter] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const [records, setRecords] = useState<IAccountingData[]>([]);
@@ -454,6 +455,17 @@ const Accounting: FC = (props: any) => {
 
     };
 
+    const handlePageChangeFilter = (event: any, page: number) => {
+        setCurrentPageFilter(page);
+        setIsLoading(true);
+        const request = {
+            page: page - 1,
+            pageSize: 10
+        }
+        props.onGetFilters(request);
+
+    };
+
 
     return (
         <React.Fragment>
@@ -708,6 +720,7 @@ const Accounting: FC = (props: any) => {
                                 backgroundColor: 'background.surface',
                                 overflowX: 'auto',
                                 maxWidth: '50%',
+                                height:"250px"
                             }}
                         >
                             <Box>
@@ -789,8 +802,8 @@ const Accounting: FC = (props: any) => {
                             </Typography>
                             <Pagination
                                 count={getPageCount(stateObj.filterCount, 10)}
-                                page={currentPage}
-                                onChange={handlePageChange}
+                                page={currentPageFilter}
+                                onChange={handlePageChangeFilter}
                                 renderItem={(item) => (
                                     <PaginationItem
                                         slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
