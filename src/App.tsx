@@ -8,6 +8,8 @@ import Accounting from "./pages/System/Accounting";
 import COA from "./pages/COA/COA";
 import {AppDataContextProvider} from "./context/AppDataContext";
 import React from "react"
+import AttributeMap from "./pages/NAS/AttributeMap";
+import ConfigNAS from "./pages/NAS/NASConfig";
 function App() {
     return (
         <React.Fragment>
@@ -19,6 +21,8 @@ function App() {
                                 <Route path={ROUTES.AVPOverride} element={<AVPOverride/>}/>
                                 <Route path={ROUTES.Account} element={<Accounting/>}/>
                                 <Route path={ROUTES.COA} element={<COA/>}/>
+                                <Route path={ROUTES.NAS_ATTRIBUTE_MAP} element={<AttributeMap/>}/>
+                                <Route path={ROUTES.NAS_CONFIG} element={<ConfigNAS/>}/>
                             </Routes>
                         </Home>
                     </BrowserRouter>

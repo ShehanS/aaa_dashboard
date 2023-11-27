@@ -114,7 +114,7 @@ const COA: FC<ReduxProps> = (props: any) => {
             dialogContent: <COAEventDialog type={DialogType.edit} data={props}/>
         });
     }
-    console.log(props.coaRecordsResponse?.data?.records)
+
     useEffect(() => {
         if (
             (stateObj.coaRecordsResponse === null ||

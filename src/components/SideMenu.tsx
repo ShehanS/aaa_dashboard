@@ -42,7 +42,7 @@ const SideMenu = () => {
                         </Sidebar.Collapse>
                     </Sidebar.ItemGroup>
                     <Sidebar.ItemGroup>
-                        <Sidebar.Collapse icon={SettingsInputSvideoRoundedIcon} label={"COA/DM"}>
+                        <Sidebar.Collapse icon={SettingsInputSvideoRoundedIcon} label={"COA/IDM"}>
                             <SideMenuButton href={ROUTES.COA} buttonIndex={3} index={index} setIndex={setIndexValue}
                                             title={"COA"}/>
                             <SideMenuButton buttonIndex={4} index={index} setIndex={setIndexValue} title={"IDM"}/>
@@ -50,11 +50,10 @@ const SideMenu = () => {
                     </Sidebar.ItemGroup>
                     <Sidebar.ItemGroup>
                         <Sidebar.Collapse href="#" icon={StorageRoundedIcon} label={"NAS"}>
-                            <SideMenuButton buttonIndex={5} index={index} setIndex={setIndexValue}
-                                            title={"Create A/E/D"}/>
-                            <SideMenuButton buttonIndex={6} index={index} setIndex={setIndexValue}
-                                            title={"Attribute map A/E/D/A"}/>
-                            <SideMenuButton buttonIndex={7} index={index} setIndex={setIndexValue} title={"CRUD"}/>
+                            <SideMenuButton href={ROUTES.NAS_CONFIG} buttonIndex={5} index={index} setIndex={setIndexValue}
+                                            title={"Create"}/>
+                            <SideMenuButton href={ROUTES.NAS_ATTRIBUTE_MAP} buttonIndex={6} index={index} setIndex={setIndexValue}
+                                            title={"Attribute Map"}/>
                         </Sidebar.Collapse>
                     </Sidebar.ItemGroup>
                     <Sidebar.ItemGroup>

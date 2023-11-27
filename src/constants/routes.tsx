@@ -4,5 +4,7 @@ export const ROUTES = {
     home: "/home",
     AVPOverride:"/home/avp-override",
     Account:"/home/account",
-    COA:"/home/coa"
+    COA:"/home/coa",
+    NAS_CONFIG:"/home/nas-config",
+    NAS_ATTRIBUTE_MAP:"/home/attribute-map"
 }
