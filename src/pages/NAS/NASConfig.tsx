@@ -9,10 +9,18 @@ import NASManageDialog from "../../components/Dialogs/NASManageDialog";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
-import {deleteNASRecord, getAllNASRecords, getNASRecord} from "../../redux/nas/nas-slice";
+import {
+    deleteAttribute,
+    deleteNASRecord,
+    getAllAttributeGroups,
+    getAllNASRecords,
+    getNASRecord
+} from "../../redux/nas/nas-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import NASAttributeGroupDialog from "../../components/Dialogs/NASAttributGroupDialog";
+
 type SnackBarProps = {
     isOpen: boolean;
     color: string;
@@ -25,7 +33,14 @@ type StateObj = {
     nasRecordDeleteResponse: any;
     nasRecordsResponse: any;
     nasRecordResponse: any;
-    nasRecordCount: any;
+    attrAddResponse: any;
+    attrEditResponse: any;
+    attrDeleteResponse: any;
+    attrGroupsResponse: any;
+    nasRecordCount: number,
+    attributeCount: number;
+
+
 };
 
 export interface INasEvent {
@@ -37,10 +52,17 @@ export interface INasEvent {
     create_date: Date;
 }
 
+export interface IAttribute {
+    group_id: number,
+    group_name: string,
+    group_description: string
+}
+
 type ReduxProps = ConnectedProps<typeof connector>;
 
 const NASConfig: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [currentPageForAtt, setCurrentPageForAtt] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
@@ -49,6 +71,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         color: "",
         message: "",
     });
+    const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const [nasEvents, setNasEvents] = useState<INasEvent[]>([]);
     const [stateObj, setStateObj] = useState<StateObj>({
         nasRecordAddResponse: null,
@@ -57,6 +80,11 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         nasRecordsResponse: null,
         nasRecordResponse: null,
         nasRecordCount: 0,
+        attrAddResponse: null,
+        attrEditResponse: null,
+        attrDeleteResponse: null,
+        attrGroupsResponse: null,
+        attributeCount: 0
     });
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
@@ -74,6 +102,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 pageSize: 10
             }
             props.onGetNasRecords(request);
+            props.onGetAttributes(request);
         }
     }
 
@@ -114,6 +143,37 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
     useEffect(() => {
         if (
+            (stateObj.attrGroupsResponse === null ||
+                props !== null) ||
+            (stateObj.attrGroupsResponse !== props.attrGroupsResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                attrGroupsResponse: props.attrGroupsResponse,
+                nasRecordCount: props?.data?.count
+            });
+            setIsLoading(false);
+            if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    attrGroupsResponse: props.attrGroupsResponse,
+                    attributeCount: props.attrGroupsResponse?.data?.count ?? 0,
+                });
+                setAttributes(props.attrGroupsResponse?.data?.records ?? []);
+            } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get NAS records due to ${props.attrGroupsResponse?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.attrGroupsResponse]);
+
+
+    useEffect(() => {
+        if (
             (stateObj.nasRecordDeleteResponse === null ||
                 props.nasDeleteResponse !== null) ||
             (stateObj.nasRecordDeleteResponse !== props.nasRecordDeleteResponse)
@@ -136,6 +196,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     ...appDataContext,
                     isOpenDialog: false,
                 });
+                initLoad();
             } else if (props.nasRecordDeleteResponse?.code === "DELETE_NAS_EVENT_FAILED") {
                 setSnackBar({
                     ...snackBar,
@@ -148,6 +209,126 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             }
         }
     }, [props.nasRecordDeleteResponse]);
+
+
+    useEffect(() => {
+        if (
+            (stateObj.attrAddResponse === null ||
+                props.attrAddResponse !== null) ||
+            (stateObj.attrAddResponse !== props.attrAddResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                attrAddResponse: props.attrAddResponse,
+            });
+            setIsLoading(false);
+            if (props.attrAddResponse?.code === "ADD_NAS_ATTRIBUTE_GROUP_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `New attribute group record added!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: "NAS added!!",
+                });
+                initLoad();
+            } else if (props.attrAddResponse?.code === "ADD_NAS_EVENT_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!!. Record couldn't get records due ${
+                        props.attrAddResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.attrAddResponse]);
+
+
+    useEffect(() => {
+        if (
+            (stateObj.attrEditResponse === null ||
+                props.attrEditResponse !== null) ||
+            (stateObj.attrEditResponse !== props.attrEditResponse)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                attrEditResponse: props.attrEditResponse
+            });
+            if (props.attrEditResponse?.code === "EDIT_NAS_ATTRIBUTE_GROUP_SUCCESS") {
+                initLoad(searchId);
+                setSearchId(searchId);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Attributr group updated!!!!`,
+                });
+                initLoad();
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+            } else if (props.attrEditResponse?.code === "EDIT_NAS_ATTRIBUTE_GROUP_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!!. Edit Event Record couldn't get updated due ${
+                        props.attrEditResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.attrEditResponse]);
+
+    useEffect(() => {
+        if (
+            (stateObj.attrDeleteResponse === null ||
+                props.attrDeleteResponse !== null) ||
+            (stateObj.attrDeleteResponse !== props.attrDeleteResponse)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                attrDeleteResponse: props.attrDeleteResponse,
+                nasRecordCount: 0,
+            });
+            if (props.attrDeleteResponse?.code === "DELETE_NAS_ATTRIBUTE_GROUP_SUCCESS") {
+                initLoad(searchId);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `NAS Record Deleted!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                initLoad();
+            } else if (props.attrDeleteResponse?.code === "DELETE_NAS_ATTRIBUTE_GROUP_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!!. NAS Record couldn't get deleted due ${
+                        props.attrDeleteResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.attrDeleteResponse]);
 
 
     useEffect(() => {
@@ -213,6 +394,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     color: "success",
                     message: `NAS Event Record updated!!!!`,
                 });
+                initLoad();
                 setAppDataContext({
                     ...appDataContext,
                     isOpenDialog: false,
@@ -232,8 +414,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
 
     const onSelectSearch = (record: any) => {
-        setSearchId(record.nas_id);
-        // props.onGetNas(record.nas_id);
+        setSearchId(record.event_id);
+        props.onGetNas(record.event_id);
     }
 
 
@@ -242,6 +424,22 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             ...appDataContext,
             isOpenDialog: true,
             dialogContent: <NASManageDialog type={DialogType.add}/>
+        });
+    }
+
+    const openAddNASGroupDialog = () => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <NASAttributeGroupDialog type={DialogType.add}/>
+        });
+    }
+
+    const openEditNASGroupDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <NASAttributeGroupDialog data={props} type={DialogType.edit}/>
         });
     }
 
@@ -255,6 +453,17 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         props.onGetCoaRecords(request);
 
     };
+
+    const handlePageChangeForAtt = (event: any, page: number) => {
+        setCurrentPageForAtt(page);
+        setIsLoading(true);
+        const request = {
+            page: page - 1,
+            pageSize: 10
+        }
+        props.onGetAttributes(request);
+
+    };
     const openEditNasDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
@@ -262,15 +471,29 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             dialogContent: <NASManageDialog data={props} type={DialogType.edit}/>
         });
     }
+
+
+    const handleDeleteNasAttr = (id: string) => {
+        props.onDeleteAttributeRecord(id);
+    }
+
+    const openDeleteNasAttrGroupDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <DeleteDialog id={props.group_id} onDelete={handleDeleteNasAttr}/>
+        });
+    }
+
     const handleDelete = (id: string) => {
-        props.onDeleteNasRecord(id);
+        props.onDeleteNASEvent(id);
     }
 
     const openDeleteDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
-            dialogContent: <DeleteDialog id={props.event_id} onDelete={handleDelete}/>
+            dialogContent: <DeleteDialog id={props.nas_id} onDelete={handleDelete}/>
         });
     }
     const getPageCount = (count: number, pageSize: number): number => {
@@ -322,8 +545,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                                columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                onSelectSearch={onSelectSearch}/>
                     <Stack direction={"row"} spacing={2}>
-                        <Button onClick={openAddNasDialog}>Add NAS EVENT</Button>
-                        <Button onClick={openAddNasDialog}>Add NAS G.ATTR</Button>
+                        <Button onClick={openAddNasDialog}>Add NAS</Button>
+                        <Button onClick={openAddNASGroupDialog}>Add Grop</Button>
 
                     </Stack>
                 </Stack>
@@ -457,6 +680,138 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 </Stack>
 
             </Box>
+            <Box sx={{
+                width: "100%",
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'start',
+                justifyContent: 'start',
+
+            }}>
+                <HeaderText title={""} subTitle={"Attribute Gropus"}/>
+                <Sheet
+                    variant="outlined"
+                    sx={{
+                        '--TableCell-height': '40px',
+                        '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                        '--Table-firstColumnWidth': '80px',
+                        '--Table-lastColumnWidth': '144px',
+                        overflow: 'auto',
+                        background: (
+                            theme,
+                        ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
+            radial-gradient(
+              farthest-side at 0 50%,
+              rgba(0, 0, 0, 0.12),
+              rgba(0, 0, 0, 0)
+            ),
+            radial-gradient(
+                farthest-side at 100% 50%,
+                rgba(0, 0, 0, 0.12),
+                rgba(0, 0, 0, 0)
+              )
+              0 100%`,
+                        backgroundSize:
+                            '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundAttachment: 'local, local, scroll, scroll',
+                        backgroundPosition:
+                            'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                        backgroundColor: 'background.surface',
+                        overflowX: 'auto',
+                        maxWidth: '40%',
+                        height: "250px"
+                    }}
+                >
+                    <Box>
+
+                        <Table
+                            borderAxis="bothBetween"
+                            stripe="odd"
+                            hoverRow
+                            sx={{
+                                width: "60%",
+                                '& tr > *:first-child': {
+                                    position: 'sticky',
+                                    left: 0,
+                                    boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                    bgcolor: 'background.surface',
+                                },
+                                '& tr > *:last-child': {
+                                    position: 'sticky',
+                                    right: 0,
+                                    bgcolor: 'var(--TableCell-headBackground)',
+                                    width: '120px',
+                                },
+                            }}
+                        >
+                            <thead>
+                            <tr>
+                                <th style={{width: 120}}>Group ID</th>
+                                <th style={{width: 150}}>Group Name</th>
+                                <th style={{width: 150}}>Description</th>
+                                <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {attributes?.map((row) => (
+                                <tr key={row.group_id}>
+                                    <td>{row.group_id ?? ""}</td>
+                                    <td>{row.group_name ?? ""}</td>
+                                    <td>{row.group_description ?? ""}</td>
+                                    <td>
+                                        <Box sx={{display: 'flex', gap: 1}}>
+                                            <Button
+                                                size="sm"
+                                                variant="plain"
+                                                color="neutral"
+                                                onClick={() => openEditNASGroupDialog(row)}
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                onClick={() => openDeleteNasAttrGroupDialog(row)}
+                                                size="sm"
+                                                variant="soft"
+                                                color="danger"
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Box>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </Table>
+                    </Box>
+                </Sheet>
+                <Stack direction={"row"} sx={{
+                    width: '50%',
+                    bottom: '-50px',
+                    right: 0,
+                    justifyItems: 'center',
+                    alignItem: "center",
+                    display: "flex",
+                    justifyContent: 'space-between',
+                    pt: 1
+                }}>
+                    <Typography level={"body-sm"}>
+                        Page Navigation
+                    </Typography>
+                    <Pagination
+                        count={getPageCount(stateObj.attributeCount, 10)}
+                        page={handlePageChangeForAtt}
+                        onChange={handlePageChangeForAtt}
+                        renderItem={(item) => (
+                            <PaginationItem
+                                slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
+                                {...item}
+                            />
+                        )}
+                    />
+                </Stack>
+            </Box>
         </Box>
     </React.Fragment>)
 }
@@ -467,14 +822,20 @@ const mapStateToProps = (state: RootState) => {
         nasRecordEditResponse: state.nas.nasRecordEditResponse,
         nasRecordDeleteResponse: state.nas.nasRecordDeleteResponse,
         nasRecordsResponse: state.nas.nasRecordsResponse,
+        attrGroupsResponse: state.nas.attrGroupsResponse,
+        attrAddResponse: state.nas.attrAddResponse,
+        attrEditResponse: state.nas.attrEditResponse,
+        attrDeleteResponse: state.nas.attrDeleteResponse
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetNasRecords: (payload: any) => dispatch(getAllNASRecords(payload)),
-        onDeleteNasRecord: (payload: any) => dispatch(deleteNASRecord(payload)),
+        onDeleteAttributeRecord: (payload: any) => dispatch(deleteAttribute(payload)),
+        onDeleteNASEvent:(payload: any)=> dispatch(deleteNASRecord(payload)),
         onGetNasRecord: (id: any) => dispatch(getNASRecord(id)),
+        onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
     };
 };
 

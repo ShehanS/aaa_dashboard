@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export interface INASState {
     payload: any;
@@ -8,6 +8,12 @@ export interface INASState {
     nasRecordsResponse: any;
     error: any;
     nasRecordResponse: any;
+    payloadAttr: any;
+    attrAddResponse: any;
+    attrEditResponse: any;
+    attrDeleteResponse: any;
+    attrGroupsResponse: any;
+
 }
 
 const initialNASState: INASState = {
@@ -17,7 +23,12 @@ const initialNASState: INASState = {
     nasRecordDeleteResponse: null,
     nasRecordsResponse: null,
     error: null,
-    nasRecordResponse: null
+    payloadAttr: null,
+    nasRecordResponse: null,
+    attrAddResponse: null,
+    attrEditResponse: null,
+    attrDeleteResponse: null,
+    attrGroupsResponse: null
 }
 
 export const NASSlice = createSlice({
@@ -64,6 +75,38 @@ export const NASSlice = createSlice({
             nasRecordResponse: action.payload,
             error: null
         }),
+        addAttribute: (state, action: PayloadAction<any>) => ({
+            payloadAttr: action.payload,
+            error: null,
+        }),
+        editAttribute: (state, action: PayloadAction<any>) => ({
+            payloadAttr: action.payload,
+            error: null,
+        }),
+        deleteAttribute: (state, action: PayloadAction<any>) => ({
+            payloadAttr: action.payload,
+            error: null,
+        }),
+        addAttributeSuccess: (state, action: PayloadAction<any>) => ({
+            attrAddResponse: action.payload,
+            error: null,
+        }),
+        editAttributeSuccess: (state, action: PayloadAction<any>) => ({
+            attrEditResponse: action.payload,
+            error: null,
+        }),
+        deleteAttributeSuccess: (state, action: PayloadAction<any>) => ({
+            attrDeleteResponse: action.payload,
+            error: null,
+        }),
+        getAllAttributeGroups: (state, action: PayloadAction<any>) => ({
+            payloadAttr: action.payload,
+            error: null,
+        }),
+        getAllAttributeGroupsSuccess: (state, action: PayloadAction<any>) => ({
+            attrGroupsResponse: action.payload,
+            error: null,
+        }),
         getError: (state) => ({
             error: null
         })
@@ -81,7 +124,15 @@ export const {
     editNASRecordSuccess,
     deleteNASRecordSuccess,
     getAllNASRecords,
-    getAllNASRecordsSuccess
+    getAllNASRecordsSuccess,
+    addAttribute,
+    editAttribute,
+    deleteAttribute,
+    addAttributeSuccess,
+    editAttributeSuccess,
+    deleteAttributeSuccess,
+    getAllAttributeGroups,
+    getAllAttributeGroupsSuccess,
 } = NASSlice.actions
 
 export default NASSlice.reducer
