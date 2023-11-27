@@ -1,38 +1,39 @@
 import {all, call, put, takeLatest} from "redux-saga/effects";
 import {ServerResponse} from "http";
 import {
+    ADD_ATTRIBUTE_GROUP_API,
     ADD_NAS_RECORD_API,
-    DELETE_NAS_RECORD_API,
+    ADD_SUBSCRIBER_API,
+    DELETE_ATTRIBUTE_GROUP_API,
+    DELETE_NAS_RECORD_API, DELETE_SUBSCRIBER_API,
+    EDIT_ATTRIBUTE_GROUP_API,
     EDIT_NAS_RECORD_API,
+    EDIT_SUBSCRIBER_API,
+    GET_ATTRIBUTE_GROUPS_API,
     GET_NAS_RECORD_API,
     GET_NAS_RECORDS_API,
-    ADD_ATTRIBUTE_API,
-    DELETE_ATTRIBUTE_API,
-    EDIT_ATTRIBUTE_API,
-    GET_ATTRIBUTES_API,
-    GET_ATTRIBUTE_API,
-    GET_ATTRIBUTE_GROUPS_API,
-    ADD_ATTRIBUTE_GROUP_API,
-    DELETE_ATTRIBUTE_GROUP_API,
-    EDIT_ATTRIBUTE_GROUP_API,
+    GET_SUBSCRIBERS_API,
 } from "./nas-api";
 import {
     addAttribute,
     addAttributeSuccess,
+    addNASRecord,
+    addNASRecordSuccess, addSubscriber,
+    addSubscriberSuccess,
     deleteAttribute,
     deleteAttributeSuccess,
+    deleteNASRecord,
+    deleteNASRecordSuccess, deleteSubscriber, deleteSubscriberSuccess,
     editAttribute,
     editAttributeSuccess,
+    editNASRecord,
+    editNASRecordSuccess, editSubscriber,
+    editSubscriberSuccess,
     getAllAttributeGroups,
     getAllAttributeGroupsSuccess,
-    addNASRecord,
-    addNASRecordSuccess,
-    deleteNASRecord,
-    deleteNASRecordSuccess,
-    editNASRecord,
-    editNASRecordSuccess,
     getAllNASRecords,
-    getAllNASRecordsSuccess,
+    getAllNASRecordsSuccess, getAllSubscribers,
+    getAllSubscribersSuccess,
     getError,
     getNASRecord,
     getNASRecordSuccess
@@ -134,6 +135,54 @@ function* handleDeleteAttribute(action: { payload: {} }) {
     }
 }
 
+function* handleGetSubscribers(action: { payload: {} }) {
+    try {
+        const response: ServerResponse = yield call(
+            GET_SUBSCRIBERS_API.all,
+            action.payload
+        );
+        yield put(getAllSubscribersSuccess(response));
+    } catch (e) {
+        yield put(getError(e));
+    }
+}
+
+function* handleAddSubscriber(action: { payload: {} }) {
+    try {
+        const response: ServerResponse = yield call(
+            ADD_SUBSCRIBER_API.add,
+            action.payload
+        );
+        yield put(addSubscriberSuccess(response));
+    } catch (e) {
+        yield put(getError(e));
+    }
+}
+
+function* handleEditSubscriber(action: { payload: {} }) {
+    try {
+        const response: ServerResponse = yield call(
+            EDIT_SUBSCRIBER_API.edit,
+            action.payload
+        );
+        yield put(editSubscriberSuccess(response));
+    } catch (e) {
+        yield put(getError(e));
+    }
+}
+
+function* handleDeleteSubscriber(action: { payload: {} }) {
+    try {
+        const response: ServerResponse = yield call(
+            DELETE_SUBSCRIBER_API.delete,
+            action.payload
+        );
+        yield put(deleteSubscriberSuccess(response));
+    } catch (e) {
+        yield put(getError(e));
+    }
+}
+
 function* watchDeleteAttribute() {
     yield takeLatest<any>(deleteAttribute.type, handleDeleteAttribute);
 }
@@ -172,6 +221,23 @@ function* watchGetNASRecord() {
     yield takeLatest<any>(getNASRecord.type, handleGetNASRecords);
 }
 
+function* watchGetSubscribers() {
+    yield takeLatest<any>(getAllSubscribers.type, handleGetSubscribers);
+}
+
+function* watchAddSubscriber() {
+    yield takeLatest<any>(addSubscriber.type, handleAddSubscriber);
+}
+
+function* watchEditSubscriber() {
+    yield takeLatest<any>(editSubscriber.type, handleEditSubscriber);
+}
+
+function* watchDeleteSubscriber() {
+    yield takeLatest<any>(deleteSubscriber.type, handleDeleteSubscriber);
+}
+
+
 export default function* NASSaga() {
     yield all([
         watchAddingNASRecord(),
@@ -183,5 +249,9 @@ export default function* NASSaga() {
         watchGetAllAttributes(),
         watchEditAttribute(),
         watchDeleteAttribute(),
+        watchAddSubscriber(),
+        watchGetSubscribers(),
+        watchEditSubscriber(),
+        watchDeleteSubscriber(),
     ]);
 }

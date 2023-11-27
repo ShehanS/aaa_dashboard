@@ -4,7 +4,6 @@ import {Box, Button, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import {useAppDataContext} from "../../context/AppDataContext";
 import SearchBar from "../../components/SearchBar";
-import {DialogType} from "../../components/Dialogs/AccountingRecordFilterDialog";
 import NASManageDialog from "../../components/Dialogs/NASManageDialog";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {RootState} from "../../redux/store";
@@ -12,14 +11,17 @@ import {connect, ConnectedProps} from "react-redux";
 import {
     deleteAttribute,
     deleteNASRecord,
+    deleteSubscriber,
     getAllAttributeGroups,
     getAllNASRecords,
+    getAllSubscribers,
     getNASRecord
 } from "../../redux/nas/nas-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import NASAttributeGroupDialog from "../../components/Dialogs/NASAttributGroupDialog";
+import NASAttributeGroupDialog, {DialogType} from "../../components/Dialogs/NASAttributGroupDialog";
+import NASSubscriberDialog from "../../components/Dialogs/NASSubscriberDialog";
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -37,8 +39,10 @@ type StateObj = {
     attrEditResponse: any;
     attrDeleteResponse: any;
     attrGroupsResponse: any;
-    nasRecordCount: number,
-    attributeCount: number;
+    subscribersResponse: any;
+    subscribeAddResponse: any;
+    subscriberEditResponse: any;
+    subscriberDeleteResponse: any;
 
 
 };
@@ -58,11 +62,21 @@ export interface IAttribute {
     group_description: string
 }
 
+export interface ISubscriber {
+    subscriber_id: number,
+    attribute_group: string,
+    attribute: string,
+    operation: string,
+    value: string,
+}
+
+
 type ReduxProps = ConnectedProps<typeof connector>;
 
 const NASConfig: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageForAtt, setCurrentPageForAtt] = useState(1);
+    const [currentPageForSub, setCurrentPageForSub] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
@@ -71,6 +85,10 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         color: "",
         message: "",
     });
+    const [nasCount, setNasCount] = useState<number>(0);
+    const [attrCount, setAttrCount] = useState<number>(0);
+    const [subscriberCount, setSubscriberCount] = useState<number>(0);
+    const [subscribers, setSubscribers] = useState<ISubscriber[]>([]);
     const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const [nasEvents, setNasEvents] = useState<INasEvent[]>([]);
     const [stateObj, setStateObj] = useState<StateObj>({
@@ -79,12 +97,14 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         nasRecordDeleteResponse: null,
         nasRecordsResponse: null,
         nasRecordResponse: null,
-        nasRecordCount: 0,
         attrAddResponse: null,
         attrEditResponse: null,
         attrDeleteResponse: null,
         attrGroupsResponse: null,
-        attributeCount: 0
+        subscribersResponse: null,
+        subscribeAddResponse: null,
+        subscriberEditResponse: null,
+        subscriberDeleteResponse: null
     });
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
@@ -103,6 +123,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             }
             props.onGetNasRecords(request);
             props.onGetAttributes(request);
+            props.onGetSubscribe(request)
         }
     }
 
@@ -126,9 +147,9 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             if (props.nasRecordsResponse?.code === "GET_NAS_EVENTS_SUCCESS") {
                 setStateObj({
                     ...stateObj,
-                    nasRecordsResponse: props.nasRecordsResponse,
-                    nasRecordCount: props.nasRecordsResponse?.data?.count ?? 0,
+                    nasRecordsResponse: props.nasRecordsResponse
                 });
+                setNasCount(props.nasRecordsResponse?.data?.count ?? 0);
                 setNasEvents(props.nasRecordsResponse?.data?.records ?? []);
             } else if (props.nasRecordsResponse?.code === "GET_NAS_EVENTS_FAILED") {
                 setSnackBar({
@@ -143,22 +164,43 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
     useEffect(() => {
         if (
-            (stateObj.attrGroupsResponse === null ||
-                props !== null) ||
-            (stateObj.attrGroupsResponse !== props.attrGroupsResponse)
+            (stateObj.subscribersResponse === null ||
+                props.subscribersResponse !== null) ||
+            (stateObj.subscribersResponse !== props.subscribersResponse)
         ) {
             setStateObj({
                 ...stateObj,
-                attrGroupsResponse: props.attrGroupsResponse,
-                nasRecordCount: props?.data?.count
+                subscribersResponse: props.subscribersResponse
             });
+            setIsLoading(false);
+            if (props.subscribersResponse?.code === "GET_NAS_SUBSCRIBERS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    subscribersResponse: props.subscribersResponse
+                });
+                setSubscriberCount(props.subscribersResponse?.data?.count ?? 0,)
+                setSubscribers(props.subscribersResponse?.data?.records ?? []);
+            } else if (props.subscribersResponse?.code === "GET_NAS_SUBSCRIBERS_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get subscribers due to ${props.subscribersResponse?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.subscribersResponse]);
+
+
+    useEffect(() => {
+        if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
             setIsLoading(false);
             if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
                 setStateObj({
                     ...stateObj,
                     attrGroupsResponse: props.attrGroupsResponse,
-                    attributeCount: props.attrGroupsResponse?.data?.count ?? 0,
                 });
+                setAttrCount(props.attrGroupsResponse?.data?.count ?? 0)
                 setAttributes(props.attrGroupsResponse?.data?.records ?? []);
             } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
                 setSnackBar({
@@ -169,6 +211,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 });
             }
         }
+        console.log(props.attrGroupsResponse?.data?.count)
     }, [props.attrGroupsResponse]);
 
 
@@ -240,7 +283,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     message: "NAS added!!",
                 });
                 initLoad();
-            } else if (props.attrAddResponse?.code === "ADD_NAS_EVENT_FAILED") {
+            } else if (props.attrAddResponse?.code === "ADD_NAS_ATTRIBUTE_GROUP_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
@@ -252,6 +295,87 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             }
         }
     }, [props.attrAddResponse]);
+
+    useEffect(() => {
+        if (
+            (stateObj.subscribeAddResponse === null ||
+                props.subscribeAddResponse !== null) ||
+            (stateObj.subscribeAddResponse !== props.subscribeAddResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                subscribeAddResponse: props.subscribeAddResponse,
+            });
+            setIsLoading(false);
+            if (props.subscribeAddResponse?.code === "ADD_NAS_SUBSCRIBER_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `New attribute group record added!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: "NAS added!!",
+                });
+                initLoad();
+            } else if (props.subscribeAddResponse?.code === "ADD_NAS_SUBSCRIBER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Add subscriber failed due to ${
+                        props.subscribeAddResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.subscribeAddResponse]);
+
+
+    useEffect(() => {
+        if (
+            (stateObj.subscriberEditResponse === null ||
+                props.subscriberEditResponse !== null) ||
+            (stateObj.subscriberEditResponse !== props.subscriberEditResponse)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                subscriberEditResponse: props.subscriberEditResponse,
+            });
+            if (props.subscriberEditResponse?.code === "EDIT_NAS_SUBSCRIBER_SUCCESS") {
+                initLoad(searchId);
+                setSearchId(searchId);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Subscriber updated successfully!`,
+                });
+                initLoad();
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+            } else if (props.subscriberEditResponse?.code === "EDIT_NAS_SUBSCRIBER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Edit subscriber failed due to ${
+                        props.subscriberEditResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.subscriberEditResponse]);
 
 
     useEffect(() => {
@@ -294,6 +418,38 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
     useEffect(() => {
         if (
+            (stateObj.subscriberEditResponse === null ||
+                props.subscriberEditResponse !== null) ||
+            (stateObj.subscriberEditResponse !== props.subscriberEditResponse)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                subscriberEditResponse: props.subscriberEditResponse,
+            });
+            if (props.subscriberEditResponse?.code === "DELETE_NAS_SUBSCRIBER_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Subscriber updated successfully!`,
+                });
+            } else if (props.subscriberEditResponse?.code === "DELETE_NAS_SUBSCRIBER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Edit subscriber failed due to ${
+                        props.subscriberEditResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.subscriberEditResponse]);
+
+
+    useEffect(() => {
+        if (
             (stateObj.attrDeleteResponse === null ||
                 props.attrDeleteResponse !== null) ||
             (stateObj.attrDeleteResponse !== props.attrDeleteResponse)
@@ -329,6 +485,43 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             }
         }
     }, [props.attrDeleteResponse]);
+
+    useEffect(() => {
+        if (
+            (stateObj.subscriberDeleteResponse === null ||
+                props.subscriberDeleteResponse !== null) ||
+            (stateObj.subscriberDeleteResponse !== props.subscriberDeleteResponse)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                subscriberDeleteResponse: props.subscriberDeleteResponse,
+                subscriberCount: 0,
+            });
+            if (props.subscriberDeleteResponse?.code === "DELETE_NAS_SUBSCRIBER_SUCCESS") {
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Subscriber Deleted successfully!`,
+                });
+                initLoad();
+            } else if (props.subscriberDeleteResponse?.code === "DELETE_NAS_SUBSCRIBER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Delete subscriber failed due to ${
+                        props.subscriberDeleteResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.subscriberDeleteResponse]);
 
 
     useEffect(() => {
@@ -443,6 +636,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         });
     }
 
+
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
         setIsLoading(true);
@@ -450,9 +644,18 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             page: page - 1,
             pageSize: 10
         }
-        props.onGetCoaRecords(request);
+        props.onGetNasRecords(request);
 
     };
+
+    const handlePageChangeForSub = (event: any, page: number) => {
+        setCurrentPageForSub(page);
+        const request = {
+            page: page - 1,
+            pageSize: 10
+        }
+        props.onGetSubscribe(request);
+    }
 
     const handlePageChangeForAtt = (event: any, page: number) => {
         setCurrentPageForAtt(page);
@@ -485,6 +688,19 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         });
     }
 
+    const handleDeleteSubscriber = (id: string) => {
+        props.onDeleteSubscriber(id);
+    }
+
+
+    const showNASDeleteSubscriberDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <DeleteDialog id={props.subscriber_id} onDelete={handleDeleteSubscriber}/>
+        });
+    }
+
     const handleDelete = (id: string) => {
         props.onDeleteNASEvent(id);
     }
@@ -500,6 +716,23 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         const pageCount = Math.ceil(count / pageSize);
         return pageCount;
     };
+
+
+    const openNASSubscribeDialog = () => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <NASSubscriberDialog type={DialogType.add}/>
+        });
+    }
+
+    const editNASSubscribeDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <NASSubscriberDialog data={props} type={DialogType.edit}/>
+        });
+    }
 
 
     return (<React.Fragment>
@@ -523,6 +756,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         >
             {snackBar.message ?? ""}
         </Snackbar>
+        {stateObj.subscribeCount} {stateObj.attributeCount} {stateObj.nasRecordCount}
         <HeaderText title={"NAS"} subTitle={"Config NAS"}/>
         <Box sx={{
             width: "100%",
@@ -546,7 +780,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                                onSelectSearch={onSelectSearch}/>
                     <Stack direction={"row"} spacing={2}>
                         <Button onClick={openAddNasDialog}>Add NAS</Button>
-                        <Button onClick={openAddNASGroupDialog}>Add Grop</Button>
+                        <Button onClick={openAddNASGroupDialog}>Add Group</Button>
+                        <Button onClick={openNASSubscribeDialog}>Add Subscribers</Button>
 
                     </Stack>
                 </Stack>
@@ -583,7 +818,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                             'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                         backgroundColor: 'background.surface',
                         overflowX: 'auto',
-                        maxWidth: '70%',
+                        maxWidth: '80%',
                     }}
                 >
                     <Box>
@@ -654,7 +889,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     </Box>
                 </Sheet>
                 <Stack direction={"row"} sx={{
-                    width: '70%',
+                    width: '100%',
                     bottom: '-50px',
                     right: 0,
                     justifyItems: 'center',
@@ -667,9 +902,9 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                         Page Navigation
                     </Typography>
                     <Pagination
-                        count={getPageCount(stateObj.nasRecordCount, 10)}
+                        count={getPageCount(nasCount, 10)}
                         page={currentPage}
-                        onChange={handlePageChange}
+                        onChange={handlePageChangeForAtt}
                         renderItem={(item) => (
                             <PaginationItem
                                 slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
@@ -680,26 +915,28 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 </Stack>
 
             </Box>
-            <Box sx={{
-                width: "100%",
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'start',
-                justifyContent: 'start',
 
-            }}>
-                <HeaderText title={""} subTitle={"Attribute Gropus"}/>
-                <Sheet
-                    variant="outlined"
-                    sx={{
-                        '--TableCell-height': '40px',
-                        '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-                        '--Table-firstColumnWidth': '80px',
-                        '--Table-lastColumnWidth': '144px',
-                        overflow: 'auto',
-                        background: (
-                            theme,
-                        ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+            <Stack direction={"row"} display={"flex"} spacing={2} sx={{width: "600"}}>
+                <Box sx={{
+                    width: "100%",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'start',
+                    justifyContent: 'start',
+
+                }}>
+                    <HeaderText title={""} subTitle={"Attribute Group(s)"}/>
+                    <Sheet
+                        variant="outlined"
+                        sx={{
+                            '--TableCell-height': '40px',
+                            '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                            '--Table-firstColumnWidth': '80px',
+                            '--Table-lastColumnWidth': '144px',
+                            overflow: 'auto',
+                            background: (
+                                theme,
+                            ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
             linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
             radial-gradient(
               farthest-side at 0 50%,
@@ -712,106 +949,244 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 rgba(0, 0, 0, 0)
               )
               0 100%`,
-                        backgroundSize:
-                            '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundAttachment: 'local, local, scroll, scroll',
-                        backgroundPosition:
-                            'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
-                        backgroundColor: 'background.surface',
-                        overflowX: 'auto',
-                        maxWidth: '40%',
-                        height: "250px"
-                    }}
-                >
-                    <Box>
+                            backgroundSize:
+                                '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundAttachment: 'local, local, scroll, scroll',
+                            backgroundPosition:
+                                'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                            backgroundColor: 'background.surface',
+                            overflowX: 'auto',
+                            maxWidth: '100%',
+                            height: "250px"
+                        }}
+                    >
+                        <Box>
 
-                        <Table
-                            borderAxis="bothBetween"
-                            stripe="odd"
-                            hoverRow
-                            sx={{
-                                width: "60%",
-                                '& tr > *:first-child': {
-                                    position: 'sticky',
-                                    left: 0,
-                                    boxShadow: '1px 0 var(--TableCell-borderColor)',
-                                    bgcolor: 'background.surface',
-                                },
-                                '& tr > *:last-child': {
-                                    position: 'sticky',
-                                    right: 0,
-                                    bgcolor: 'var(--TableCell-headBackground)',
-                                    width: '120px',
-                                },
-                            }}
-                        >
-                            <thead>
-                            <tr>
-                                <th style={{width: 120}}>Group ID</th>
-                                <th style={{width: 150}}>Group Name</th>
-                                <th style={{width: 150}}>Description</th>
-                                <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {attributes?.map((row) => (
-                                <tr key={row.group_id}>
-                                    <td>{row.group_id ?? ""}</td>
-                                    <td>{row.group_name ?? ""}</td>
-                                    <td>{row.group_description ?? ""}</td>
-                                    <td>
-                                        <Box sx={{display: 'flex', gap: 1}}>
-                                            <Button
-                                                size="sm"
-                                                variant="plain"
-                                                color="neutral"
-                                                onClick={() => openEditNASGroupDialog(row)}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                onClick={() => openDeleteNasAttrGroupDialog(row)}
-                                                size="sm"
-                                                variant="soft"
-                                                color="danger"
-                                            >
-                                                Delete
-                                            </Button>
-                                        </Box>
-                                    </td>
+                            <Table
+                                borderAxis="bothBetween"
+                                stripe="odd"
+                                hoverRow
+                                sx={{
+                                    width: "60%",
+                                    '& tr > *:first-child': {
+                                        position: 'sticky',
+                                        left: 0,
+                                        boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                        bgcolor: 'background.surface',
+                                    },
+                                    '& tr > *:last-child': {
+                                        position: 'sticky',
+                                        right: 0,
+                                        bgcolor: 'var(--TableCell-headBackground)',
+                                        width: '120px',
+                                    },
+                                }}
+                            >
+                                <thead>
+                                <tr>
+                                    <th style={{width: 120}}>Group ID</th>
+                                    <th style={{width: 150}}>Group Name</th>
+                                    <th style={{width: 150}}>Description</th>
+                                    <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
                                 </tr>
-                            ))}
-                            </tbody>
-                        </Table>
-                    </Box>
-                </Sheet>
-                <Stack direction={"row"} sx={{
-                    width: '50%',
-                    bottom: '-50px',
-                    right: 0,
-                    justifyItems: 'center',
-                    alignItem: "center",
-                    display: "flex",
-                    justifyContent: 'space-between',
-                    pt: 1
+                                </thead>
+                                <tbody>
+                                {attributes?.map((row) => (
+                                    <tr key={row.group_id}>
+                                        <td>{row.group_id ?? ""}</td>
+                                        <td>{row.group_name ?? ""}</td>
+                                        <td>{row.group_description ?? ""}</td>
+                                        <td>
+                                            <Box sx={{display: 'flex', gap: 1}}>
+                                                <Button
+                                                    size="sm"
+                                                    variant="plain"
+                                                    color="neutral"
+                                                    onClick={() => openEditNASGroupDialog(row)}
+                                                >
+                                                    Edit
+                                                </Button>
+                                                <Button
+                                                    onClick={() => openDeleteNasAttrGroupDialog(row)}
+                                                    size="sm"
+                                                    variant="soft"
+                                                    color="danger"
+                                                >
+                                                    Delete
+                                                </Button>
+                                            </Box>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </Table>
+                        </Box>
+                    </Sheet>
+                    <Stack direction={"row"} sx={{
+                        width: '100%',
+                        bottom: '-50px',
+                        right: 0,
+                        justifyItems: 'center',
+                        alignItem: "center",
+                        display: "flex",
+                        justifyContent: 'space-between',
+                        pt: 1
+                    }}>
+                        <Typography level={"body-sm"}>
+                            Page Navigation
+                        </Typography>
+                        <Pagination
+                            count={getPageCount(attrCount, 10)}
+                            page={currentPageForAtt}
+                            onChange={handlePageChangeForAtt}
+                            renderItem={(item) => (
+                                <PaginationItem
+                                    slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
+                                    {...item}
+                                />
+                            )}
+                        />
+                    </Stack>
+                </Box>
+                <Box sx={{
+                    width: "100%",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'start',
+                    justifyContent: 'start',
+
                 }}>
-                    <Typography level={"body-sm"}>
-                        Page Navigation
-                    </Typography>
-                    <Pagination
-                        count={getPageCount(stateObj.attributeCount, 10)}
-                        page={handlePageChangeForAtt}
-                        onChange={handlePageChangeForAtt}
-                        renderItem={(item) => (
-                            <PaginationItem
-                                slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
-                                {...item}
-                            />
-                        )}
-                    />
-                </Stack>
-            </Box>
+                    <HeaderText title={""} subTitle={"Subscribers"}/>
+                    <Sheet
+                        variant="outlined"
+                        sx={{
+                            '--TableCell-height': '40px',
+                            '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                            '--Table-firstColumnWidth': '80px',
+                            '--Table-lastColumnWidth': '144px',
+                            overflow: 'auto',
+                            background: (
+                                theme,
+                            ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
+            radial-gradient(
+              farthest-side at 0 50%,
+              rgba(0, 0, 0, 0.12),
+              rgba(0, 0, 0, 0)
+            ),
+            radial-gradient(
+                farthest-side at 100% 50%,
+                rgba(0, 0, 0, 0.12),
+                rgba(0, 0, 0, 0)
+              )
+              0 100%`,
+                            backgroundSize:
+                                '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundAttachment: 'local, local, scroll, scroll',
+                            backgroundPosition:
+                                'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                            backgroundColor: 'background.surface',
+                            overflowX: 'auto',
+                            maxWidth: '100%',
+                            height: "250px"
+                        }}
+                    >
+                        <Box>
+
+                            <Table
+                                borderAxis="bothBetween"
+                                stripe="odd"
+                                hoverRow
+                                sx={{
+                                    width: "60%",
+                                    '& tr > *:first-child': {
+                                        position: 'sticky',
+                                        left: 0,
+                                        boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                        bgcolor: 'background.surface',
+                                    },
+                                    '& tr > *:last-child': {
+                                        position: 'sticky',
+                                        right: 0,
+                                        bgcolor: 'var(--TableCell-headBackground)',
+                                        width: '120px',
+                                    },
+                                }}
+                            >
+                                <thead>
+                                <tr>
+                                    <th style={{width: 120}}>Subscribe Id</th>
+                                    <th style={{width: 150}}>Attribute</th>
+                                    <th style={{width: 150}}>Attribute Group</th>
+                                    <th style={{width: 150}}>Operation</th>
+                                    <th style={{width: 150}}>Value</th>
+                                    <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {subscribers?.map((row) => (
+                                    <tr key={row.subscriber_id}>
+                                        <td>{row.subscriber_id ?? ""}</td>
+                                        <td>{row.attribute ?? ""}</td>
+                                        <td>{row.attribute_group ?? ""}</td>
+                                        <td>{row.operation ?? ""}</td>
+                                        <td>{row.value ?? ""}</td>
+                                        <td>
+                                            <Box sx={{display: 'flex', gap: 1}}>
+                                                <Button
+                                                    size="sm"
+                                                    variant="plain"
+                                                    color="neutral"
+                                                    onClick={() => editNASSubscribeDialog(row)}
+                                                >
+                                                    Edit
+                                                </Button>
+                                                <Button
+                                                    onClick={() => showNASDeleteSubscriberDialog(row)}
+                                                    size="sm"
+                                                    variant="soft"
+                                                    color="danger"
+                                                >
+                                                    Delete
+                                                </Button>
+                                            </Box>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </Table>
+                        </Box>
+                    </Sheet>
+                    <Stack direction={"row"} sx={{
+                        width: '100%',
+                        bottom: '-50px',
+                        right: 0,
+                        justifyItems: 'center',
+                        alignItem: "center",
+                        display: "flex",
+                        justifyContent: 'space-between',
+                        pt: 1
+                    }}>
+                        <Typography level={"body-sm"}>
+                            Page Navigation
+                        </Typography>
+                        <Pagination
+                            count={getPageCount(subscriberCount, 10)}
+                            page={currentPageForSub}
+                            onChange={handlePageChangeForSub}
+                            renderItem={(item) => (
+                                <PaginationItem
+                                    slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
+                                    {...item}
+                                />
+                            )}
+                        />
+                    </Stack>
+                </Box>
+            </Stack>
+
         </Box>
     </React.Fragment>)
 }
@@ -825,7 +1200,11 @@ const mapStateToProps = (state: RootState) => {
         attrGroupsResponse: state.nas.attrGroupsResponse,
         attrAddResponse: state.nas.attrAddResponse,
         attrEditResponse: state.nas.attrEditResponse,
-        attrDeleteResponse: state.nas.attrDeleteResponse
+        attrDeleteResponse: state.nas.attrDeleteResponse,
+        subscribersResponse: state.nas.subscribersResponse,
+        subscribeAddResponse: state.nas.subscribeAddResponse,
+        subscriberEditResponse: state.nas.subscriberEditResponse,
+        subscriberDeleteResponse: state.nas.subscriberDeleteResponse
     };
 };
 
@@ -833,9 +1212,12 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetNasRecords: (payload: any) => dispatch(getAllNASRecords(payload)),
         onDeleteAttributeRecord: (payload: any) => dispatch(deleteAttribute(payload)),
-        onDeleteNASEvent:(payload: any)=> dispatch(deleteNASRecord(payload)),
+        onDeleteNASEvent: (payload: any) => dispatch(deleteNASRecord(payload)),
         onGetNasRecord: (id: any) => dispatch(getNASRecord(id)),
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
+        onDeleteSubscriber: (payload: any) => dispatch(deleteSubscriber(payload)),
+        onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload))
+
     };
 };
 

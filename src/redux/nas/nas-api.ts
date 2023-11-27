@@ -76,6 +76,33 @@ const GET_ATTRIBUTE_GROUP_API = {
             return response.data;
         }),
 };
+const ADD_SUBSCRIBER_API = {
+    add: (payload: any) =>
+        axios.post(`/api/subscriber/add`, payload).then((response: { data: any }) => {
+            return response.data;
+        }),
+};
+
+const EDIT_SUBSCRIBER_API = {
+    edit: (payload: any) =>
+        axios.put(`/api/subscriber/edit`, payload).then((response: { data: any }) => {
+            return response.data;
+        }),
+};
+
+const DELETE_SUBSCRIBER_API = {
+    delete: (payload: any) =>
+        axios.delete(`/api/subscriber/delete/id/${payload}`).then((response: { data: any }) => {
+            return response.data;
+        }),
+};
+
+const GET_SUBSCRIBERS_API = {
+    all: (payload: any) =>
+        axios.post(`/api/subscriber/all`, payload).then((response: { data: any }) => {
+            return response.data;
+        }),
+};
 
 export {
     ADD_NAS_RECORD_API,
@@ -88,5 +115,9 @@ export {
     ADD_ATTRIBUTE_GROUP_API,
     EDIT_ATTRIBUTE_GROUP_API,
     DELETE_ATTRIBUTE_GROUP_API,
-    ADD_ATTRIBUTE_API
+    ADD_ATTRIBUTE_API,
+    ADD_SUBSCRIBER_API,
+    EDIT_SUBSCRIBER_API,
+    DELETE_SUBSCRIBER_API,
+    GET_SUBSCRIBERS_API,
 }
