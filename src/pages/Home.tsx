@@ -3,6 +3,7 @@ import SideMenu from "../components/SideMenu";
 import {Box, Grid} from "@mui/joy";
 import Header from "../components/Header";
 import Dialog from "../components/Dialog";
+import DialogV1 from "../components/DialogV1";
 
 type Props = {
     children: ReactNode
@@ -10,6 +11,7 @@ type Props = {
 
 const Home: FC<Props> = ({children}) => {
     return <React.Fragment>
+        <DialogV1/>
         <Dialog/>
         <Grid
             sx={{flexGrow: 1, width: '100%',  height:'100%'}}

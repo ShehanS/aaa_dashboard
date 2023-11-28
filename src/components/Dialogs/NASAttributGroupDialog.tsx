@@ -11,8 +11,6 @@ import {useAppDataContext} from "../../context/AppDataContext";
 export enum DialogType {
     add,
     edit,
-    addAttributeGroup,
-    editAttributeGroup,
 }
 
 type StateObj = {

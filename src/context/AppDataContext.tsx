@@ -5,6 +5,8 @@ type AppDataContextType = {
     appDataContext: {
         user: any;
         isOpenDialog: boolean;
+        dialogWidth: number;
+        dialogHeight: number;
         dialogContent: any;
 
 
@@ -23,7 +25,9 @@ const AppDataContextProvider = ({children}: AppDataContextProviderProps) => {
     const [appDataContext, setAppDataContext] = useState({
         user: null,
         isOpenDialog: false,
-        dialogContent: null
+        dialogContent: null,
+        dialogWidth: 600,
+        dialogHeight: 450,
 
 
     });

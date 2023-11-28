@@ -8,15 +8,23 @@ import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {useAppDataContext} from "../../context/AppDataContext";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
+import {useDialogDataContext} from "../../context/DialogDataContext";
+
+export enum Context {
+    Dialog,
+    AppData
+}
 
 type OwnProps = {
     id: string
     onDelete: (id: string) => void;
+    context?: Context
 }
 type ReduxProps = ConnectedProps<typeof connector>;
 type Props = OwnProps & ReduxProps;
 const DeleteDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
+    const {dialogDataContext, setDialogDataContext} = useDialogDataContext();
     return (<>
         <DialogTitle>
             <WarningRoundedIcon/>
@@ -31,7 +39,18 @@ const DeleteDialog: FC<Props> = (props) => {
                 YES
             </Button>
             <Button variant="plain" color="neutral"
-                    onClick={() => setAppDataContext({...appDataContext, isOpenDialog: false})}>
+                    onClick={() => {
+                        if (props.context === undefined) {
+                            setAppDataContext({...appDataContext, isOpenDialog: false});
+                        } else if (props.context === Context.AppData) {
+                            setAppDataContext({...appDataContext, isOpenDialog: false});
+                        } else if (props.context === Context.Dialog) {
+                            setDialogDataContext({
+                                ...dialogDataContext,
+                                isOpenDialog: false
+                            });
+                        }
+                    }}>
                 NO
             </Button>
         </DialogActions>

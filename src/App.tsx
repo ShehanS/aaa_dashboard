@@ -10,23 +10,29 @@ import {AppDataContextProvider} from "./context/AppDataContext";
 import React from "react"
 import AttributeMap from "./pages/NAS/AttributeMap";
 import ConfigNAS from "./pages/NAS/NASConfig";
+import ParameterSetting from "./pages/Parameters/ParameterSetting";
+import {DialogDataContextProvider} from "./context/DialogDataContext";
+
 function App() {
     return (
         <React.Fragment>
             <AppDataContextProvider>
-                <AppLayout>
-                    <BrowserRouter>
-                        <Home>
-                            <Routes>
-                                <Route path={ROUTES.AVPOverride} element={<AVPOverride/>}/>
-                                <Route path={ROUTES.Account} element={<Accounting/>}/>
-                                <Route path={ROUTES.COA} element={<COA/>}/>
-                                <Route path={ROUTES.NAS_ATTRIBUTE_MAP} element={<AttributeMap/>}/>
-                                <Route path={ROUTES.NAS_CONFIG} element={<ConfigNAS/>}/>
-                            </Routes>
-                        </Home>
-                    </BrowserRouter>
-                </AppLayout>
+                <DialogDataContextProvider>
+                    <AppLayout>
+                        <BrowserRouter>
+                            <Home>
+                                <Routes>
+                                    <Route path={ROUTES.AVPOverride} element={<AVPOverride/>}/>
+                                    <Route path={ROUTES.Account} element={<Accounting/>}/>
+                                    <Route path={ROUTES.COA} element={<COA/>}/>
+                                    <Route path={ROUTES.NAS_ATTRIBUTE_MAP} element={<AttributeMap/>}/>
+                                    <Route path={ROUTES.NAS_CONFIG} element={<ConfigNAS/>}/>
+                                    <Route path={ROUTES.PARAMETER_SETTINGS} element={<ParameterSetting/>}/>
+                                </Routes>
+                            </Home>
+                        </BrowserRouter>
+                    </AppLayout>
+                </DialogDataContextProvider>
             </AppDataContextProvider>
         </React.Fragment>
     )

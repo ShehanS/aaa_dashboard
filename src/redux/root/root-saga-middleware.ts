@@ -5,6 +5,7 @@ import SearchSaga from "../search/search-saga";
 import AccountSaga from "../account/account_saga";
 import COASaga from "../coa/coa-saga";
 import NASSaga from "../nas/nas-saga";
+import ParameterSaga from "../parameter/parameter-saga";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -15,6 +16,7 @@ export const runRootSagaMiddleware = () => {
     sagaMiddleware.run(AccountSaga);
     sagaMiddleware.run(COASaga);
     sagaMiddleware.run(NASSaga);
+    sagaMiddleware.run(ParameterSaga);
 
 };
 

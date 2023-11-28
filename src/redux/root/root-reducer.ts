@@ -4,8 +4,9 @@ import counterReducer from "../login/counter-slice";
 import AVPReducer from "../avp/avp-slice";
 import SearchReducer from "../search/search-slice";
 import AccountReducer from "../account/account-slice";
-import COAReducer from  "../coa/coa-slice";
+import COAReducer from "../coa/coa-slice";
 import NASReducer from "../nas/nas-slice"
+import ParameterReducer from "../parameter/parameter-slice";
 
 const rootReducer = combineReducers({
     counter: counterReducer,
@@ -13,8 +14,9 @@ const rootReducer = combineReducers({
     avp: AVPReducer,
     search: SearchReducer,
     account: AccountReducer,
-    coa:COAReducer,
-    nas: NASReducer
+    coa: COAReducer,
+    nas: NASReducer,
+    param: ParameterReducer
 });
 
 export default rootReducer;

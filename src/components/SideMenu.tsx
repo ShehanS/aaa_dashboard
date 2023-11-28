@@ -57,8 +57,8 @@ const SideMenu = () => {
                         </Sidebar.Collapse>
                     </Sidebar.ItemGroup>
                     <Sidebar.ItemGroup>
-                        <Sidebar.Collapse href="#" icon={ExtensionRoundedIcon} label={"Parameter"}>
-                            <SideMenuButton buttonIndex={8} index={index} setIndex={setIndexValue} title={"CRUD"}/>
+                        <Sidebar.Collapse icon={ExtensionRoundedIcon} label={"Parameter"}>
+                            <SideMenuButton href={ROUTES.PARAMETER_SETTINGS}  buttonIndex={8} index={index} setIndex={setIndexValue} title={"Meta Config"}/>
                         </Sidebar.Collapse>
                     </Sidebar.ItemGroup>
                     <Sidebar.ItemGroup>
