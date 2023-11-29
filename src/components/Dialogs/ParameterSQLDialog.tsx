@@ -2,6 +2,8 @@ import React, {FC, useEffect, useState} from "react";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import PublishedWithChangesRoundedIcon from '@mui/icons-material/PublishedWithChangesRounded';
 import {
     CircularProgress,
     DialogActions,
@@ -9,6 +11,7 @@ import {
     Divider,
     FormControl,
     FormLabel,
+    IconButton,
     Input,
     Sheet,
     Table,
@@ -23,6 +26,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog, {Context} from "./DeleteDialog";
 import {useDialogDataContext} from "../../context/DialogDataContext";
 import {useAppDataContext} from "../../context/AppDataContext";
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 export enum DialogType {
     add,
@@ -443,33 +447,34 @@ const ParameterMetaDialog: FC<Props> = (props) => {
 
                                             <td>
                                                 <Box sx={{display: 'flex', gap: 1}}>
-                                                    <Button
+                                                    <IconButton
                                                         size="sm"
-                                                        variant="plain"
-                                                        color="neutral"
+                                                        variant="soft"
+                                                        color="primary"
                                                         onClick={() => {
                                                             setSelectedParam(row);
                                                             setCurrentIndex(index)
                                                         }}
+
                                                     >
-                                                        Edit
-                                                    </Button>
-                                                    {selectedParam !== null && index === currentIndex && <Button
+                                                        <CreateRoundedIcon/>
+                                                    </IconButton>
+                                                    {selectedParam !== null && index === currentIndex && <IconButton
                                                         onClick={() => updateParameter()}
                                                         size="sm"
                                                         variant="soft"
                                                         color="primary"
                                                     >
-                                                        Update
-                                                    </Button>}
-                                                    <Button
+                                                        <PublishedWithChangesRoundedIcon/>
+                                                    </IconButton>}
+                                                    <IconButton
                                                         onClick={() => openDeleteSqlParameter(row)}
                                                         size="sm"
                                                         variant="soft"
                                                         color="danger"
                                                     >
-                                                        Delete
-                                                    </Button>
+                                                        <DeleteRoundedIcon/>
+                                                    </IconButton>
                                                 </Box>
                                             </td>
                                         </tr>

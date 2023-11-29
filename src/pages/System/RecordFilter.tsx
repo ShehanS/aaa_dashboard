@@ -7,9 +7,11 @@ import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import {RootState} from "../../redux/store";
 import {connect} from "react-redux";
-import {CircularProgress, Snackbar, Stack} from "@mui/joy";
+import {CircularProgress, IconButton, Snackbar, Stack} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import SearchBar from "../../components/SearchBar";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {
     deleteAccount,
     deleteFilter,
@@ -530,7 +532,7 @@ const RecordFilter: FC = (props: any) => {
                             </Stack>
                         </Stack>}
                     <Box sx={{
-                        paddingTop: 3,
+
                         width: "100%",
                         display: 'flex',
                         flexDirection: 'column',
@@ -621,22 +623,24 @@ const RecordFilter: FC = (props: any) => {
                                                 <td>{row.filter_regexp ?? ""}</td>
                                                 <td>
                                                     <Box sx={{display: 'flex', gap: 1}}>
-                                                        <Button
+
+                                                        <IconButton
                                                             size="sm"
-                                                            variant="plain"
-                                                            color="neutral"
+                                                            variant="soft"
+                                                            color="primary"
                                                             onClick={() => openEditAccountingFilterDialog(row)}
+
                                                         >
-                                                            Edit
-                                                        </Button>
-                                                        <Button
+                                                            <CreateRoundedIcon/>
+                                                        </IconButton>
+                                                        <IconButton
                                                             onClick={() => openFilterDeleteDialog(row)}
                                                             size="sm"
                                                             variant="soft"
                                                             color="danger"
                                                         >
-                                                            Delete
-                                                        </Button>
+                                                            <DeleteRoundedIcon/>
+                                                        </IconButton>
                                                     </Box>
                                                 </td>
                                             </tr>

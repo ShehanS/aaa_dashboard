@@ -1,12 +1,14 @@
 import React, {FC, useEffect, useState} from "react";
 import HeaderText from "../../components/HeaderText";
-import {Box, Button, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
+import {Box, Button, IconButton, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import {useAppDataContext} from "../../context/AppDataContext";
 import SearchBar from "../../components/SearchBar";
 import NASManageDialog from "../../components/Dialogs/NASManageDialog";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {RootState} from "../../redux/store";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {connect, ConnectedProps} from "react-redux";
 import {
     deleteAttribute,
@@ -717,21 +719,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
     };
 
 
-    const openNASSubscribeDialog = () => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <NASSubscriberDialog type={DialogType.add}/>
-        });
-    }
 
-    const editNASSubscribeDialog = (props: any) => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <NASSubscriberDialog data={props} type={DialogType.edit}/>
-        });
-    }
 
 
     return (<React.Fragment>
@@ -755,7 +743,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         >
             {snackBar.message ?? ""}
         </Snackbar>
-        <HeaderText title={"NAS"} subTitle={"Config NAS"}/>
+        <HeaderText title={"Network Access Storage"} subTitle={"Manage NAS"}/>
         <Box sx={{
             width: "100%",
             display: 'flex',
@@ -859,22 +847,23 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                                     <td>{row.create_date ?? ""}</td>
                                     <td>
                                         <Box sx={{display: 'flex', gap: 1}}>
-                                            <Button
+                                            <IconButton
                                                 size="sm"
-                                                variant="plain"
-                                                color="neutral"
+                                                variant="soft"
+                                                color="primary"
                                                 onClick={() => openEditNasDialog(row)}
+
                                             >
-                                                Edit
-                                            </Button>
-                                            <Button
+                                                <CreateRoundedIcon/>
+                                            </IconButton>
+                                            <IconButton
                                                 onClick={() => openDeleteDialog(row)}
                                                 size="sm"
                                                 variant="soft"
                                                 color="danger"
                                             >
-                                                Delete
-                                            </Button>
+                                                <DeleteRoundedIcon/>
+                                            </IconButton>
                                         </Box>
                                     </td>
                                 </tr>

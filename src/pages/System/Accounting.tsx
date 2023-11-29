@@ -7,9 +7,11 @@ import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import {RootState} from "../../redux/store";
 import {connect} from "react-redux";
-import {CircularProgress, Snackbar, Stack} from "@mui/joy";
+import {CircularProgress, IconButton, Snackbar, Stack} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import SearchBar from "../../components/SearchBar";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {
     deleteAccount,
     deleteFilter,
@@ -23,7 +25,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AccountDialog from "../../components/Dialogs/AccountDialog";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {useAppDataContext} from "../../context/AppDataContext";
-import AccountingRecordFilterDialog, {DialogType} from "../../components/Dialogs/AccountingRecordFilterDialog";
+import {DialogType} from "../../components/Dialogs/AccountingRecordFilterDialog";
 
 export interface IAccountingData {
     subscriber_id: number,
@@ -586,22 +588,23 @@ const Accounting: FC = (props: any) => {
                                         <td>{row.accunting_datetime ?? ""}</td>
                                         <td>
                                             <Box sx={{display: 'flex', gap: 1}}>
-                                                <Button
+                                                <IconButton
                                                     size="sm"
-                                                    variant="plain"
-                                                    color="neutral"
+                                                    variant="soft"
+                                                    color="primary"
                                                     onClick={() => openAccountEditDialog(row)}
+
                                                 >
-                                                    Edit
-                                                </Button>
-                                                <Button
+                                                    <CreateRoundedIcon/>
+                                                </IconButton>
+                                                <IconButton
                                                     onClick={() => openDeleteDialog(row)}
                                                     size="sm"
                                                     variant="soft"
                                                     color="danger"
                                                 >
-                                                    Delete
-                                                </Button>
+                                                    <DeleteRoundedIcon/>
+                                                </IconButton>
                                             </Box>
                                         </td>
                                     </tr>

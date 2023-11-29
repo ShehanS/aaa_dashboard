@@ -9,7 +9,7 @@ import {useAppDataContext} from "../../context/AppDataContext";
 import AVPManageDialog, {DialogType} from "../../components/Dialogs/AVPRecordDialog";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
-import {CircularProgress, Snackbar, Stack} from "@mui/joy";
+import {CircularProgress, IconButton, Snackbar, Stack} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import {deleteAvpRecord, getAllAvpRecords, getAvpRecord} from "../../redux/avp/avp-slice";
 import {Pagination, PaginationItem} from "@mui/material";
@@ -17,7 +17,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchBar from "../../components/SearchBar";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
-
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 export interface IAVPAttribute {
     attrgroup_id: number;
     vp_name: string;
@@ -399,14 +400,23 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                                 <td>{row.extract_sscanf ?? ""}</td>
                                 <td>
                                     <Box sx={{display: 'flex', gap: 1}}>
-                                        <Button size="sm" variant="plain" color="neutral"
-                                                onClick={() => openAvpEditDialog(row)}>
-                                            Edit
-                                        </Button>
-                                        <Button onClick={() => openDeleteDelete(row)} size="sm" variant="soft"
-                                                color="danger">
-                                            Delete
-                                        </Button>
+                                        <IconButton
+                                            size="sm"
+                                            variant="soft"
+                                            color="primary"
+                                            onClick={() => openAvpEditDialog(row)}
+
+                                        >
+                                            <CreateRoundedIcon/>
+                                        </IconButton>
+                                        <IconButton
+                                            onClick={() => openDeleteDelete(row)}
+                                            size="sm"
+                                            variant="soft"
+                                            color="danger"
+                                        >
+                                            <DeleteRoundedIcon/>
+                                        </IconButton>
                                     </Box>
                                 </td>
                             </tr>

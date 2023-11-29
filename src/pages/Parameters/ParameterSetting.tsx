@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useState} from "react";
 import HeaderText from "../../components/HeaderText";
 import SearchBar from "../../components/SearchBar";
-import {Box, Button, CircularProgress, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
+import {Box, Button, CircularProgress, IconButton, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import {useAppDataContext} from "../../context/AppDataContext";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import ParameterMetaDialog, {DialogType} from "../../components/Dialogs/ParameterMetaDialog";
@@ -14,6 +14,8 @@ import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {useDialogDataContext} from "../../context/DialogDataContext";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -556,22 +558,23 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
 
                                     <td>
                                         <Box sx={{display: 'flex', gap: 1}}>
-                                            <Button
+                                            <IconButton
                                                 size="sm"
-                                                variant="plain"
-                                                color="neutral"
+                                                variant="soft"
+                                                color="primary"
                                                 onClick={() => openEditMetaParameter(row)}
+
                                             >
-                                                Edit
-                                            </Button>
-                                            <Button
+                                                <CreateRoundedIcon/>
+                                            </IconButton>
+                                            <IconButton
                                                 onClick={() => openDeleteMetaParameter(row)}
                                                 size="sm"
                                                 variant="soft"
                                                 color="danger"
                                             >
-                                                Delete
-                                            </Button>
+                                                <DeleteRoundedIcon/>
+                                            </IconButton>
                                         </Box>
                                     </td>
                                 </tr>

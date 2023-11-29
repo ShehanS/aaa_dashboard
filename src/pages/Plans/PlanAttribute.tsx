@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useState} from "react";
 import HeaderText from "../../components/HeaderText";
-import {Box, Button, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
+import {Box, Button, IconButton, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import SearchBar from "../../components/SearchBar";
 import {useAppDataContext} from "../../context/AppDataContext";
@@ -13,6 +13,8 @@ import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import PlanAttributeDialog, {DialogType} from "../../components/Dialogs/PlanAttributeDialog";
 import {deletePlanAttribute, getPlans, getPlansAttribute} from "../../redux/plan/plan-slice";
 import {IPlan} from "./Plan";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 type SnackBarProps = {
     isOpen: boolean,
@@ -434,22 +436,23 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                                         <td>{row.status ?? ""}</td>
                                         <td>
                                             <Box sx={{display: 'flex', gap: 1}}>
-                                                <Button
+                                                <IconButton
                                                     size="sm"
-                                                    variant="plain"
-                                                    color="neutral"
+                                                    variant="soft"
+                                                    color="primary"
                                                     onClick={() => openEditAttributeDialog(row)}
+
                                                 >
-                                                    Edit
-                                                </Button>
-                                                <Button
+                                                    <CreateRoundedIcon/>
+                                                </IconButton>
+                                                <IconButton
                                                     onClick={() => openDeleteDialog(row)}
                                                     size="sm"
                                                     variant="soft"
                                                     color="danger"
                                                 >
-                                                    Delete
-                                                </Button>
+                                                    <DeleteRoundedIcon/>
+                                                </IconButton>
                                             </Box>
                                         </td>
                                     </tr>

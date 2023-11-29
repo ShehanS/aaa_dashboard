@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useState} from "react";
 import HeaderText from "../../components/HeaderText";
-import {Box, Button, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
+import {Box, Button, IconButton, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import SearchBar from "../../components/SearchBar";
 import {DialogType} from "../../components/Dialogs/PlanTypeDalog";
@@ -14,6 +14,9 @@ import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {deletePlanType, getPlans, getPlansParameter} from "../../redux/plan/plan-slice";
 import PlanParameterDalog from "../../components/Dialogs/PlanParameterDalog";
 import {IPlan} from "./Plan";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+
 
 type SnackBarProps = {
     isOpen: boolean,
@@ -241,7 +244,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. COA Record couldn't get deleted due ${
+                    message: `Oops!! delete plan type couldn't get deleted due ${
                         props.planTypeDeleteSuccess?.error ?? ""
                     }`,
                 });
@@ -419,22 +422,23 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                         <td>{row.reject_on_failure ?? ""}</td>
                                         <td>
                                             <Box sx={{display: 'flex', gap: 1}}>
-                                                <Button
+                                                <IconButton
                                                     size="sm"
-                                                    variant="plain"
-                                                    color="neutral"
+                                                    variant="soft"
+                                                    color="primary"
                                                     onClick={() => openEditPlanParameterDialog(row)}
+
                                                 >
-                                                    Edit
-                                                </Button>
-                                                <Button
+                                                    <CreateRoundedIcon/>
+                                                </IconButton>
+                                                <IconButton
                                                     onClick={() => openDeleteDialog(row)}
                                                     size="sm"
                                                     variant="soft"
                                                     color="danger"
                                                 >
-                                                    Delete
-                                                </Button>
+                                                    <DeleteRoundedIcon/>
+                                                </IconButton>
                                             </Box>
                                         </td>
                                     </tr>
