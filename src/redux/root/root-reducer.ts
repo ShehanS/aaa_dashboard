@@ -7,6 +7,7 @@ import AccountReducer from "../account/account-slice";
 import COAReducer from "../coa/coa-slice";
 import NASReducer from "../nas/nas-slice"
 import ParameterReducer from "../parameter/parameter-slice";
+import PlanReducer from "../plan/plan-slice";
 
 const rootReducer = combineReducers({
     counter: counterReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     account: AccountReducer,
     coa: COAReducer,
     nas: NASReducer,
-    param: ParameterReducer
+    param: ParameterReducer,
+    plan: PlanReducer
 });
 
 export default rootReducer;

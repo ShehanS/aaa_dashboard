@@ -349,7 +349,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                     }}>
                         {isLoading &&
                             <Stack direction={"row"}
-                                   sx={{display: 'flex', justifyContent: 'center', width: '100%', p: 2}}>
+                                   sx={{display: 'flex', justifyContent: 'center', width: '100%', p: 2, zIndex:1000, bottom:140, position:'absolute'}}>
                                 <Stack direction={"column"} alignItems={"center"}>
                                     <CircularProgress color="success"/>
                                     <Typography level="body-sm" style={{

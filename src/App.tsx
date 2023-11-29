@@ -12,6 +12,8 @@ import AttributeMap from "./pages/NAS/AttributeMap";
 import ConfigNAS from "./pages/NAS/NASConfig";
 import ParameterSetting from "./pages/Parameters/ParameterSetting";
 import {DialogDataContextProvider} from "./context/DialogDataContext";
+import PlanAttributes from "./pages/Plans/PlanAttribute";
+import PlanType from "./pages/Plans/PlanType";
 
 function App() {
     return (
@@ -28,6 +30,8 @@ function App() {
                                     <Route path={ROUTES.NAS_ATTRIBUTE_MAP} element={<AttributeMap/>}/>
                                     <Route path={ROUTES.NAS_CONFIG} element={<ConfigNAS/>}/>
                                     <Route path={ROUTES.PARAMETER_SETTINGS} element={<ParameterSetting/>}/>
+                                    <Route path={ROUTES.PLAN_TYPE} element={<PlanType/>}/>
+                                    <Route path={ROUTES.PLAN_ATTRIBUTES} element={<PlanAttributes/>}/>
                                 </Routes>
                             </Home>
                         </BrowserRouter>

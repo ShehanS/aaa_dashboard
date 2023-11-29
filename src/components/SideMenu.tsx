@@ -63,9 +63,9 @@ const SideMenu = () => {
                     </Sidebar.ItemGroup>
                     <Sidebar.ItemGroup>
                         <Sidebar.Collapse href="#" icon={TaskRoundedIcon} label={"Plan"}>
-                            <SideMenuButton buttonIndex={9} index={index} setIndex={setIndexValue}
+                            <SideMenuButton href={ROUTES.PLAN_TYPE}  buttonIndex={9} index={index} setIndex={setIndexValue}
                                             title={"Plan Types"}/>
-                            <SideMenuButton buttonIndex={10} index={index} setIndex={setIndexValue}
+                            <SideMenuButton href={ROUTES.PLAN_ATTRIBUTES} buttonIndex={10} index={index} setIndex={setIndexValue}
                                             title={"Plan Attributes"}/>
                             <SideMenuButton buttonIndex={11} index={index} setIndex={setIndexValue} title={"Plans"}/>
                             <SideMenuButton buttonIndex={12} index={index} setIndex={setIndexValue}
