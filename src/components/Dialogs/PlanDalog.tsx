@@ -2,10 +2,21 @@ import React, {FC, useState} from "react";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Textarea} from "@mui/joy";
+import {
+    Button,
+    DialogActions,
+    DialogTitle,
+    Divider,
+    FormControl,
+    FormLabel,
+    Input,
+    Option,
+    Select,
+    Textarea
+} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../redux/store";
-import {addPlanType, editPlanType} from "../../redux/plan/plan-slice";
+import {addPlan, editPlan} from "../../redux/plan/plan-slice";
 
 export enum DialogType {
     add,
@@ -13,7 +24,10 @@ export enum DialogType {
 }
 
 type StateObj = {
-    avpRecordAddResponse: any;
+    planAddSuccess: any;
+    planEditSuccess: any;
+    planDeleteSuccess: any;
+    plansGetSuccess: any;
 };
 
 type InputStateObj = {
@@ -36,20 +50,34 @@ type Props = ReduxProps & OwnProps;
 
 const PlanTypeDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
+
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
-            type_name: "",
+            plan_id: "",
+            type_id: "",
+            plan_name: "",
             description: ""
         },
     }));
 
     const handleCloseAndAdd = () => {
-        props.onAddPlanType(input.inputData)
+        props.onAddPlan(input.inputData)
     };
 
     const handleCloseAndUpdate = () => {
-        props.onEditPlanType(input.inputData);
+        props.onEditPlan(input.inputData);
     };
+    const handlePlanType = (event: any, value: any) => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "type_id",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    }
 
     const handleInput = (event: any) => {
         setInput((prevInput) => ({
@@ -71,25 +99,35 @@ const PlanTypeDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>Plan Attribute</DialogTitle>
+                <DialogTitle>Plan Dialog</DialogTitle>
                 <Divider/>
 
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
                     <FormControl>
                         <FormLabel>
-                            Attribute Name:
+                            Plan Name:
                         </FormLabel>
-                        <Input name={"type_name"} value={input?.inputData?.['type_name'] ?? ""}
+                        <Input name={"plan_name"} value={input?.inputData?.['plan_name'] ?? ""}
                                onChange={handleInput}/>
+                    </FormControl>
+                    <FormControl sx={{width: 278}}>
+                        <FormLabel>
+                            Plan Type:
+                        </FormLabel>
+                        <Select value={input?.inputData?.['type_id'] ?? ""}
+                                onChange={(event, value) => handleInput(handlePlanType(event, value))}>
+                            <Option value={1}>1</Option>
+                        </Select>
                     </FormControl>
                     <FormControl>
                         <FormLabel>
                             Description:
                         </FormLabel>
-                        <Textarea minRows={3} name={"description"} value={input?.inputData?.['description'] ?? ""}
+                        <Textarea value={input?.inputData?.['description'] ?? ""} minRows={3} name={"description"}
                                   onChange={handleInput}/>
                     </FormControl>
+
 
                 </Stack>
             </Box>
@@ -106,13 +144,19 @@ const PlanTypeDialog: FC<Props> = (props) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-    return {};
+    return {
+        planAddSuccess: state.plan.planAddSuccess,
+        planEditSuccess: state.plan.planEditSuccess,
+        planDeleteSuccess: state.planEditSuccess,
+        plansGetSuccess: state.plan.plansGetSuccess
+
+    };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onAddPlanType: (payload: any) => dispatch(addPlanType(payload)),
-        onEditPlanType: (payload: any) => dispatch(editPlanType(payload))
+        onAddPlan: (payload: any) => dispatch(addPlan(payload)),
+        onEditPlan: (payload: any) => dispatch(editPlan(payload))
     };
 };
 

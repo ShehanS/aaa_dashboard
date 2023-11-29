@@ -2,10 +2,21 @@ import React, {FC, useState} from "react";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Textarea} from "@mui/joy";
+import {
+    Button,
+    DialogActions,
+    DialogTitle,
+    Divider,
+    FormControl,
+    FormLabel,
+    Input,
+    Option,
+    Select,
+    Textarea
+} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../redux/store";
-import {addPlanType, editPlanType} from "../../redux/plan/plan-slice";
+import {addPlanParameter, addPlanType, editPlanParameter, editPlanType} from "../../redux/plan/plan-slice";
 
 export enum DialogType {
     add,
@@ -38,17 +49,18 @@ const PlanTypeDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
-            type_name: "",
-            description: ""
+            parameter_name: "",
+            parameter_value: "",
+            reject_on_failure: ""
         },
     }));
 
     const handleCloseAndAdd = () => {
-        props.onAddPlanType(input.inputData)
+        props.onAddPlanParameter(input.inputData)
     };
 
     const handleCloseAndUpdate = () => {
-        props.onEditPlanType(input.inputData);
+        props.onEditPlanParameter(input.inputData);
     };
 
     const handleInput = (event: any) => {
@@ -67,28 +79,49 @@ const PlanTypeDialog: FC<Props> = (props) => {
             isOpenDialog: false,
         });
     };
-
+    const handleRejectOnFailure = (event: any, value: any) => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "reject_on_failure",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    }
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>Plan Attribute</DialogTitle>
+                <DialogTitle>Plan Parameter</DialogTitle>
                 <Divider/>
 
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
                     <FormControl>
                         <FormLabel>
-                            Attribute Name:
+                            Parameter Name:
                         </FormLabel>
-                        <Input name={"type_name"} value={input?.inputData?.['type_name'] ?? ""}
+                        <Input name={"parameter_name"} value={input?.inputData?.['parameter_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
                     <FormControl>
                         <FormLabel>
-                            Description:
+                            Parameter Value:
                         </FormLabel>
-                        <Textarea minRows={3} name={"description"} value={input?.inputData?.['description'] ?? ""}
+                        <Input name={"parameter_value"}
+                                  value={input?.inputData?.['parameter_value'] ?? ""}
                                   onChange={handleInput}/>
+                    </FormControl>
+                    <FormControl>
+                        <FormLabel sx={{width: 278}}>
+                            Reject on Failure:
+                        </FormLabel>
+                        <Select value={input?.inputData?.['reject_on_failure'] ?? ""}
+                                onChange={(event, value) => handleInput(handleRejectOnFailure(event, value))}>
+                            <Option value={1}>1</Option>
+                            <Option value={2}>2</Option>
+                        </Select>
                     </FormControl>
 
                 </Stack>
@@ -111,8 +144,8 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onAddPlanType: (payload: any) => dispatch(addPlanType(payload)),
-        onEditPlanType: (payload: any) => dispatch(editPlanType(payload))
+        onAddPlanParameter: (payload: any) => dispatch(addPlanParameter(payload)),
+        onEditPlanParameter: (payload: any) => dispatch(editPlanParameter(payload))
     };
 };
 

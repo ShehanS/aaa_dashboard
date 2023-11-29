@@ -14,6 +14,8 @@ import ParameterSetting from "./pages/Parameters/ParameterSetting";
 import {DialogDataContextProvider} from "./context/DialogDataContext";
 import PlanAttributes from "./pages/Plans/PlanAttribute";
 import PlanType from "./pages/Plans/PlanType";
+import PlanParameter from "./pages/Plans/PlanParameter";
+import Plan from "./pages/Plans/Plan";
 
 function App() {
     return (
@@ -32,6 +34,8 @@ function App() {
                                     <Route path={ROUTES.PARAMETER_SETTINGS} element={<ParameterSetting/>}/>
                                     <Route path={ROUTES.PLAN_TYPE} element={<PlanType/>}/>
                                     <Route path={ROUTES.PLAN_ATTRIBUTES} element={<PlanAttributes/>}/>
+                                    <Route path={ROUTES.PLAN_PARAMETERS} element={<PlanParameter/>}/>
+                                    <Route path={ROUTES.PLAN} element={<Plan/>}/>
                                 </Routes>
                             </Home>
                         </BrowserRouter>

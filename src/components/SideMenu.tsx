@@ -7,7 +7,6 @@ import SettingsSuggestRoundedIcon from '@mui/icons-material/SettingsSuggestRound
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
 import TaskRoundedIcon from '@mui/icons-material/TaskRounded';
-import {Card} from "@mui/joy";
 import {ROUTES} from "../constants/routes";
 
 
@@ -63,12 +62,16 @@ const SideMenu = () => {
                     </Sidebar.ItemGroup>
                     <Sidebar.ItemGroup>
                         <Sidebar.Collapse href="#" icon={TaskRoundedIcon} label={"Plan"}>
-                            <SideMenuButton href={ROUTES.PLAN_TYPE}  buttonIndex={9} index={index} setIndex={setIndexValue}
+                            <SideMenuButton href={ROUTES.PLAN_TYPE} buttonIndex={9} index={index}
+                                            setIndex={setIndexValue}
                                             title={"Plan Types"}/>
-                            <SideMenuButton href={ROUTES.PLAN_ATTRIBUTES} buttonIndex={10} index={index} setIndex={setIndexValue}
+                            <SideMenuButton href={ROUTES.PLAN_ATTRIBUTES} buttonIndex={10} index={index}
+                                            setIndex={setIndexValue}
                                             title={"Plan Attributes"}/>
-                            <SideMenuButton buttonIndex={11} index={index} setIndex={setIndexValue} title={"Plans"}/>
-                            <SideMenuButton buttonIndex={12} index={index} setIndex={setIndexValue}
+                            <SideMenuButton href={ROUTES.PLAN} buttonIndex={11} index={index} setIndex={setIndexValue}
+                                            title={"Plans"}/>
+                            <SideMenuButton href={ROUTES.PLAN_PARAMETERS} buttonIndex={12} index={index}
+                                            setIndex={setIndexValue}
                                             title={"Plans Parameters"}/>
                         </Sidebar.Collapse>
                     </Sidebar.ItemGroup>

@@ -10,4 +10,6 @@ export const ROUTES = {
     PARAMETER_SETTINGS: "/home/parameter-settings",
     PLAN_TYPE: "/home/plan/type",
     PLAN_ATTRIBUTES: "/home/plan/attributes",
+    PLAN_PARAMETERS: "/home/plan/parameters",
+    PLAN: "/home/plan",
 }

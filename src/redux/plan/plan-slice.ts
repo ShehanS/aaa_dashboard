@@ -133,15 +133,115 @@ export const PlanSlice = createSlice({
             error: null,
             planTypesGetSuccess: action.payload,
         }),
+
+        //plan parameter
+        addPlanParameter: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            payloadPlanParameter: action.payload,
+        }),
+        addPlanParameterSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planParameterAddSuccess: action.payload,
+        }),
+        editPlanParameter: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            payloadPlanParameter: action.payload,
+        }),
+        editPlanParameterSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planParameterEditSuccess: action.payload,
+        }),
+        deletePlanParameter: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            payloadPlanParameter: action.payload,
+        }),
+        deletePlanParameterSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planParameterDeleteSuccess: action.payload,
+        }),
+        getPlansParameter: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            payloadPlanParameter: action.payload,
+        }),
+        getPlansParameterSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            getPlansParameterSuccess: action.payload,
+        }),
         getError: (state, action: PayloadAction<any>) => ({
             ...state,
             error: action.payload,
+        }),
+        ////plan
+
+        addPlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planPayload: action.payload,
+        }),
+        addPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planAddSuccess: action.payload,
+        }),
+        editPlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planPayload: action.payload,
+        }),
+        editPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planEditSuccess: action.payload,
+        }),
+        deletePlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planPayload: action.payload,
+        }),
+        deletePlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planDeleteSuccess: action.payload,
+        }),
+        getPlans: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            planPayload: action.payload,
+        }),
+        getPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            error: null,
+            plansGetSuccess: action.payload,
         }),
     }
 
 });
 
 export const {
+    addPlan,
+    addPlanSuccess,
+    editPlan,
+    editPlanSuccess,
+    deletePlan,
+    deletePlanSuccess,
+    getPlans,
+    getPlanSuccess,
+    addPlanParameter,
+    addPlanParameterSuccess,
+    editPlanParameter,
+    editPlanParameterSuccess,
+    deletePlanParameter,
+    deletePlanParameterSuccess,
+    getPlansParameter,
+    getPlansParameterSuccess,
     addPlanType,
     addPlanTypeSuccess,
     editPlanType,
