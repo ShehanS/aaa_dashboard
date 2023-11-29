@@ -2,87 +2,116 @@ import React, {FC, useEffect, useState} from "react";
 import HeaderText from "../../components/HeaderText";
 import {Box, Button, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
-import SearchBar from "../../components/SearchBar";
-import {DialogType} from "../../components/Dialogs/PlanTypeDalog";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {RootState} from "../../redux/store";
+import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {connect, ConnectedProps} from "react-redux";
+import {deleteSubscriber, getAllSubscribers} from "../../redux/nas/nas-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DeleteDialog from "../../components/Dialogs/DeleteDialog";
-import {deletePlanType, getPlans, getPlansParameter} from "../../redux/plan/plan-slice";
-import PlanParameterDalog from "../../components/Dialogs/PlanParameterDalog";
-import {IPlan} from "./Plan";
+import {DialogType} from "../../components/Dialogs/NASAttributGroupDialog";
+import NASSubscriberDialog from "../../components/Dialogs/NASSubscriberDialog";
+import {RootState} from "../../redux/store";
+import SearchBar from "../../components/SearchBar";
 
 type SnackBarProps = {
-    isOpen: boolean,
+    isOpen: boolean;
     color: string;
     message: string;
-}
+};
 
 type StateObj = {
-    planParameterAddSuccess: any;
-    planParameterEditSuccess: any;
-    planParameterDeleteSuccess: any;
-    planParametersGetSuccess: any;
-    planParameterCount: number;
-    plansGetSuccess: any;
+    nasRecordAddResponse: any;
+    nasRecordEditResponse: any;
+    nasRecordDeleteResponse: any;
+    nasRecordsResponse: any;
+    nasRecordResponse: any;
+    attrAddResponse: any;
+    attrEditResponse: any;
+    attrDeleteResponse: any;
+    attrGroupsResponse: any;
+    subscribersResponse: any;
+    subscribeAddResponse: any;
+    subscriberEditResponse: any;
+    subscriberDeleteResponse: any;
+
+
+};
+
+export interface INasEvent {
+    nas_id: number;
+    nas_name: string;
+    nas_type: string;
+    nas_attrgroup: string;
+    nas_secret: string;
+    create_date: Date;
 }
 
-export interface IPlanParameter {
-    plan_id: number;
-    parameter_name: string;
-    parameter_value: string;
-    reject_on_failure: number;
+export interface IAttribute {
+    group_id: number,
+    group_name: string,
+    group_description: string
 }
+
+export interface ISubscriber {
+    subscriber_id: number,
+    attribute_group: string,
+    attribute: string,
+    operation: string,
+    value: string,
+}
+
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
-const PlanParameter: FC<ReduxProps> = (props: any) => {
+const Subscriber: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [currentPageForAtt, setCurrentPageForAtt] = useState(1);
+    const [currentPageForSub, setCurrentPageForSub] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
-    const [plans, setPlans] = useState<IPlan[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
-        message: ""
+        message: "",
     });
-    const [planParameters, setPlanParameters] = useState<IPlanParameter[]>([]);
-    const [stateObj, setStateObj] = useState<StateObj>(
-        {
-            planParameterAddSuccess: null,
-            planParameterEditSuccess: null,
-            planParameterDeleteSuccess: null,
-            planParametersGetSuccess: null,
-            planParameterCount: 0,
-            plansGetSuccess: null
-        }
-    )
-    const getPlans = () => {
-        const request = {
-            page: 0,
-            pageSize: 1000
-        }
-        props.onGetPlans(request);
-    }
+    const [nasCount, setNasCount] = useState<number>(0);
+    const [attrCount, setAttrCount] = useState<number>(0);
+    const [subscriberCount, setSubscriberCount] = useState<number>(0);
+    const [subscribers, setSubscribers] = useState<ISubscriber[]>([]);
+    const [attributes, setAttributes] = useState<IAttribute[]>([]);
+    const [nasEvents, setNasEvents] = useState<INasEvent[]>([]);
+    const [stateObj, setStateObj] = useState<StateObj>({
+        nasRecordAddResponse: null,
+        nasRecordEditResponse: null,
+        nasRecordDeleteResponse: null,
+        nasRecordsResponse: null,
+        nasRecordResponse: null,
+        attrAddResponse: null,
+        attrEditResponse: null,
+        attrDeleteResponse: null,
+        attrGroupsResponse: null,
+        subscribersResponse: null,
+        subscribeAddResponse: null,
+        subscriberEditResponse: null,
+        subscriberDeleteResponse: null
+    });
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
     };
+
+
     const initLoad = (id?: string) => {
-        getPlans();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
-            //  props.onGetAccount(id);
         } else {
             const request = {
                 page: currentPage - 1,
                 pageSize: 10
             }
-            props.onGetPlanParameters(request);
+            props.onGetSubscribe(request)
         }
     }
 
@@ -90,104 +119,85 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         initLoad();
     }, []);
 
-    const onSelectSearch = (record: any) => {
-        setSearchId(record.subscriber_id);
-        props.onGetAccount(record.subscriber_id);
-    }
-
-    const handleDelete = (id: string) => {
-        props.onDeletePlanType(id);
-    }
-
-
-    const openDeleteDialog = (props: any) => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <DeleteDialog id={props.type_id} onDelete={handleDelete}/>
-        });
-    }
-
-    const openAddPlanParameter = () => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <PlanParameterDalog type={DialogType.add}/>
-        });
-    }
-
-    const mapPlanIdToPlanTypeName = (id: number): string => {
-        console.log(id, plans)
-        const plan: any = plans?.filter((plan: any) => plan?.plan_id === Number.parseInt(id))?.[0];
-        return plan?.plan_name ?? "";
-    }
-    const openEditPlanParameterDialog = (props: any) => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <PlanParameterDalog type={DialogType.edit} data={props}/>
-        });
-    }
 
     useEffect(() => {
         if (
-            (stateObj.planParametersGetSuccess === null ||
-                props.planParametersGetSuccess !== null) ||
-            (stateObj.planParametersGetSuccess !== props.planParametersGetSuccess)
-        ) {
-            setIsLoading(false);
-            if (props.planParametersGetSuccess?.code === "GET_ALL_PLAN_PARAMETER_SUCCESS") {
-                setStateObj({
-                    ...stateObj,
-                    planParametersGetSuccess: props.planParametersGetSuccess,
-                    planParameterCount: props.planParametersGetSuccess?.data?.count ?? 0,
-                });
-                setPlanParameters(props.planParametersGetSuccess?.data?.records ?? []);
-            } else if (props.planParametersGetSuccess?.code === "GET_ALL_PLAN_PARAMETER_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!! Couldn't get plan parameters records due to ${props.planParametersGetSuccess?.error ?? ""}`,
-                });
-            }
-        }
-    }, [props.planParametersGetSuccess]);
-
-    useEffect(() => {
-        if ((stateObj.plansGetSuccess === null ||
-                props.plansGetSuccess !== null) ||
-            (stateObj.plansGetSuccess !== props.plansGetSuccess)
-        ) {
-            if (props.plansGetSuccess?.code === "GET_ALL_PLAN_SUCCESS") {
-                setStateObj({
-                    ...stateObj,
-                    plansGetSuccess: props.plansGetSuccess
-                });
-                setPlans(props.plansGetSuccess?.data?.records ?? []);
-            } else if (props.plansGetSuccess?.code === "GET_ALL_PLAN_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!! Couldn't get plan records due to ${props.plansGetSuccess?.error ?? ""}`,
-                });
-            }
-        }
-    }, [props.plansGetSuccess]);
-
-    useEffect(() => {
-        if (
-            (stateObj.planParameterAddSuccess === null ||
-                props.planParameterAddSuccess !== null) ||
-            (stateObj.planParameterAddSuccess !== props.planParameterAddSuccess)
+            (stateObj.nasRecordsResponse === null ||
+                props.nasRecordsResponse !== null) ||
+            (stateObj.nasRecordsResponse !== props.nasRecordsResponse)
         ) {
             setStateObj({
                 ...stateObj,
-                planParameterAddSuccess: props.planParameterAddSuccess,
+                nasRecordsResponse: props.nasRecordsResponse,
+                nasRecordCount: props?.data?.count
             });
             setIsLoading(false);
-            if (props.planParameterAddSuccess?.code === "ADD_PLAN_PARAMETER_SUCCESS") {
+            if (props.nasRecordsResponse?.code === "GET_NAS_EVENTS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    nasRecordsResponse: props.nasRecordsResponse
+                });
+                setNasCount(props.nasRecordsResponse?.data?.count ?? 0);
+                setNasEvents(props.nasRecordsResponse?.data?.records ?? []);
+            } else if (props.nasRecordsResponse?.code === "GET_NAS_EVENTS_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get NAS records due to ${props.nasRecordsResponse?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.nasRecordsResponse]);
+
+    useEffect(() => {
+        if (
+            (stateObj.subscribersResponse === null ||
+                props.subscribersResponse !== null) ||
+            (stateObj.subscribersResponse !== props.subscribersResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                subscribersResponse: props.subscribersResponse
+            });
+            setIsLoading(false);
+            if (props.subscribersResponse?.code === "GET_NAS_SUBSCRIBERS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    subscribersResponse: props.subscribersResponse
+                });
+                setSubscriberCount(props.subscribersResponse?.data?.count ?? 0,)
+                setSubscribers(props.subscribersResponse?.data?.records ?? []);
+            } else if (props.subscribersResponse?.code === "GET_NAS_SUBSCRIBERS_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get subscribers due to ${props.subscribersResponse?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.subscribersResponse]);
+
+
+    useEffect(() => {
+        if (
+            (stateObj.subscribeAddResponse === null ||
+                props.subscribeAddResponse !== null) ||
+            (stateObj.subscribeAddResponse !== props.subscribeAddResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                subscribeAddResponse: props.subscribeAddResponse,
+            });
+            setIsLoading(false);
+            if (props.subscribeAddResponse?.code === "ADD_NAS_SUBSCRIBER_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `New attribute group record added!!!!`,
+                });
                 setAppDataContext({
                     ...appDataContext,
                     isOpenDialog: false,
@@ -196,108 +206,182 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                     ...snackBar,
                     isOpen: true,
                     color: "success",
-                    message: "Plan parameter added!!",
+                    message: "NAS added!!",
                 });
                 initLoad();
-            } else if (props.planParameterAddSuccess?.code === "ADD_PLAN_PARAMETER_FAILED") {
+            } else if (props.subscribeAddResponse?.code === "ADD_NAS_SUBSCRIBER_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. Record couldn't get records due ${
-                        props.planParameterAddSuccess?.error ?? ""
+                    message: `Oops! Add subscriber failed due to ${
+                        props.subscribeAddResponse?.error ?? ""
                     }`,
                 });
             }
         }
-    }, [props.planParameterAddSuccess]);
+    }, [props.subscribeAddResponse]);
+
 
     useEffect(() => {
         if (
-            (stateObj.planTypeDeleteSuccess === null ||
-                props.planTypeDeleteSuccess !== null) ||
-            (stateObj.planTypeDeleteSuccess !== props.planTypeDeleteSuccess)
+            (stateObj.subscriberEditResponse === null ||
+                props.subscriberEditResponse !== null) ||
+            (stateObj.subscriberEditResponse !== props.subscriberEditResponse)
         ) {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                planTypeDeleteSuccess: props.planTypeDeleteSuccess,
-                coaRecordCount: 0,
+                subscriberEditResponse: props.subscriberEditResponse,
             });
-            if (props.planTypeDeleteSuccess?.code === "DELETE_PLAN_TYPE_SUCCESS") {
+            if (props.subscriberEditResponse?.code === "EDIT_NAS_SUBSCRIBER_SUCCESS") {
                 initLoad(searchId);
+                setSearchId(searchId);
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "success",
-                    message: `Plan type deleted!!!!`,
+                    message: `Subscriber updated successfully!`,
                 });
+                initLoad();
                 setAppDataContext({
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-            } else if (props.planTypeDeleteSuccess?.code === "DELETE_PLAN_TYPE_FAILED") {
+            } else if (props.subscriberEditResponse?.code === "EDIT_NAS_SUBSCRIBER_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. COA Record couldn't get deleted due ${
-                        props.planTypeDeleteSuccess?.error ?? ""
+                    message: `Oops! Edit subscriber failed due to ${
+                        props.subscriberEditResponse?.error ?? ""
                     }`,
                 });
             }
         }
-    }, [props.planTypeDeleteSuccess]);
+    }, [props.subscriberEditResponse]);
+
 
     useEffect(() => {
         if (
-            (stateObj.planTypeEditSuccess === null ||
-                props.planTypeEditSuccess !== null) ||
-            (stateObj.planTypeEditSuccess !== props.planTypeEditSuccess)
+            (stateObj.subscriberEditResponse === null ||
+                props.subscriberEditResponse !== null) ||
+            (stateObj.subscriberEditResponse !== props.subscriberEditResponse)
         ) {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                planTypeEditSuccess: props.planTypeEditSuccess,
-                coaRecordCount: 0,
+                subscriberEditResponse: props.subscriberEditResponse,
             });
-            if (props.planTypeEditSuccess?.code === "EDIT_PLAN_TYPE_SUCCESS") {
-                initLoad(searchId);
-                setSearchId(searchId);
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
+            if (props.subscriberEditResponse?.code === "DELETE_NAS_SUBSCRIBER_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Subscriber updated successfully!`,
                 });
-            } else if (props.planTypeEditSuccess?.code === "EDIT_PLAN_TYPE_FAILED") {
+            } else if (props.subscriberEditResponse?.code === "DELETE_NAS_SUBSCRIBER_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. COA Event Record couldn't get updated due ${
-                        props.planTypeEditSuccess?.error ?? ""
+                    message: `Oops! Edit subscriber failed due to ${
+                        props.subscriberEditResponse?.error ?? ""
                     }`,
                 });
             }
         }
-    }, [props.planTypeEditSuccess]);
+    }, [props.subscriberEditResponse]);
 
-    const handlePageChange = (event: any, page: number) => {
-        setCurrentPage(page);
-        setIsLoading(true);
+
+    useEffect(() => {
+        if (
+            (stateObj.subscriberDeleteResponse === null ||
+                props.subscriberDeleteResponse !== null) ||
+            (stateObj.subscriberDeleteResponse !== props.subscriberDeleteResponse)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                subscriberDeleteResponse: props.subscriberDeleteResponse,
+                subscriberCount: 0,
+            });
+            if (props.subscriberDeleteResponse?.code === "DELETE_NAS_SUBSCRIBER_SUCCESS") {
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Subscriber Deleted successfully!`,
+                });
+                initLoad();
+            } else if (props.subscriberDeleteResponse?.code === "DELETE_NAS_SUBSCRIBER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Delete subscriber failed due to ${
+                        props.subscriberDeleteResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.subscriberDeleteResponse]);
+
+
+    const handlePageChangeForSub = (event: any, page: number) => {
+        setCurrentPageForSub(page);
         const request = {
             page: page - 1,
             pageSize: 10
         }
-        props.onGetPlanParameters(request);
+        props.onGetSubscribe(request);
+    }
 
-    };
+
+    const handleDeleteSubscriber = (id: string) => {
+        props.onDeleteSubscriber(id);
+    }
+    const openNASSubscribeDialog = () => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <NASSubscriberDialog type={DialogType.add}/>
+        });
+    }
+
+
+    const showNASDeleteSubscriberDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <DeleteDialog id={props.subscriber_id} onDelete={handleDeleteSubscriber}/>
+        });
+    }
+
+
     const getPageCount = (count: number, pageSize: number): number => {
         const pageCount = Math.ceil(count / pageSize);
         return pageCount;
     };
 
-    return (
-        <React.Fragment>
+
+    const editNASSubscribeDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <NASSubscriberDialog data={props} type={DialogType.edit}/>
+        });
+    }
+    const onSelectSearch = (record: any) => {
+        setSearchId(record.event_id);
+        props.onGetNasRecord(record.event_id);
+    }
+
+    return (<React.Fragment>
             <Snackbar
                 variant="soft"
                 color={snackBar.color === "success" ? "success" : "danger"}
@@ -318,7 +402,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"Plan Parameter"} subTitle={"Manage plan parameter"}/>
+            <HeaderText title={"NAS"} subTitle={"Config NAS"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',
@@ -340,8 +424,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openAddPlanParameter}>Add Parameter</Button>
-
+                            <Button onClick={openNASSubscribeDialog}>Add Subscriber</Button>
                         </Stack>
                     </Stack>
                     <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
@@ -377,10 +460,12 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
                             overflowX: 'auto',
-                            maxWidth: '50%',
+                            maxWidth: '60%',
+                            height: "450px"
                         }}
                     >
                         <Box>
+
                             <Table
                                 borderAxis="bothBetween"
                                 stripe="odd"
@@ -403,32 +488,34 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                             >
                                 <thead>
                                 <tr>
-                                    <th style={{width: 120}}>Plan Name</th>
-                                    <th style={{width: 150}}>Parameter Name</th>
-                                    <th style={{width: 150}}>Parameter Value</th>
-                                    <th style={{width: 150}}>Reject on Failure</th>
+                                    <th style={{width: 120}}>Subscribe Id</th>
+                                    <th style={{width: 150}}>Attribute</th>
+                                    <th style={{width: 150}}>Attribute Group</th>
+                                    <th style={{width: 150}}>Operation</th>
+                                    <th style={{width: 150}}>Value</th>
                                     <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {planParameters?.map((row) => (
-                                    <tr key={row.plan_id}>
-                                        <td>{mapPlanIdToPlanTypeName(row.plan_id)}</td>
-                                        <td>{row.parameter_name ?? ""}</td>
-                                        <td>{row.parameter_value ?? ""}</td>
-                                        <td>{row.reject_on_failure ?? ""}</td>
+                                {subscribers?.map((row) => (
+                                    <tr key={row.subscriber_id}>
+                                        <td>{row.subscriber_id ?? ""}</td>
+                                        <td>{row.attribute ?? ""}</td>
+                                        <td>{row.attribute_group ?? ""}</td>
+                                        <td>{row.operation ?? ""}</td>
+                                        <td>{row.value ?? ""}</td>
                                         <td>
                                             <Box sx={{display: 'flex', gap: 1}}>
                                                 <Button
                                                     size="sm"
                                                     variant="plain"
                                                     color="neutral"
-                                                    onClick={() => openEditPlanParameterDialog(row)}
+                                                    onClick={() => editNASSubscribeDialog(row)}
                                                 >
                                                     Edit
                                                 </Button>
                                                 <Button
-                                                    onClick={() => openDeleteDialog(row)}
+                                                    onClick={() => showNASDeleteSubscriberDialog(row)}
                                                     size="sm"
                                                     variant="soft"
                                                     color="danger"
@@ -444,7 +531,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                         </Box>
                     </Sheet>
                     <Stack direction={"row"} sx={{
-                        width: '40%',
+                        width: '60%',
                         bottom: '-50px',
                         right: 0,
                         justifyItems: 'center',
@@ -457,9 +544,9 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(stateObj.planParameterCount, 10)}
-                            page={currentPage}
-                            onChange={handlePageChange}
+                            count={getPageCount(subscriberCount, 10)}
+                            page={currentPageForSub}
+                            onChange={handlePageChangeForSub}
                             renderItem={(item) => (
                                 <PaginationItem
                                     slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
@@ -468,33 +555,39 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                             )}
                         />
                     </Stack>
-
                 </Box>
             </Box>
-
         </React.Fragment>
     )
 }
 
 const mapStateToProps = (state: RootState) => {
-    return {
-        planParametersGetSuccess: state.plan.planParametersGetSuccess,
-        planParameterAddSuccess: state.plan.planParameterAddSuccess,
-        planParameterEditSuccess: state.plan.planParameterEditSuccess,
-        planParameterDeleteSuccess: state.plan.planParameterDeleteSuccess,
-        plansGetSuccess: state.plan.plansGetSuccess
-
-    };
-};
+        return {
+            nasRecordAddResponse: state.nas.nasRecordAddResponse,
+            nasRecordEditResponse: state.nas.nasRecordEditResponse,
+            nasRecordDeleteResponse: state.nas.nasRecordDeleteResponse,
+            nasRecordsResponse: state.nas.nasRecordsResponse,
+            attrGroupsResponse: state.nas.attrGroupsResponse,
+            attrAddResponse: state.nas.attrAddResponse,
+            attrEditResponse: state.nas.attrEditResponse,
+            attrDeleteResponse: state.nas.attrDeleteResponse,
+            subscribersResponse: state.nas.subscribersResponse,
+            subscribeAddResponse: state.nas.subscribeAddResponse,
+            subscriberEditResponse: state.nas.subscriberEditResponse,
+            subscriberDeleteResponse: state.nas.subscriberDeleteResponse
+        };
+    }
+;
 
 const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onGetPlanParameters: (payload: any) => dispatch(getPlansParameter(payload)),
-        onDeletePlanType: (payload: any) => dispatch(deletePlanType(payload)),
-        onGetPlans: (payload: any) => dispatch(getPlans(payload)),
-    };
-};
+        return {
+            onDeleteSubscriber: (payload: any) => dispatch(deleteSubscriber(payload)),
+            onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload))
+
+        };
+    }
+;
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(PlanParameter);
+export default connector(Subscriber);

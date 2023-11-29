@@ -173,7 +173,7 @@ export const PlanSlice = createSlice({
         getPlansParameterSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             error: null,
-            getPlansParameterSuccess: action.payload,
+            planParametersGetSuccess: action.payload,
         }),
         getError: (state, action: PayloadAction<any>) => ({
             ...state,

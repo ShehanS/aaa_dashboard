@@ -211,14 +211,13 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 });
             }
         }
-        console.log(props.attrGroupsResponse?.data?.count)
     }, [props.attrGroupsResponse]);
 
 
     useEffect(() => {
         if (
             (stateObj.nasRecordDeleteResponse === null ||
-                props.nasDeleteResponse !== null) ||
+                props.nasRecordDeleteResponse !== null) ||
             (stateObj.nasRecordDeleteResponse !== props.nasRecordDeleteResponse)
         ) {
             setIsLoading(false);
@@ -608,7 +607,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
     const onSelectSearch = (record: any) => {
         setSearchId(record.event_id);
-        props.onGetNas(record.event_id);
+        props.onGetNasRecord(record.event_id);
     }
 
 
@@ -756,7 +755,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         >
             {snackBar.message ?? ""}
         </Snackbar>
-        {stateObj.subscribeCount} {stateObj.attributeCount} {stateObj.nasRecordCount}
         <HeaderText title={"NAS"} subTitle={"Config NAS"}/>
         <Box sx={{
             width: "100%",
@@ -780,9 +778,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                                onSelectSearch={onSelectSearch}/>
                     <Stack direction={"row"} spacing={2}>
                         <Button onClick={openAddNasDialog}>Add NAS</Button>
-                        <Button onClick={openAddNASGroupDialog}>Add Group</Button>
-                        <Button onClick={openNASSubscribeDialog}>Add Subscribers</Button>
-
                     </Stack>
                 </Stack>
                 <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
@@ -889,7 +884,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     </Box>
                 </Sheet>
                 <Stack direction={"row"} sx={{
-                    width: '100%',
+                    width: '80%',
                     bottom: '-50px',
                     right: 0,
                     justifyItems: 'center',
@@ -916,277 +911,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
             </Box>
 
-            <Stack direction={"row"} display={"flex"} spacing={2} sx={{width: "600"}}>
-                <Box sx={{
-                    width: "100%",
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'start',
-                    justifyContent: 'start',
-
-                }}>
-                    <HeaderText title={""} subTitle={"Attribute Group(s)"}/>
-                    <Sheet
-                        variant="outlined"
-                        sx={{
-                            '--TableCell-height': '40px',
-                            '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-                            '--Table-firstColumnWidth': '80px',
-                            '--Table-lastColumnWidth': '144px',
-                            overflow: 'auto',
-                            background: (
-                                theme,
-                            ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
-            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
-            radial-gradient(
-              farthest-side at 0 50%,
-              rgba(0, 0, 0, 0.12),
-              rgba(0, 0, 0, 0)
-            ),
-            radial-gradient(
-                farthest-side at 100% 50%,
-                rgba(0, 0, 0, 0.12),
-                rgba(0, 0, 0, 0)
-              )
-              0 100%`,
-                            backgroundSize:
-                                '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundAttachment: 'local, local, scroll, scroll',
-                            backgroundPosition:
-                                'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
-                            backgroundColor: 'background.surface',
-                            overflowX: 'auto',
-                            maxWidth: '100%',
-                            height: "250px"
-                        }}
-                    >
-                        <Box>
-
-                            <Table
-                                borderAxis="bothBetween"
-                                stripe="odd"
-                                hoverRow
-                                sx={{
-                                    width: "60%",
-                                    '& tr > *:first-child': {
-                                        position: 'sticky',
-                                        left: 0,
-                                        boxShadow: '1px 0 var(--TableCell-borderColor)',
-                                        bgcolor: 'background.surface',
-                                    },
-                                    '& tr > *:last-child': {
-                                        position: 'sticky',
-                                        right: 0,
-                                        bgcolor: 'var(--TableCell-headBackground)',
-                                        width: '120px',
-                                    },
-                                }}
-                            >
-                                <thead>
-                                <tr>
-                                    <th style={{width: 120}}>Group ID</th>
-                                    <th style={{width: 150}}>Group Name</th>
-                                    <th style={{width: 150}}>Description</th>
-                                    <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {attributes?.map((row) => (
-                                    <tr key={row.group_id}>
-                                        <td>{row.group_id ?? ""}</td>
-                                        <td>{row.group_name ?? ""}</td>
-                                        <td>{row.group_description ?? ""}</td>
-                                        <td>
-                                            <Box sx={{display: 'flex', gap: 1}}>
-                                                <Button
-                                                    size="sm"
-                                                    variant="plain"
-                                                    color="neutral"
-                                                    onClick={() => openEditNASGroupDialog(row)}
-                                                >
-                                                    Edit
-                                                </Button>
-                                                <Button
-                                                    onClick={() => openDeleteNasAttrGroupDialog(row)}
-                                                    size="sm"
-                                                    variant="soft"
-                                                    color="danger"
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </Box>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </Table>
-                        </Box>
-                    </Sheet>
-                    <Stack direction={"row"} sx={{
-                        width: '100%',
-                        bottom: '-50px',
-                        right: 0,
-                        justifyItems: 'center',
-                        alignItem: "center",
-                        display: "flex",
-                        justifyContent: 'space-between',
-                        pt: 1
-                    }}>
-                        <Typography level={"body-sm"}>
-                            Page Navigation
-                        </Typography>
-                        <Pagination
-                            count={getPageCount(attrCount, 10)}
-                            page={currentPageForAtt}
-                            onChange={handlePageChangeForAtt}
-                            renderItem={(item) => (
-                                <PaginationItem
-                                    slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
-                                    {...item}
-                                />
-                            )}
-                        />
-                    </Stack>
-                </Box>
-                <Box sx={{
-                    width: "100%",
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'start',
-                    justifyContent: 'start',
-
-                }}>
-                    <HeaderText title={""} subTitle={"Subscribers"}/>
-                    <Sheet
-                        variant="outlined"
-                        sx={{
-                            '--TableCell-height': '40px',
-                            '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-                            '--Table-firstColumnWidth': '80px',
-                            '--Table-lastColumnWidth': '144px',
-                            overflow: 'auto',
-                            background: (
-                                theme,
-                            ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
-            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
-            radial-gradient(
-              farthest-side at 0 50%,
-              rgba(0, 0, 0, 0.12),
-              rgba(0, 0, 0, 0)
-            ),
-            radial-gradient(
-                farthest-side at 100% 50%,
-                rgba(0, 0, 0, 0.12),
-                rgba(0, 0, 0, 0)
-              )
-              0 100%`,
-                            backgroundSize:
-                                '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundAttachment: 'local, local, scroll, scroll',
-                            backgroundPosition:
-                                'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
-                            backgroundColor: 'background.surface',
-                            overflowX: 'auto',
-                            maxWidth: '100%',
-                            height: "250px"
-                        }}
-                    >
-                        <Box>
-
-                            <Table
-                                borderAxis="bothBetween"
-                                stripe="odd"
-                                hoverRow
-                                sx={{
-                                    width: "60%",
-                                    '& tr > *:first-child': {
-                                        position: 'sticky',
-                                        left: 0,
-                                        boxShadow: '1px 0 var(--TableCell-borderColor)',
-                                        bgcolor: 'background.surface',
-                                    },
-                                    '& tr > *:last-child': {
-                                        position: 'sticky',
-                                        right: 0,
-                                        bgcolor: 'var(--TableCell-headBackground)',
-                                        width: '120px',
-                                    },
-                                }}
-                            >
-                                <thead>
-                                <tr>
-                                    <th style={{width: 120}}>Subscribe Id</th>
-                                    <th style={{width: 150}}>Attribute</th>
-                                    <th style={{width: 150}}>Attribute Group</th>
-                                    <th style={{width: 150}}>Operation</th>
-                                    <th style={{width: 150}}>Value</th>
-                                    <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {subscribers?.map((row) => (
-                                    <tr key={row.subscriber_id}>
-                                        <td>{row.subscriber_id ?? ""}</td>
-                                        <td>{row.attribute ?? ""}</td>
-                                        <td>{row.attribute_group ?? ""}</td>
-                                        <td>{row.operation ?? ""}</td>
-                                        <td>{row.value ?? ""}</td>
-                                        <td>
-                                            <Box sx={{display: 'flex', gap: 1}}>
-                                                <Button
-                                                    size="sm"
-                                                    variant="plain"
-                                                    color="neutral"
-                                                    onClick={() => editNASSubscribeDialog(row)}
-                                                >
-                                                    Edit
-                                                </Button>
-                                                <Button
-                                                    onClick={() => showNASDeleteSubscriberDialog(row)}
-                                                    size="sm"
-                                                    variant="soft"
-                                                    color="danger"
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </Box>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </Table>
-                        </Box>
-                    </Sheet>
-                    <Stack direction={"row"} sx={{
-                        width: '100%',
-                        bottom: '-50px',
-                        right: 0,
-                        justifyItems: 'center',
-                        alignItem: "center",
-                        display: "flex",
-                        justifyContent: 'space-between',
-                        pt: 1
-                    }}>
-                        <Typography level={"body-sm"}>
-                            Page Navigation
-                        </Typography>
-                        <Pagination
-                            count={getPageCount(subscriberCount, 10)}
-                            page={currentPageForSub}
-                            onChange={handlePageChangeForSub}
-                            renderItem={(item) => (
-                                <PaginationItem
-                                    slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
-                                    {...item}
-                                />
-                            )}
-                        />
-                    </Stack>
-                </Box>
-            </Stack>
-
         </Box>
     </React.Fragment>)
 }
@@ -1197,14 +921,14 @@ const mapStateToProps = (state: RootState) => {
         nasRecordEditResponse: state.nas.nasRecordEditResponse,
         nasRecordDeleteResponse: state.nas.nasRecordDeleteResponse,
         nasRecordsResponse: state.nas.nasRecordsResponse,
-        attrGroupsResponse: state.nas.attrGroupsResponse,
-        attrAddResponse: state.nas.attrAddResponse,
-        attrEditResponse: state.nas.attrEditResponse,
-        attrDeleteResponse: state.nas.attrDeleteResponse,
-        subscribersResponse: state.nas.subscribersResponse,
-        subscribeAddResponse: state.nas.subscribeAddResponse,
-        subscriberEditResponse: state.nas.subscriberEditResponse,
-        subscriberDeleteResponse: state.nas.subscriberDeleteResponse
+        // attrGroupsResponse: state.nas.attrGroupsResponse,
+        // attrAddResponse: state.nas.attrAddResponse,
+        // attrEditResponse: state.nas.attrEditResponse,
+        // attrDeleteResponse: state.nas.attrDeleteResponse,
+        // subscribersResponse: state.nas.subscribersResponse,
+        // subscribeAddResponse: state.nas.subscribeAddResponse,
+        // subscriberEditResponse: state.nas.subscriberEditResponse,
+        // subscriberDeleteResponse: state.nas.subscriberDeleteResponse
     };
 };
 

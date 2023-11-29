@@ -13,6 +13,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {deletePlan, getPlans, getPlansType} from "../../redux/plan/plan-slice";
 import PlanDalog from "../../components/Dialogs/PlanDalog";
+import {IPlanType} from "./PlanType";
 
 type SnackBarProps = {
     isOpen: boolean,
@@ -35,12 +36,14 @@ type StateObj = {
     planDeleteSuccess: any;
     plansGetSuccess: any;
     planCount: number;
+    planTypesGetSuccess: any;
 };
 const PlanParameter: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
+    const [planTypes, setPlanTypes] = useState<IPlanType[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -51,6 +54,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         planEditSuccess: null,
         planDeleteSuccess: null,
         plansGetSuccess: null,
+        planTypesGetSuccess: null,
         planCount: 0
     });
     const [plans, setPlans] = useState<IPlan[]>([]);
@@ -111,6 +115,37 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
     }
 
     useEffect(() => {
+        if (
+            (stateObj.planTypesGetSuccess === null ||
+                props.planTypesGetSuccess !== null) ||
+            (stateObj.planTypesGetSuccess !== props.planTypesGetSuccess)
+        ) {
+            setIsLoading(false);
+            if (props.planTypesGetSuccess?.code === "GET_ALL_PLAN_TYPE_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    planTypesGetSuccess: props.planTypesGetSuccess
+                });
+                setPlanTypes(props.planTypesGetSuccess?.data?.records ?? []);
+            } else if (props.planTypesGetSuccess?.code === "GET_ALL_PLAN_TYPE_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get plan types records due to ${props.planTypesGetSuccess?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.planTypesGetSuccess]);
+
+
+    const mapPlanTypeToPlanTypeName = (id: number): string => {
+        const planType: any = planTypes?.filter((type: any) => type?.type_id === id)?.[0];
+        return planType?.type_name ?? "";
+    }
+
+
+    useEffect(() => {
         if ((stateObj.plansGetSuccess === null ||
                 props.plansGetSuccess !== null) ||
             (stateObj.plansGetSuccess !== props.plansGetSuccess)
@@ -128,7 +163,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!! Couldn't get COA records due to ${props.plansGetSuccess?.error ?? ""}`,
+                    message: `Oops!! Couldn't get plan records due to ${props.plansGetSuccess?.error ?? ""}`,
                 });
             }
         }
@@ -207,7 +242,6 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             setStateObj({
                 ...stateObj,
                 planDeleteSuccess: props.planDeleteSuccess,
-                coaRecordCount: 0,
             });
             if (props.planDeleteSuccess?.code === "DELETE_PLAN_SUCCESS") {
                 initLoad(searchId);
@@ -226,7 +260,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. COA Record couldn't get deleted due ${
+                    message: `Oops!!. plan Record couldn't get deleted due ${
                         props.planDeleteSuccess?.error ?? ""
                     }`,
                 });
@@ -277,7 +311,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                 width: "100%",
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                alignItems: 'start',
                 justifyContent: 'start',
 
             }}>
@@ -285,8 +319,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                     width: "100%",
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: 'start',
+                    justifyContent: 'start',
 
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
@@ -368,7 +402,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 {plans?.map((row) => (
                                     <tr key={row.plan_id}>
                                         <td>{row.plan_id ?? ""}</td>
-                                        <td>{row.type_id ?? ""}</td>
+                                        <td>{mapPlanTypeToPlanTypeName(row.type_id ?? "")}</td>
                                         <td>{row.plan_name ?? ""}</td>
                                         <td>{row.description ?? ""}</td>
                                         <td>
@@ -435,7 +469,8 @@ const mapStateToProps = (state: RootState) => {
         planAddSuccess: state.plan.planAddSuccess,
         planEditSuccess: state.plan.planEditSuccess,
         planDeleteSuccess: state.plan.planDeleteSuccess,
-        plansGetSuccess: state.plan.plansGetSuccess
+        plansGetSuccess: state.plan.plansGetSuccess,
+        planTypesGetSuccess: state.plan.planTypesGetSuccess
     };
 };
 
@@ -443,7 +478,7 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetPlanTypes: (payload: any) => dispatch(getPlansType(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
-        onDeletePlan: (payload: any) => dispatch(deletePlan(payload))
+        onDeletePlan: (payload: any) => dispatch(deletePlan(payload)),
     };
 };
 

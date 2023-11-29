@@ -1,11 +1,12 @@
-import React, {FC, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Select, Option} from "@mui/joy";
+import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../redux/store";
-import {addPlanAttribute} from "../../redux/plan/plan-slice";
+import {addPlanAttribute, editPlanAttribute} from "../../redux/plan/plan-slice";
+import {IPlan} from "../../pages/Plans/Plan";
 
 export enum DialogType {
     add,
@@ -13,7 +14,7 @@ export enum DialogType {
 }
 
 type StateObj = {
-    avpRecordAddResponse: any;
+    plansGetSuccess: any;
 };
 
 type InputStateObj = {
@@ -48,13 +49,35 @@ const PlanAttributeDialog: FC<Props> = (props) => {
             status: "",
         },
     }));
+    const [stateObj, setStateObj] = useState<StateObj>({
+        plansGetSuccess: null
+    });
+    const [plans, setPlans] = useState<IPlan[]>([]);
 
     const handleCloseAndAdd = () => {
         props.onAddPlanAttribute(input.inputData)
     };
 
-    const handleCloseAndUpdate = () => {
+    useEffect(() => {
+        if ((stateObj.plansGetSuccess === null ||
+                props.plansGetSuccess !== null) ||
+            (stateObj.plansGetSuccess !== props.plansGetSuccess)
+        ) {
+            if (props.plansGetSuccess?.code === "GET_ALL_PLAN_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    plansGetSuccess: props.plansGetSuccess,
+                    planCount: props.plansGetSuccess?.data?.count ?? 0,
+                });
+                setPlans(props.plansGetSuccess?.data?.records ?? []);
+            } else if (props.plansGetSuccess?.code === "GET_ALL_PLAN_FAILED") {
 
+            }
+        }
+    }, [props.plansGetSuccess]);
+
+    const handleCloseAndUpdate = () => {
+        props.onEditPlanAttribute(input.inputData)
     };
 
     const handleInput = (event: any) => {
@@ -86,14 +109,38 @@ const PlanAttributeDialog: FC<Props> = (props) => {
         return data;
     };
 
+
+    const handlePlanId = (event: any, value: any): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "plan_id",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    };
+
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
                 <DialogTitle>Plan Attribute</DialogTitle>
                 <Divider/>
-
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
+                    <FormControl>
+                        <FormLabel sx={{width: 278}}>
+                            Plan Name:
+                        </FormLabel>
+                        <Select value={input?.inputData?.['plan_id'] ?? ""}
+                                onChange={(event, value) => handleInput((handlePlanId(event, value)))}>
+                            {plans?.map((plan: any) => (
+                                <Option value={plan?.plan_id}>{plan?.plan_name ?? ""}</Option>
+                            ))}
+
+                        </Select>
+                    </FormControl>
                     <FormControl>
                         <FormLabel>
                             Attribute Name:
@@ -134,7 +181,7 @@ const PlanAttributeDialog: FC<Props> = (props) => {
                         <FormLabel sx={{width: 278}}>
                             Status:
                         </FormLabel>
-                        <Select alue={input?.inputData?.['status'] ?? ""} onChange={(event, value) => handleInput((handleStatus(event, value)))}>
+                        <Select value={input?.inputData?.['status'] ?? ""} onChange={(event, value) => handleInput((handleStatus(event, value)))}>
                             <Option value={"ACTIVE"}>ACTIVE</Option>
                             <Option value={"INACTIVE"}>INACTIVE</Option>
                         </Select>
@@ -154,12 +201,15 @@ const PlanAttributeDialog: FC<Props> = (props) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-    return {};
+    return {
+        plansGetSuccess: state.plan.plansGetSuccess,
+    };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onAddPlanAttribute:(payload: any)=> dispatch(addPlanAttribute(payload))
+        onAddPlanAttribute:(payload: any)=> dispatch(addPlanAttribute(payload)),
+        onEditPlanAttribute:(payload: any)=>dispatch(editPlanAttribute(payload))
     };
 };
 

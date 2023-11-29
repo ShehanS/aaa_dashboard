@@ -16,6 +16,8 @@ import PlanAttributes from "./pages/Plans/PlanAttribute";
 import PlanType from "./pages/Plans/PlanType";
 import PlanParameter from "./pages/Plans/PlanParameter";
 import Plan from "./pages/Plans/Plan";
+import RecordFilter from "./pages/System/RecordFilter";
+import Subscribers from "./pages/NAS/Subscribers";
 
 function App() {
     return (
@@ -27,15 +29,17 @@ function App() {
                             <Home>
                                 <Routes>
                                     <Route path={ROUTES.AVPOverride} element={<AVPOverride/>}/>
-                                    <Route path={ROUTES.Account} element={<Accounting/>}/>
-                                    <Route path={ROUTES.COA} element={<COA/>}/>
-                                    <Route path={ROUTES.NAS_ATTRIBUTE_MAP} element={<AttributeMap/>}/>
-                                    <Route path={ROUTES.NAS_CONFIG} element={<ConfigNAS/>}/>
-                                    <Route path={ROUTES.PARAMETER_SETTINGS} element={<ParameterSetting/>}/>
-                                    <Route path={ROUTES.PLAN_TYPE} element={<PlanType/>}/>
-                                    <Route path={ROUTES.PLAN_ATTRIBUTES} element={<PlanAttributes/>}/>
-                                    <Route path={ROUTES.PLAN_PARAMETERS} element={<PlanParameter/>}/>
-                                    <Route path={ROUTES.PLAN} element={<Plan/>}/>
+                                    <Route path={ROUTES.account} element={<Accounting/>}/>
+                                    <Route path={ROUTES.record_filter} element={<RecordFilter/>}/>
+                                    <Route path={ROUTES.coa} element={<COA/>}/>
+                                    <Route path={ROUTES.nas_attribute_map} element={<AttributeMap/>}/>
+                                    <Route path={ROUTES.nas_config} element={<ConfigNAS/>}/>
+                                    <Route path={ROUTES.parameter_setting} element={<ParameterSetting/>}/>
+                                    <Route path={ROUTES.plan_type} element={<PlanType/>}/>
+                                    <Route path={ROUTES.plan_attribute} element={<PlanAttributes/>}/>
+                                    <Route path={ROUTES.plan_parameter} element={<PlanParameter/>}/>
+                                    <Route path={ROUTES.plan} element={<Plan/>}/>
+                                    <Route path={ROUTES.subscribers} element={<Subscribers/>}/>
                                 </Routes>
                             </Home>
                         </BrowserRouter>

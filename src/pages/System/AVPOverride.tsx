@@ -31,7 +31,6 @@ type StateObj = {
     avpRecordAddResponse: any;
     avpRecordsResponse: any;
     avpRecordEditResponse: any;
-    records: number;
     avpRecordDeleteResponse: any;
 }
 
@@ -47,6 +46,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
+    const[avpRecordCount, setAVPRecordCount] = useState<number>(1);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -56,7 +56,6 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         avpRecordAddResponse: null,
         avpRecordsResponse: null,
         avpRecordEditResponse: null,
-        records: 0,
         avpRecordDeleteResponse: null
     });
     const [avpRecords, setAvpRecords] = useState<IAVPAttribute[]>([]);
@@ -85,12 +84,12 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         setAvpRecords([]);
         if ((stateObj.avpRecordsResponse === null && props.avpRecordsResponse !== null) || (stateObj.avpRecordsResponse !== props.avpRecordsResponse)) {
             setIsLoading(false);
-            setStateObj({
-                ...stateObj,
-                avpRecordsResponse: props.avpRecordsResponse,
-                records: props.avpRecordsResponse?.data?.count ?? 0
-            });
             if (props.avpRecordsResponse?.code === "GET_ALL_AVP_RECORD_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    avpRecordsResponse: props.avpRecordsResponse,
+                    records: props.avpRecordsResponse?.data?.count ?? 0
+                });
                 setAvpRecords(props.avpRecordsResponse?.data?.records ?? [])
             } else if (props.avpRecordsResponse?.code === "GET_ALL_AVP_RECORD_FAILED") {
                 setSnackBar({
@@ -109,10 +108,10 @@ const AVPOverride: FC<ReduxProps> = (props) => {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                avpRecordsResponse: props.avpRecordResponseSuccess,
-                records: 0
+                avpRecordsResponse: props.avpRecordResponseSuccess
             });
             if (props.avpRecordResponseSuccess?.code === "GET_AVP_RECORD_SUCCESS") {
+                setAVPRecordCount(props?.avpRecordResponseSuccess?.data?.count);
                 setAvpRecords(props.avpRecordResponseSuccess?.data ?? [])
             } else if (props.avpRecordResponseSuccess?.code === "GET_AVP_RECORD_FAILED") {
                 setSnackBar({
@@ -130,8 +129,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                avpRecordEditResponse: props.avpRecordEditResponse,
-                records: 0
+                avpRecordEditResponse: props.avpRecordEditResponse
             });
             if (props.avpRecordEditResponse?.code === "UPDATE_AVP_RECORD_SUCCESS") {
                 initLoad(searchId);
@@ -161,8 +159,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                avpRecordDeleteResponse: props.avpRecordDeleteResponse,
-                records: 0
+                avpRecordDeleteResponse: props.avpRecordDeleteResponse
             });
             if (props.avpRecordDeleteResponse?.code === "DELETE_AVP_RECORD_SUCCESS") {
                 initLoad(searchId);
@@ -432,7 +429,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(stateObj.records, 10)}
+                            count={getPageCount(avpRecordCount, 10)}
                             page={currentPage}
                             onChange={handlePageChange}
                             renderItem={(item) => (

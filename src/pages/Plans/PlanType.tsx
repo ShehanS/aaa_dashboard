@@ -282,7 +282,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                 width: "100%",
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                alignItems: 'start',
                 justifyContent: 'start',
 
             }}>
@@ -290,8 +290,8 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                     width: "100%",
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: 'start',
+                    justifyContent: 'start',
 
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
@@ -299,7 +299,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openAddPlanTypeDialog}>Add Plan Type</Button>
+                            <Button onClick={openAddPlanTypeDialog}>Add Type</Button>
 
                         </Stack>
                     </Stack>

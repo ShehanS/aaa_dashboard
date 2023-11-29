@@ -11,7 +11,8 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import PlanAttributeDialog, {DialogType} from "../../components/Dialogs/PlanAttributeDialog";
-import {getPlansAttribute} from "../../redux/plan/plan-slice";
+import {deletePlanAttribute, getPlans, getPlansAttribute} from "../../redux/plan/plan-slice";
+import {IPlan} from "./Plan";
 
 type SnackBarProps = {
     isOpen: boolean,
@@ -25,6 +26,7 @@ type StateObj = {
     planAttributeDeleteSuccess: any;
     planAttributesGetSuccess: any;
     attributeRecordCount: number;
+    plansGetSuccess: any;
 }
 
 export interface IPlanAttribute {
@@ -43,6 +45,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
+    const [plans, setPlans] = useState<IPlan[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -55,7 +58,8 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             planAttributeDeleteSuccess: null,
             planAttributeEditSuccess: null,
             planAttributesGetSuccess: null,
-            attributeRecordCount: 0
+            attributeRecordCount: 0,
+            plansGetSuccess: null
         }
     )
     const handleClose = () => {
@@ -65,15 +69,37 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
-          //  props.onGetAccount(id);
         } else {
             const request = {
                 page: currentPage - 1,
                 pageSize: 10
             }
             props.onGetPlanAttribute(request);
+            getPlans();
         }
     }
+
+    useEffect(() => {
+        if ((stateObj.plansGetSuccess === null ||
+                props.plansGetSuccess !== null) ||
+            (stateObj.plansGetSuccess !== props.plansGetSuccess)
+        ) {
+            if (props.plansGetSuccess?.code === "GET_ALL_PLAN_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    plansGetSuccess: props.plansGetSuccess
+                });
+                setPlans(props.plansGetSuccess?.data?.records ?? []);
+            } else if (props.plansGetSuccess?.code === "GET_ALL_PLAN_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get plan records due to ${props.plansGetSuccess?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.plansGetSuccess]);
 
     useEffect(() => {
         initLoad();
@@ -85,7 +111,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
     }
 
     const handleDelete = (id: string) => {
-        props.onDeleteCoRecord(id);
+        props.onDeleteAttribute(id);
     }
 
 
@@ -93,7 +119,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
-            dialogContent: <DeleteDialog id={props.event_id} onDelete={handleDelete}/>
+            dialogContent: <DeleteDialog id={props.plan_id} onDelete={handleDelete}/>
         });
     }
 
@@ -109,7 +135,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
-            dialogContent: <PlanAttributeDialog type={DialogType.add} data={props}/>
+            dialogContent: <PlanAttributeDialog type={DialogType.edit} data={props}/>
         });
     }
 
@@ -119,17 +145,12 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                 props.planAttributesGetSuccess !== null) ||
             (stateObj.planAttributesGetSuccess !== props.planAttributesGetSuccess)
         ) {
-            setStateObj({
-                ...stateObj,
-                planAttributesGetSuccess: props.planAttributesGetSuccess,
-                coaRecordCount: props?.data?.count
-            });
             setIsLoading(false);
             if (props.planAttributesGetSuccess?.code === "GET_ALL_PLAN_ATTRIBUTE_SUCCESS") {
                 setStateObj({
                     ...stateObj,
                     planAttributesGetSuccess: props.planAttributesGetSuccess,
-                    coaRecordCount: props.coaRecordsResponse?.data?.count ?? 0,
+                    attributeRecordCount: props.attributeRecordCount?.data?.count ?? 0,
                 });
                 setPlanAttributes(props.planAttributesGetSuccess?.data?.records ?? []);
             } else if (props.planAttributesGetSuccess?.code === "GET_ALL_PLAN_ATTRIBUTE_FAILED") {
@@ -137,11 +158,19 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!! Couldn't get COA records due to ${props.planAttributesGetSuccess?.error ?? ""}`,
+                    message: `Oops!! Couldn't get plan attributes records due to ${props.planAttributesGetSuccess?.error ?? ""}`,
                 });
             }
         }
     }, [props.planAttributesGetSuccess]);
+
+    const getPlans = () => {
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetPlans(request);
+    }
 
     useEffect(() => {
         if (
@@ -184,81 +213,81 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             }
         }
     }, [props.planAttributeAddSuccess]);
-    //
-    // useEffect(() => {
-    //     if (
-    //         (stateObj.coaRecordDeleteResponse === null ||
-    //             props.coaRecordDeleteResponse !== null) ||
-    //         (stateObj.coaRecordDeleteResponse !== props.coaRecordDeleteResponse)
-    //     ) {
-    //         setIsLoading(false);
-    //         setStateObj({
-    //             ...stateObj,
-    //             coaRecordDeleteResponse: props.coaRecordDeleteResponse,
-    //             coaRecordCount: 0,
-    //         });
-    //         if (props.coaRecordDeleteResponse?.code === "DELETE_COA_EVENT_SUCCESS") {
-    //             initLoad(searchId);
-    //             setSnackBar({
-    //                 ...snackBar,
-    //                 isOpen: true,
-    //                 color: "success",
-    //                 message: `COA Record Deleted!!!!`,
-    //             });
-    //             setAppDataContext({
-    //                 ...appDataContext,
-    //                 isOpenDialog: false,
-    //             });
-    //         } else if (props.coaRecordDeleteResponse?.code === "DELETE_COA_EVENT_FAILED") {
-    //             setSnackBar({
-    //                 ...snackBar,
-    //                 isOpen: true,
-    //                 color: "danger",
-    //                 message: `Oops!!. COA Record couldn't get deleted due ${
-    //                     props.coaRecordDeleteResponse?.error ?? ""
-    //                 }`,
-    //             });
-    //         }
-    //     }
-    // }, [props.coaRecordDeleteResponse]);
-    //
-    // useEffect(() => {
-    //     if (
-    //         (stateObj.coaRecordEditResponse === null ||
-    //             props.coaRecordEditResponse !== null) ||
-    //         (stateObj.coaRecordEditResponse !== props.coaRecordEditResponse)
-    //     ) {
-    //         setIsLoading(false);
-    //         setStateObj({
-    //             ...stateObj,
-    //             coaRecordEditResponse: props.coaRecordEditResponse,
-    //             coaRecordCount: 0,
-    //         });
-    //         if (props.coaRecordEditResponse?.code === "EDIT_COA_EVENT_SUCCESS") {
-    //             initLoad(searchId);
-    //             setSearchId(searchId);
-    //             setSnackBar({
-    //                 ...snackBar,
-    //                 isOpen: true,
-    //                 color: "success",
-    //                 message: `COA Event Record updated!!!!`,
-    //             });
-    //             setAppDataContext({
-    //                 ...appDataContext,
-    //                 isOpenDialog: false,
-    //             });
-    //         } else if (props.coaRecordEditResponse?.code === "EDIT_COA_EVENT_FAILED") {
-    //             setSnackBar({
-    //                 ...snackBar,
-    //                 isOpen: true,
-    //                 color: "danger",
-    //                 message: `Oops!!. COA Event Record couldn't get updated due ${
-    //                     props.coaRecordEditResponse?.error ?? ""
-    //                 }`,
-    //             });
-    //         }
-    //     }
-    // }, [props.coaRecordEditResponse]);
+
+    useEffect(() => {
+        if (
+            (stateObj.planAttributeDeleteSuccess === null ||
+                props.planAttributeDeleteSuccess !== null) ||
+            (stateObj.planAttributeDeleteSuccess !== props.planAttributeDeleteSuccess)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                planAttributeDeleteSuccess: props.planAttributeDeleteSuccess,
+                coaRecordCount: 0,
+            });
+            if (props.planAttributeDeleteSuccess?.code === "DELETE_PLAN_ATTRIBUTE_SUCCESS") {
+                initLoad(searchId);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Plan attribute Record Deleted!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+            } else if (props.planAttributeDeleteSuccess?.code === "DELETE_PLAN_ATTRIBUTE_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!!. COA Record couldn't get deleted due ${
+                        props.planAttributeDeleteSuccess?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.planAttributeDeleteSuccess]);
+
+    useEffect(() => {
+        if (
+            (stateObj.planAttributeEditSuccess === null ||
+                props.planAttributeEditSuccess !== null) ||
+            (stateObj.planAttributeEditSuccess !== props.planAttributeEditSuccess)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                planAttributeEditSuccess: props.planAttributeEditSuccess,
+                coaRecordCount: 0,
+            });
+            if (props.planAttributeEditSuccess?.code === "EDIT_PLAN_ATTRIBUTE_SUCCESS") {
+                initLoad(searchId);
+                setSearchId(searchId);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Plan attribute updated!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+            } else if (props.planAttributeEditSuccess?.code === "EDIT_PLAN_ATTRIBUTE_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!!. Plan attribute Record couldn't get updated due ${
+                        props.planAttributeEditSuccess?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.planAttributeEditSuccess]);
 
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
@@ -274,7 +303,10 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
         const pageCount = Math.ceil(count / pageSize);
         return pageCount;
     };
-
+    const mapPlanIdToPlanTypeName = (id: string): string => {
+        const plan: any = plans?.filter((plan: any) => plan?.plan_id === Number.parseInt(id))?.[0];
+        return plan?.plan_name ?? "";
+    }
     return (
         <React.Fragment>
             <Snackbar
@@ -302,7 +334,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                 width: "100%",
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                alignItems: 'start',
                 justifyContent: 'start',
 
             }}>
@@ -310,8 +342,8 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                     width: "100%",
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: 'start',
+                    justifyContent: 'start',
 
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
@@ -382,7 +414,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                             >
                                 <thead>
                                 <tr>
-                                    <th style={{width: 120}}>Plan ID</th>
+                                    <th style={{width: 120}}>Plan Name</th>
                                     <th style={{width: 150}}>Attribute Name</th>
                                     <th style={{width: 150}}>Attribute Value</th>
                                     <th style={{width: 150}}>Attribute Group</th>
@@ -394,7 +426,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                                 <tbody>
                                 {planAttributes?.map((row) => (
                                     <tr key={row.plan_id}>
-                                        <td>{row.plan_id ?? ""}</td>
+                                        <td>{mapPlanIdToPlanTypeName(row.plan_id)}</td>
                                         <td>{row.attribute_name ?? ""}</td>
                                         <td>{row.attribute_value ?? ""}</td>
                                         <td>{row.attribute_group ?? ""}</td>
@@ -463,14 +495,17 @@ const mapStateToProps = (state: RootState) => {
     return {
         planAttributeAddSuccess: state.plan.planAttributeAddSuccess,
         planAttributeEditSuccess: state.plan.planAttributeEditSuccess,
-        planAttributeDeleteSuccess: state.plan.planAttributeEditSuccess,
-        planAttributesGetSuccess: state.plan.planAttributeEditSuccess
+        planAttributeDeleteSuccess: state.plan.planAttributeDeleteSuccess,
+        planAttributesGetSuccess: state.plan.planAttributesGetSuccess,
+        plansGetSuccess:state.plan.plansGetSuccess
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onGetPlanAttribute:(payload: any)=> dispatch(getPlansAttribute(payload))
+        onGetPlanAttribute: (payload: any) => dispatch(getPlansAttribute(payload)),
+        onDeleteAttribute:(payload: any)=> dispatch(deletePlanAttribute(payload)),
+        onGetPlans: (payload: any) => dispatch(getPlans(payload)),
     };
 };
 

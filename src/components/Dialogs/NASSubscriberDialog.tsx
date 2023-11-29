@@ -1,12 +1,12 @@
-import React, { FC, useState } from "react";
+import React, {FC, useState} from "react";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
-import { DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Textarea } from "@mui/joy";
-import { RootState } from "../../redux/store";
-import { connect, ConnectedProps } from "react-redux";
-import {addAttribute, addSubscriber, editAttribute, editSubscriber} from "../../redux/nas/nas-slice";
-import { useAppDataContext } from "../../context/AppDataContext";
+import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input} from "@mui/joy";
+import {RootState} from "../../redux/store";
+import {connect, ConnectedProps} from "react-redux";
+import {addSubscriber, editSubscriber} from "../../redux/nas/nas-slice";
+import {useAppDataContext} from "../../context/AppDataContext";
 
 export enum DialogType {
     add,
@@ -71,7 +71,7 @@ const NASSubscriberDialog: FC<Props> = (props) => {
         <React.Fragment>
             <Box sx={{ height: 350 }}>
                 <DialogTitle>
-                    NAS Attribute
+                    Subscribers
                 </DialogTitle>
                 <Divider />
 

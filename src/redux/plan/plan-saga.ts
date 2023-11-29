@@ -6,9 +6,11 @@ import {
     ADD_PLAN_PARAMETER_API,
     ADD_PLAN_TYPE_API,
     DELETE_PLAN_API,
+    DELETE_PLAN_ATTRIBUTE_API,
     DELETE_PLAN_PARAMETER_API,
     DELETE_PLAN_TYPES_API,
     EDIT_PLAN_API,
+    EDIT_PLAN_ATTRIBUTE_API,
     EDIT_PLAN_PARAMETER_API,
     EDIT_PLAN_TYPES_API,
     GET_ALL_PLAN_API,
@@ -26,14 +28,19 @@ import {
     addPlanType,
     addPlanTypeSuccess,
     deletePlan,
+    deletePlanAttribute,
+    deletePlanAttributeSuccess,
     deletePlanParameter,
     deletePlanParameterSuccess,
     deletePlanSuccess,
     deletePlanType,
     deletePlanTypeSuccess,
     editPlan,
+    editPlanAttribute,
+    editPlanAttributeSuccess,
     editPlanParameter,
-    editPlanParameterSuccess, editPlanSuccess,
+    editPlanParameterSuccess,
+    editPlanSuccess,
     editPlanType,
     editPlanTypeSuccess,
     getError,
@@ -41,6 +48,7 @@ import {
     getPlansAttribute,
     getPlansAttributeSuccess,
     getPlansParameter,
+    getPlansParameterSuccess,
     getPlansType,
     getPlansTypeSuccess,
     getPlanSuccess
@@ -120,6 +128,30 @@ function* handleAddAttribute(action: { payload: {} }) {
     }
 }
 
+function* handleDeleteAttribute(action: { payload: {} }) {
+    try {
+        const response: ServerResponse = yield call(
+            DELETE_PLAN_ATTRIBUTE_API.delete,
+            action.payload
+        );
+        yield put(deletePlanAttributeSuccess(response));
+    } catch (e) {
+        yield put(getError(e));
+    }
+}
+
+function* handleEditPlanAttribute(action: { payload: {} }) {
+    try {
+        const response: ServerResponse = yield call(
+            EDIT_PLAN_ATTRIBUTE_API.edit,
+            action.payload
+        );
+        yield put(editPlanAttributeSuccess(response));
+    } catch (e) {
+        yield put(getError(e));
+    }
+}
+
 function* handleAddPlanParameter(action: { payload: {} }) {
     try {
         const response: ServerResponse = yield call(
@@ -150,7 +182,7 @@ function* handleGetPlanParameters(action: { payload: {} }) {
             GET_ALL_PLAN_PARAMETER_API.get,
             action.payload
         );
-        yield put(getPlansParameter(response));
+        yield put(getPlansParameterSuccess(response));
     } catch (e) {
         yield put(getError(e));
     }
@@ -218,6 +250,14 @@ function* handleDeletePlan(action: { payload: {} }) {
     }
 }
 
+function* watchEditPlanAttributes() {
+    yield takeLatest<any>(editPlanAttribute.type, handleEditPlanAttribute);
+}
+
+
+function* watchDeletePlanAttributes() {
+    yield takeLatest<any>(deletePlanAttribute.type, handleDeleteAttribute);
+}
 
 function* watchAddPlan() {
     yield takeLatest<any>(addPlan.type, handleAddPlan);
@@ -280,5 +320,5 @@ function* watchAddPlanAttribute() {
 
 
 export default function* PlanSaga() {
-    yield all([watchAddPlan(), watchEditPlan(), watchDeletePlan(), watchGetPlans(), watchDeletePlanParameter(), watchGetPlanParameters(), watchEditPlanParameter(), watchAddPlanParameter(), watchAddPlanType(), watchEditPlanType(), watchGetPlanTypes(), watchDeletePlanType(), watchGetPlanAttributes(), watchAddPlanAttribute()]);
+    yield all([watchAddPlan(), watchEditPlanAttributes(), watchDeletePlanAttributes(), watchEditPlan(), watchDeletePlan(), watchGetPlans(), watchDeletePlanParameter(), watchGetPlanParameters(), watchEditPlanParameter(), watchAddPlanParameter(), watchAddPlanType(), watchEditPlanType(), watchGetPlanTypes(), watchDeletePlanType(), watchGetPlanAttributes(), watchAddPlanAttribute()]);
 }

@@ -69,7 +69,7 @@ type StateObj = {
     filtersResponse: any;
 }
 
-const Accounting: FC = (props: any) => {
+const RecordFilter: FC = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageFilter, setCurrentPageFilter] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -383,7 +383,6 @@ const Accounting: FC = (props: any) => {
     }
 
 
-
     const openAccountEditDialog = (record: IAccountingData) => {
         setAppDataContext({
             ...appDataContext,
@@ -417,6 +416,30 @@ const Accounting: FC = (props: any) => {
         props.onFilterDelete(id);
     }
 
+    const openFilterDeleteDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <DeleteDialog id={props.attrgroup_id} onDelete={handleFilterDelete}/>
+        });
+    }
+
+    const openAddAccountingFilterDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <AccountingRecordFilterDialog type={DialogType.add}/>
+        });
+    }
+
+    const openEditAccountingFilterDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogContent: <AccountingRecordFilterDialog type={DialogType.edit} data={props}/>
+        });
+    }
+
 
     const getPageCount = (count: number, pageSize: number): number => {
         const pageCount = Math.ceil(count / pageSize);
@@ -430,6 +453,17 @@ const Accounting: FC = (props: any) => {
             pageSize: 10
         }
         props.onGetAccounts(request);
+
+    };
+
+    const handlePageChangeFilter = (event: any, page: number) => {
+        setCurrentPageFilter(page);
+        setIsLoading(true);
+        const request = {
+            page: page - 1,
+            pageSize: 10
+        }
+        props.onGetFilters(request);
 
     };
 
@@ -456,21 +490,21 @@ const Accounting: FC = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"Account"} subTitle={"Manage Account"}/>
+            <HeaderText title={"Account Filters"} subTitle={"Manage Account Filters"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'start',
-                justifyContent: 'start',
+                alignItems: 'center',
+                justifyContent: 'center',
 
             }}>
                 <Box sx={{
                     width: "100%",
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'start',
-                    justifyContent: 'start',
+                    alignItems: 'center',
+                    justifyContent: 'center',
 
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
@@ -478,7 +512,7 @@ const Accounting: FC = (props: any) => {
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openNewAccountDialog}>Add Account</Button>
+                            <Button onClick={openAddAccountingFilterDialog}>Add Filter</Button>
                         </Stack>
                     </Stack>
                     <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
@@ -495,17 +529,35 @@ const Accounting: FC = (props: any) => {
                                 }}>Just wait....</Typography>
                             </Stack>
                         </Stack>}
-                    <Sheet
-                        variant="outlined"
-                        sx={{
-                            '--TableCell-height': '40px',
-                            '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
-                            '--Table-firstColumnWidth': '80px',
-                            '--Table-lastColumnWidth': '144px',
-                            overflow: 'auto',
-                            background: (
-                                theme,
-                            ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+                    <Box sx={{
+                        paddingTop: 3,
+                        width: "100%",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'start',
+                        justifyContent: 'start',
+
+                    }}>
+                        <Box sx={{
+                            width: "100%",
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'start',
+                            justifyContent: 'start',
+
+                        }}>
+                            <HeaderText title={""} subTitle={"Account Filters"}/>
+                            <Sheet
+                                variant="outlined"
+                                sx={{
+                                    '--TableCell-height': '40px',
+                                    '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                                    '--Table-firstColumnWidth': '80px',
+                                    '--Table-lastColumnWidth': '144px',
+                                    overflow: 'auto',
+                                    background: (
+                                        theme,
+                                    ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
             linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
             radial-gradient(
               farthest-side at 0 50%,
@@ -518,123 +570,108 @@ const Accounting: FC = (props: any) => {
                 rgba(0, 0, 0, 0)
               )
               0 100%`,
-                            backgroundSize:
-                                '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundAttachment: 'local, local, scroll, scroll',
-                            backgroundPosition:
-                                'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
-                            backgroundColor: 'background.surface',
-                            overflowX: 'auto',
-                            maxWidth: '100%',
-                        }}
-                    >
-                        <Box>
-                            <Table
-                                borderAxis="bothBetween"
-                                stripe="odd"
-                                hoverRow
-                                sx={{
-                                    width: "60%",
-                                    '& tr > *:first-child': {
-                                        position: 'sticky',
-                                        left: 0,
-                                        boxShadow: '1px 0 var(--TableCell-borderColor)',
-                                        bgcolor: 'background.surface',
-                                    },
-                                    '& tr > *:last-child': {
-                                        position: 'sticky',
-                                        right: 0,
-                                        bgcolor: 'var(--TableCell-headBackground)',
-                                        width: '120px',
-                                    },
+                                    backgroundSize:
+                                        '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundAttachment: 'local, local, scroll, scroll',
+                                    backgroundPosition:
+                                        'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                                    backgroundColor: 'background.surface',
+                                    overflowX: 'auto',
+                                    maxWidth: '50%',
+                                    height: "350px"
                                 }}
                             >
-                                <thead>
-                                <tr>
-                                    <th style={{width: 120}}>Subscriber ID</th>
-                                    <th style={{width: 150}}>Username</th>
-                                    <th style={{width: 150}}>Session ID</th>
-                                    <th style={{width: 150}}>ACC.State Type</th>
-                                    <th style={{width: 150}}>ACC Input Octets</th>
-                                    <th style={{width: 150}}>ACC Output Octets</th>
-                                    <th style={{width: 150}}>ACC Input Gigwords</th>
-                                    <th style={{width: 150}}>ACC Output Gigwords</th>
-                                    <th style={{width: 150}}>NAS IP</th>
-                                    <th style={{width: 150}}>NAS Port</th>
-                                    <th style={{width: 150}}>Frame IP</th>
-                                    <th style={{width: 150}}>Frame Protocol</th>
-                                    <th style={{width: 200}}>Date</th>
-                                    <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {records?.map((row) => (
-                                    <tr key={row.subscriber_id}>
-                                        <td>{row.subscriber_id ?? ""}</td>
-                                        <td>{row.username ?? ""}</td>
-                                        <td>{row.acct_session_id ?? ""}</td>
-                                        <td>{row.acct_status_type ==1 ? "Active": "Deactivate"}</td>
-                                        <td>{row.acct_input_octets ?? ""}</td>
-                                        <td>{row.acct_output_octets ?? ""}</td>
-                                        <td>{row.acct_input_gigawords ?? ""}</td>
-                                        <td>{row.acct_output_gigawords ?? ""}</td>
-                                        <td>{row.nas_ip_address ?? ""}</td>
-                                        <td>{row.nas_port_id ?? ""}</td>
-                                        <td>{row.framed_ip_address ?? ""}</td>
-                                        <td>{row.framed_protocol ?? ""}</td>
-                                        <td>{row.accunting_datetime ?? ""}</td>
-                                        <td>
-                                            <Box sx={{display: 'flex', gap: 1}}>
-                                                <Button
-                                                    size="sm"
-                                                    variant="plain"
-                                                    color="neutral"
-                                                    onClick={() => openAccountEditDialog(row)}
-                                                >
-                                                    Edit
-                                                </Button>
-                                                <Button
-                                                    onClick={() => openDeleteDialog(row)}
-                                                    size="sm"
-                                                    variant="soft"
-                                                    color="danger"
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </Box>
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </Table>
-                        </Box>
-                    </Sheet>
-                    <Stack direction={"row"} sx={{
-                        width: '100%',
-                        bottom: '-50px',
-                        right:0,
-                        justifyItems: 'center',
-                        alignItem: "center",
-                        display: "flex",
-                        justifyContent: 'space-between',
-                        pt: 1
-                    }}>
-                        <Typography level={"body-sm"}>
-                            Page Navigation
-                        </Typography>
-                        <Pagination
-                            count={getPageCount(stateObj.accountCount, 10)}
-                            page={currentPage}
-                            onChange={handlePageChange}
-                            renderItem={(item) => (
-                                <PaginationItem
-                                    slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
-                                    {...item}
+                                <Box>
+                                    <Table
+                                        borderAxis="bothBetween"
+                                        stripe="odd"
+                                        hoverRow
+                                        sx={{
+                                            width: "60%",
+                                            '& tr > *:first-child': {
+                                                position: 'sticky',
+                                                left: 0,
+                                                boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                                bgcolor: 'background.surface',
+                                            },
+                                            '& tr > *:last-child': {
+                                                position: 'sticky',
+                                                right: 0,
+                                                bgcolor: 'var(--TableCell-headBackground)',
+                                                width: '120px',
+                                            },
+                                        }}
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th style={{width: 120}}>Att.Group ID</th>
+                                            <th style={{width: 150}}>Filter AVP</th>
+                                            <th style={{width: 150}}>Filter For</th>
+                                            <th style={{width: 150}}>Filter Regexp</th>
+                                            <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {accountFilters?.map((row) => (
+                                            <tr key={row.attrgroup_id}>
+                                                <td>{row.attrgroup_id ?? ""}</td>
+                                                <td>{row.filter_avp ?? ""}</td>
+                                                <td>{row.filter_for ?? ""}</td>
+                                                <td>{row.filter_regexp ?? ""}</td>
+                                                <td>
+                                                    <Box sx={{display: 'flex', gap: 1}}>
+                                                        <Button
+                                                            size="sm"
+                                                            variant="plain"
+                                                            color="neutral"
+                                                            onClick={() => openEditAccountingFilterDialog(row)}
+                                                        >
+                                                            Edit
+                                                        </Button>
+                                                        <Button
+                                                            onClick={() => openFilterDeleteDialog(row)}
+                                                            size="sm"
+                                                            variant="soft"
+                                                            color="danger"
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    </Box>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </Table>
+                                </Box>
+                            </Sheet>
+                            <Stack direction={"row"} sx={{
+                                width: '50%',
+                                bottom: '-50px',
+                                right: 0,
+                                justifyItems: 'center',
+                                alignItem: "center",
+                                display: "flex",
+                                justifyContent: 'space-between',
+                                pt: 1
+                            }}>
+                                <Typography level={"body-sm"}>
+                                    Page Navigation
+                                </Typography>
+                                <Pagination
+                                    count={getPageCount(stateObj.filterCount, 10)}
+                                    page={currentPageFilter}
+                                    onChange={handlePageChangeFilter}
+                                    renderItem={(item) => (
+                                        <PaginationItem
+                                            slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
+                                            {...item}
+                                        />
+                                    )}
                                 />
-                            )}
-                        />
-                    </Stack>
+                            </Stack>
+                        </Box>
+                    </Box>
                 </Box>
             </Box>
 
@@ -663,11 +700,11 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetAccounts: (payload: any) => dispatch(getAllAccounts(payload)),
         onGetAccount: (payload: any) => dispatch(getAccount(payload)),
         onDelete: (payload: any) => dispatch(deleteAccount(payload)),
-        onFilterDelete:(payload: any)=>dispatch(deleteFilter(payload)),
+        onFilterDelete: (payload: any) => dispatch(deleteFilter(payload)),
         onGetFilters: (payload: any) => dispatch(getAllFilters(payload))
     };
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(Accounting);
+export default connector(RecordFilter);

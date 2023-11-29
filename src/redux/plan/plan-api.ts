@@ -44,21 +44,35 @@ const EDIT_PLAN_TYPES_API = {
 
 const ADD_PLAN_PARAMETER_API = {
     add: (payload: any) =>
-        axios.post(`/api/plan/parameters/add`, payload).then((response: { data: any }) => {
+        axios.post(`/api/plans/parameters/add`, payload).then((response: { data: any }) => {
             return response.data;
         }),
 };
 
 const EDIT_PLAN_PARAMETER_API = {
     edit: (payload: any) =>
-        axios.put(`/api/plan/parameters/edit`, payload).then((response: { data: any }) => {
+        axios.put(`/api/plans/parameters/edit`, payload).then((response: { data: any }) => {
             return response.data;
         }),
 };
 
 const DELETE_PLAN_PARAMETER_API = {
     delete: (payload: any) =>
-        axios.delete(`/api/plan/parameters/delete/id/${payload}`).then((response: { data: any }) => {
+        axios.delete(`/api/plans/parameters/delete/id/${payload}`).then((response: { data: any }) => {
+            return response.data;
+        }),
+};
+
+const DELETE_PLAN_ATTRIBUTE_API = {
+    delete: (payload: any) =>
+        axios.delete(`/api/plan/attributes/delete/id/${payload}`).then((response: { data: any }) => {
+            return response.data;
+        }),
+};
+
+const EDIT_PLAN_ATTRIBUTE_API = {
+    edit: (payload: any) =>
+        axios.put(`/api/plan/attributes/edit`, payload).then((response: { data: any }) => {
             return response.data;
         }),
 };
@@ -100,6 +114,8 @@ const GET_ALL_PLAN_API = {
 
 
 export {
+    EDIT_PLAN_ATTRIBUTE_API,
+    DELETE_PLAN_ATTRIBUTE_API,
     ADD_PLAN_API,
     EDIT_PLAN_API,
     DELETE_PLAN_API,

@@ -304,7 +304,7 @@ const COA: FC<ReduxProps> = (props: any) => {
                 width: "100%",
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
+                alignItems: 'start',
                 justifyContent: 'start',
 
             }}>
@@ -312,8 +312,8 @@ const COA: FC<ReduxProps> = (props: any) => {
                     width: "100%",
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    alignItems: 'start',
+                    justifyContent: 'start',
 
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
