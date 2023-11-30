@@ -63,6 +63,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
 
 
     const initLoad = (id?: string) => {
+        setSnackBar({...snackBar, isOpen: false});
         setIsLoading(true);
        // setSearchId(undefined);
         if (id !== undefined) {

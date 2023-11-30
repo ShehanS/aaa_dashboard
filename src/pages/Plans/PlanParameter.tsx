@@ -11,11 +11,19 @@ import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
-import {deletePlanType, getPlans, getPlansParameter} from "../../redux/plan/plan-slice";
+import {
+    clearPlanHistory,
+    deletePlanParameter,
+    deletePlanType,
+    getPlans,
+    getPlansParameter
+} from "../../redux/plan/plan-slice";
 import PlanParameterDalog from "../../components/Dialogs/PlanParameterDalog";
 import {IPlan} from "./Plan";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import {getMetaParams} from "../../redux/parameter/parameter-slice";
+import {IParameterMeta} from "../Parameters/ParameterSetting";
 
 
 type SnackBarProps = {
@@ -31,11 +39,12 @@ type StateObj = {
     planParametersGetSuccess: any;
     planParameterCount: number;
     plansGetSuccess: any;
+    metaParamsGetResponse: any;
 }
 
 export interface IPlanParameter {
     plan_id: number;
-    parameter_name: string;
+    parameter_name: number;
     parameter_value: string;
     reject_on_failure: number;
 }
@@ -48,6 +57,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [plans, setPlans] = useState<IPlan[]>([]);
+    const [metaParameters, setMetaParameters] = useState<IParameterMeta[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -61,7 +71,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             planParameterDeleteSuccess: null,
             planParametersGetSuccess: null,
             planParameterCount: 0,
-            plansGetSuccess: null
+            plansGetSuccess: null,
+            metaParamsGetResponse: null
         }
     )
     const getPlans = () => {
@@ -75,6 +86,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
+        props.clearPlanHistory();
+
         getPlans();
         setSearchId(undefined);
         setIsLoading(true);
@@ -87,6 +100,11 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             }
             props.onGetPlanParameters(request);
         }
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetMetaParameters(request);
     }
 
     useEffect(() => {
@@ -99,7 +117,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
     }
 
     const handleDelete = (id: string) => {
-        props.onDeletePlanType(id);
+        props.onDeletePlanParameter(id);
     }
 
 
@@ -107,7 +125,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
-            dialogContent: <DeleteDialog id={props.type_id} onDelete={handleDelete}/>
+            dialogContent: <DeleteDialog id={props.parameter_name} onDelete={handleDelete}/>
         });
     }
 
@@ -120,7 +138,6 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
     }
 
     const mapPlanIdToPlanTypeName = (id: number): string => {
-        console.log(id, plans)
         const plan: any = plans?.filter((plan: any) => plan?.plan_id === Number.parseInt(id))?.[0];
         return plan?.plan_name ?? "";
     }
@@ -131,6 +148,43 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             dialogContent: <PlanParameterDalog type={DialogType.edit} data={props}/>
         });
     }
+
+    useEffect(() => {
+        if (
+            (stateObj.planParameterDeleteSuccess === null ||
+                props.planParameterDeleteSuccess !== null) ||
+            (stateObj.planParameterDeleteSuccess !== props.planParameterDeleteSuccess)
+        ) {
+            setIsLoading(false);
+            setStateObj({
+                ...stateObj,
+                planParameterDeleteSuccess: props.planParameterDeleteSuccess,
+                coaRecordCount: 0,
+            });
+            if (props.planParameterDeleteSuccess?.code === "DELETE_PLAN_PARAMETER_SUCCESS") {
+                initLoad(searchId);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Plan attribute Record Deleted!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+            } else if (props.planParameterDeleteSuccess?.code === "DELETE_PLAN_PARAMETER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!!. Plan parameter Record couldn't get deleted due ${
+                        props.planParameterDeleteSuccess?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.planParameterDeleteSuccess]);
 
     useEffect(() => {
         if (
@@ -179,6 +233,31 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         }
     }, [props.plansGetSuccess]);
 
+    const mapMetParamIdToName = (id: number): string => {
+        const findId = Number.parseInt(String(id));
+        const parm: any = metaParameters?.filter((p: any) => p?.parameter_id === findId)?.[0];
+        return parm?.parameter_name ?? "";
+    }
+
+
+    useEffect(() => {
+        if (
+            (stateObj.metaParamsGetResponse === null ||
+                props.metaParamsGetResponse !== null) ||
+            (stateObj.metaParamsGetResponse !== props.metaParamsGetResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                metaParamsGetResponse: props.metaParamsGetResponse,
+            });
+            if (props.metaParamsGetResponse?.code === "GET_PARAMETER_META_SUCCESS") {
+                setMetaParameters(props.metaParamsGetResponse?.data?.records ?? []);
+
+            } else if (props.metaParamsGetResponse?.code === "GET_PARAMETER_META_FAILED") {
+            }
+        }
+    }, [props.metaParamsGetResponse]);
+
     useEffect(() => {
         if (
             (stateObj.planParameterAddSuccess === null ||
@@ -215,74 +294,42 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         }
     }, [props.planParameterAddSuccess]);
 
+
     useEffect(() => {
         if (
-            (stateObj.planTypeDeleteSuccess === null ||
-                props.planTypeDeleteSuccess !== null) ||
-            (stateObj.planTypeDeleteSuccess !== props.planTypeDeleteSuccess)
+            (stateObj.planParameterEditSuccess === null ||
+                props.planParameterEditSuccess !== null) ||
+            (stateObj.planParameterEditSuccess !== props.planParameterEditSuccess)
         ) {
-            setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                planTypeDeleteSuccess: props.planTypeDeleteSuccess,
-                coaRecordCount: 0,
+                planParameterEditSuccess: props.planParameterEditSuccess,
             });
-            if (props.planTypeDeleteSuccess?.code === "DELETE_PLAN_TYPE_SUCCESS") {
-                initLoad(searchId);
+            setIsLoading(false);
+            if (props.planParameterEditSuccess?.code === "EDIT_PLAN_PARAMETER_SUCCESS") {
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "success",
-                    message: `Plan type deleted!!!!`,
+                    message: "Parameter updated !!",
                 });
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-            } else if (props.planTypeDeleteSuccess?.code === "DELETE_PLAN_TYPE_FAILED") {
+                initLoad();
+            } else if (props.planParameterEditSuccess?.code === "EDIT_PLAN_PARAMETER_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!! delete plan type couldn't get deleted due ${
-                        props.planTypeDeleteSuccess?.error ?? ""
+                    message: `Oops!!. Record couldn't get records due ${
+                        props.planParameterEditSuccess?.error ?? ""
                     }`,
                 });
             }
         }
-    }, [props.planTypeDeleteSuccess]);
-
-    useEffect(() => {
-        if (
-            (stateObj.planTypeEditSuccess === null ||
-                props.planTypeEditSuccess !== null) ||
-            (stateObj.planTypeEditSuccess !== props.planTypeEditSuccess)
-        ) {
-            setIsLoading(false);
-            setStateObj({
-                ...stateObj,
-                planTypeEditSuccess: props.planTypeEditSuccess,
-                coaRecordCount: 0,
-            });
-            if (props.planTypeEditSuccess?.code === "EDIT_PLAN_TYPE_SUCCESS") {
-                initLoad(searchId);
-                setSearchId(searchId);
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-            } else if (props.planTypeEditSuccess?.code === "EDIT_PLAN_TYPE_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!!. COA Event Record couldn't get updated due ${
-                        props.planTypeEditSuccess?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.planTypeEditSuccess]);
+    }, [props.planParameterEditSuccess]);
 
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
@@ -417,9 +464,9 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 {planParameters?.map((row) => (
                                     <tr key={row.plan_id}>
                                         <td>{mapPlanIdToPlanTypeName(row.plan_id)}</td>
-                                        <td>{row.parameter_name ?? ""}</td>
+                                        <td>{mapMetParamIdToName(row.parameter_name)}</td>
                                         <td>{row.parameter_value ?? ""}</td>
-                                        <td>{row.reject_on_failure ?? ""}</td>
+                                        <td>{row.reject_on_failure === 1 ? "YES" : "NO"}</td>
                                         <td>
                                             <Box sx={{display: 'flex', gap: 1}}>
                                                 <IconButton
@@ -486,7 +533,8 @@ const mapStateToProps = (state: RootState) => {
         planParameterAddSuccess: state.plan.planParameterAddSuccess,
         planParameterEditSuccess: state.plan.planParameterEditSuccess,
         planParameterDeleteSuccess: state.plan.planParameterDeleteSuccess,
-        plansGetSuccess: state.plan.plansGetSuccess
+        plansGetSuccess: state.plan.plansGetSuccess,
+        metaParamsGetResponse: state.param.metaParamsGetResponse,
 
     };
 };
@@ -495,7 +543,10 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetPlanParameters: (payload: any) => dispatch(getPlansParameter(payload)),
         onDeletePlanType: (payload: any) => dispatch(deletePlanType(payload)),
+        onDeletePlanParameter: (payload: any) => dispatch(deletePlanParameter(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
+        clearPlanHistory: () => dispatch(clearPlanHistory()),
+        onGetMetaParameters: (payload: any) => dispatch(getMetaParams(payload)),
     };
 };
 

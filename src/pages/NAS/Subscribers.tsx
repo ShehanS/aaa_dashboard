@@ -105,6 +105,7 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
 
 
     const initLoad = (id?: string) => {
+        setSnackBar({...snackBar, isOpen: false});
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -404,7 +405,7 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"NAS"} subTitle={"Config NAS"}/>
+            <HeaderText title={"Subscribers"} subTitle={"Manage subscriber"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',

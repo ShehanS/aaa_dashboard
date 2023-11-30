@@ -67,7 +67,7 @@ export interface ISubscriber {
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
-const AttributeMap: FC<ReduxProps> = (props: any) => {
+const AttributeGroup: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageForAtt, setCurrentPageForAtt] = useState(1);
     const [currentPageForSub, setCurrentPageForSub] = useState(1);
@@ -106,6 +106,7 @@ const AttributeMap: FC<ReduxProps> = (props: any) => {
 
 
     const initLoad = (id?: string) => {
+        setSnackBar({...snackBar, isOpen: false});
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -749,7 +750,7 @@ const AttributeMap: FC<ReduxProps> = (props: any) => {
         >
             {snackBar.message ?? ""}
         </Snackbar>
-        <HeaderText title={"Attributes"} subTitle={"Manage Attributes"}/>
+        <HeaderText title={"Attribute group"} subTitle={"Manage Attributes"}/>
         <Box sx={{
             width: "100%",
             display: 'flex',
@@ -951,4 +952,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(AttributeMap);
+export default connector(AttributeGroup);

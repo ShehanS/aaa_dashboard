@@ -22,7 +22,11 @@ const Home: FC<Props> = ({children}) => {
         >
             <Grid md={1} sm={1} lg={1} direction="row">
                 <Header/>
-                <SideMenu/>
+             <Box sx={{position:"absolute",  height:"100%"}}>
+                 <Box sx={{marginTop:10, width:"290px", height:"90%" ,overflowY:"auto", overflowX: "none"}}>
+                     <SideMenu/>
+                 </Box>
+             </Box>
             </Grid>
             <Grid md={11} sm={11} lg={11}>
                 <Box sx={{position: 'absolute', left: 300, top: 100, width:"80%"}}>

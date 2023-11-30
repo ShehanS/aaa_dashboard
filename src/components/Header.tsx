@@ -11,10 +11,9 @@ const Header: FC = (props: any) => {
             width: '100%',
             height: 80,
             borderRadius: 0,
-            borderBottom: '3px solid  #756AFF'
-
+            borderBottom: '3px solid  #756AFF',
         }}>
-            <img src={"vite.svg"}/> AAA Product Dashboard
+            <img loading={"lazy"} src={"http://localhost/robo.png"} width={50}/>
         </Card>
     </React.Fragment>)
 }

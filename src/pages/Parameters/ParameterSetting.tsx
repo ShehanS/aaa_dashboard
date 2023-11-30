@@ -335,6 +335,7 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
     };
 
     const initLoad = (id?: string) => {
+        setSnackBar({...snackBar, isOpen: false});
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {

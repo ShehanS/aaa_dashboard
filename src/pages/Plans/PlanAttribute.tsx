@@ -15,6 +15,9 @@ import {deletePlanAttribute, getPlans, getPlansAttribute} from "../../redux/plan
 import {IPlan} from "./Plan";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import attributeGroup from "../NAS/AttributeGroup";
+import {IAttribute} from "../NAS/NASConfig";
+import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
 
 type SnackBarProps = {
     isOpen: boolean,
@@ -29,6 +32,7 @@ type StateObj = {
     planAttributesGetSuccess: any;
     attributeRecordCount: number;
     plansGetSuccess: any;
+    attrGroupsResponse: any;
 }
 
 export interface IPlanAttribute {
@@ -47,6 +51,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
+    const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const [plans, setPlans] = useState<IPlan[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
@@ -61,13 +66,15 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             planAttributeEditSuccess: null,
             planAttributesGetSuccess: null,
             attributeRecordCount: 0,
-            plansGetSuccess: null
+            plansGetSuccess: null,
+            attrGroupsResponse: null
         }
     )
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
+        setSnackBar({...snackBar, isOpen: false});
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -79,6 +86,11 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             props.onGetPlanAttribute(request);
             getPlans();
         }
+        const request = {
+            page:0,
+            pageSize: 1000
+        }
+        props.onGetAttributes(request);
     }
 
     useEffect(() => {
@@ -252,6 +264,25 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             }
         }
     }, [props.planAttributeDeleteSuccess]);
+    useEffect(() => {
+        if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
+            setIsLoading(false);
+            if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    attrGroupsResponse: props.attrGroupsResponse,
+                });
+                setAttributes(props.attrGroupsResponse?.data?.records ?? []);
+            } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get NAS records due to ${props.attrGroupsResponse?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.attrGroupsResponse]);
 
     useEffect(() => {
         if (
@@ -431,7 +462,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                                         <td>{mapPlanIdToPlanTypeName(row.plan_id)}</td>
                                         <td>{row.attribute_name ?? ""}</td>
                                         <td>{row.attribute_value ?? ""}</td>
-                                        <td>{row.attribute_group ?? ""}</td>
+                                        <td>{attributes?.filter((att: any) => att?.group_id === row.attribute_group)?.[0]?.group_name ?? ""}</td>
                                         <td>{row.include_plan_state ?? ""}</td>
                                         <td>{row.status ?? ""}</td>
                                         <td>
@@ -500,7 +531,8 @@ const mapStateToProps = (state: RootState) => {
         planAttributeEditSuccess: state.plan.planAttributeEditSuccess,
         planAttributeDeleteSuccess: state.plan.planAttributeDeleteSuccess,
         planAttributesGetSuccess: state.plan.planAttributesGetSuccess,
-        plansGetSuccess:state.plan.plansGetSuccess
+        plansGetSuccess:state.plan.plansGetSuccess,
+        attrGroupsResponse: state.nas.attrGroupsResponse,
     };
 };
 
@@ -509,6 +541,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetPlanAttribute: (payload: any) => dispatch(getPlansAttribute(payload)),
         onDeleteAttribute:(payload: any)=> dispatch(deletePlanAttribute(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
+        onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
     };
 };
 

@@ -8,7 +8,7 @@ import Accounting from "./pages/System/Accounting";
 import COA from "./pages/COA/COA";
 import {AppDataContextProvider} from "./context/AppDataContext";
 import React from "react"
-import AttributeMap from "./pages/NAS/AttributeMap";
+import AttributeMap from "./pages/NAS/AttributeGroup";
 import ConfigNAS from "./pages/NAS/NASConfig";
 import ParameterSetting from "./pages/Parameters/ParameterSetting";
 import {DialogDataContextProvider} from "./context/DialogDataContext";
@@ -18,6 +18,7 @@ import PlanParameter from "./pages/Plans/PlanParameter";
 import Plan from "./pages/Plans/Plan";
 import RecordFilter from "./pages/System/RecordFilter";
 import Subscribers from "./pages/NAS/Subscribers";
+import LandingPage from "./pages/home/LandingPage";
 
 function App() {
     return (
@@ -28,6 +29,8 @@ function App() {
                         <BrowserRouter>
                             <Home>
                                 <Routes>
+                                    <Route path={ROUTES.home} element={<LandingPage/>}/>
+                                    <Route path={ROUTES.root} element={<LandingPage/>}/>
                                     <Route path={ROUTES.AVPOverride} element={<AVPOverride/>}/>
                                     <Route path={ROUTES.account} element={<Accounting/>}/>
                                     <Route path={ROUTES.record_filter} element={<RecordFilter/>}/>

@@ -10,7 +10,11 @@ import {RootState} from "../../redux/store";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {connect, ConnectedProps} from "react-redux";
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
+
 import {
+    clearNasResponse,
     deleteAttribute,
     deleteNASRecord,
     deleteSubscriber,
@@ -22,8 +26,7 @@ import {
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import NASAttributeGroupDialog, {DialogType} from "../../components/Dialogs/NASAttributGroupDialog";
-import NASSubscriberDialog from "../../components/Dialogs/NASSubscriberDialog";
+import {DialogType} from "../../components/Dialogs/NASAttributGroupDialog";
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -53,7 +56,7 @@ export interface INasEvent {
     nas_id: number;
     nas_name: string;
     nas_type: string;
-    nas_attrgroup: string;
+    nas_attrgroup: number;
     nas_secret: string;
     create_date: Date;
 }
@@ -82,15 +85,14 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
+    const [isHide, setHide] = useState<boolean>(false);
+    const [index, setIndex] = useState<number>(9999);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
         message: "",
     });
     const [nasCount, setNasCount] = useState<number>(0);
-    const [attrCount, setAttrCount] = useState<number>(0);
-    const [subscriberCount, setSubscriberCount] = useState<number>(0);
-    const [subscribers, setSubscribers] = useState<ISubscriber[]>([]);
     const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const [nasEvents, setNasEvents] = useState<INasEvent[]>([]);
     const [stateObj, setStateObj] = useState<StateObj>({
@@ -124,15 +126,27 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 pageSize: 10
             }
             props.onGetNasRecords(request);
-            props.onGetAttributes(request);
             props.onGetSubscribe(request)
         }
+        const request = {
+            page:0,
+            pageSize: 1000
+        }
+        props.onGetAttributes(request);
     }
 
     useEffect(() => {
         initLoad();
     }, []);
 
+    const passwordIsHide = (index: number) => {
+        setIndex(index);
+        if (!isHide) {
+            setHide(true);
+        } else {
+            setHide(false);
+        }
+    }
 
     useEffect(() => {
         if (
@@ -164,35 +178,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         }
     }, [props.nasRecordsResponse]);
 
-    useEffect(() => {
-        if (
-            (stateObj.subscribersResponse === null ||
-                props.subscribersResponse !== null) ||
-            (stateObj.subscribersResponse !== props.subscribersResponse)
-        ) {
-            setStateObj({
-                ...stateObj,
-                subscribersResponse: props.subscribersResponse
-            });
-            setIsLoading(false);
-            if (props.subscribersResponse?.code === "GET_NAS_SUBSCRIBERS_SUCCESS") {
-                setStateObj({
-                    ...stateObj,
-                    subscribersResponse: props.subscribersResponse
-                });
-                setSubscriberCount(props.subscribersResponse?.data?.count ?? 0,)
-                setSubscribers(props.subscribersResponse?.data?.records ?? []);
-            } else if (props.subscribersResponse?.code === "GET_NAS_SUBSCRIBERS_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!! Couldn't get subscribers due to ${props.subscribersResponse?.error ?? ""}`,
-                });
-            }
-        }
-    }, [props.subscribersResponse]);
-
 
     useEffect(() => {
         if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
@@ -202,7 +187,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     ...stateObj,
                     attrGroupsResponse: props.attrGroupsResponse,
                 });
-                setAttrCount(props.attrGroupsResponse?.data?.count ?? 0)
                 setAttributes(props.attrGroupsResponse?.data?.records ?? []);
             } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
                 setSnackBar({
@@ -214,7 +198,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             }
         }
     }, [props.attrGroupsResponse]);
-
 
     useEffect(() => {
         if (
@@ -253,277 +236,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             }
         }
     }, [props.nasRecordDeleteResponse]);
-
-
-    useEffect(() => {
-        if (
-            (stateObj.attrAddResponse === null ||
-                props.attrAddResponse !== null) ||
-            (stateObj.attrAddResponse !== props.attrAddResponse)
-        ) {
-            setStateObj({
-                ...stateObj,
-                attrAddResponse: props.attrAddResponse,
-            });
-            setIsLoading(false);
-            if (props.attrAddResponse?.code === "ADD_NAS_ATTRIBUTE_GROUP_SUCCESS") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `New attribute group record added!!!!`,
-                });
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: "NAS added!!",
-                });
-                initLoad();
-            } else if (props.attrAddResponse?.code === "ADD_NAS_ATTRIBUTE_GROUP_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!!. Record couldn't get records due ${
-                        props.attrAddResponse?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.attrAddResponse]);
-
-    useEffect(() => {
-        if (
-            (stateObj.subscribeAddResponse === null ||
-                props.subscribeAddResponse !== null) ||
-            (stateObj.subscribeAddResponse !== props.subscribeAddResponse)
-        ) {
-            setStateObj({
-                ...stateObj,
-                subscribeAddResponse: props.subscribeAddResponse,
-            });
-            setIsLoading(false);
-            if (props.subscribeAddResponse?.code === "ADD_NAS_SUBSCRIBER_SUCCESS") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `New attribute group record added!!!!`,
-                });
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: "NAS added!!",
-                });
-                initLoad();
-            } else if (props.subscribeAddResponse?.code === "ADD_NAS_SUBSCRIBER_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops! Add subscriber failed due to ${
-                        props.subscribeAddResponse?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.subscribeAddResponse]);
-
-
-    useEffect(() => {
-        if (
-            (stateObj.subscriberEditResponse === null ||
-                props.subscriberEditResponse !== null) ||
-            (stateObj.subscriberEditResponse !== props.subscriberEditResponse)
-        ) {
-            setIsLoading(false);
-            setStateObj({
-                ...stateObj,
-                subscriberEditResponse: props.subscriberEditResponse,
-            });
-            if (props.subscriberEditResponse?.code === "EDIT_NAS_SUBSCRIBER_SUCCESS") {
-                initLoad(searchId);
-                setSearchId(searchId);
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `Subscriber updated successfully!`,
-                });
-                initLoad();
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-            } else if (props.subscriberEditResponse?.code === "EDIT_NAS_SUBSCRIBER_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops! Edit subscriber failed due to ${
-                        props.subscriberEditResponse?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.subscriberEditResponse]);
-
-
-    useEffect(() => {
-        if (
-            (stateObj.attrEditResponse === null ||
-                props.attrEditResponse !== null) ||
-            (stateObj.attrEditResponse !== props.attrEditResponse)
-        ) {
-            setIsLoading(false);
-            setStateObj({
-                ...stateObj,
-                attrEditResponse: props.attrEditResponse
-            });
-            if (props.attrEditResponse?.code === "EDIT_NAS_ATTRIBUTE_GROUP_SUCCESS") {
-                initLoad(searchId);
-                setSearchId(searchId);
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `Attributr group updated!!!!`,
-                });
-                initLoad();
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-            } else if (props.attrEditResponse?.code === "EDIT_NAS_ATTRIBUTE_GROUP_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!!. Edit Event Record couldn't get updated due ${
-                        props.attrEditResponse?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.attrEditResponse]);
-
-    useEffect(() => {
-        if (
-            (stateObj.subscriberEditResponse === null ||
-                props.subscriberEditResponse !== null) ||
-            (stateObj.subscriberEditResponse !== props.subscriberEditResponse)
-        ) {
-            setIsLoading(false);
-            setStateObj({
-                ...stateObj,
-                subscriberEditResponse: props.subscriberEditResponse,
-            });
-            if (props.subscriberEditResponse?.code === "DELETE_NAS_SUBSCRIBER_SUCCESS") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `Subscriber updated successfully!`,
-                });
-            } else if (props.subscriberEditResponse?.code === "DELETE_NAS_SUBSCRIBER_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops! Edit subscriber failed due to ${
-                        props.subscriberEditResponse?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.subscriberEditResponse]);
-
-
-    useEffect(() => {
-        if (
-            (stateObj.attrDeleteResponse === null ||
-                props.attrDeleteResponse !== null) ||
-            (stateObj.attrDeleteResponse !== props.attrDeleteResponse)
-        ) {
-            setIsLoading(false);
-            setStateObj({
-                ...stateObj,
-                attrDeleteResponse: props.attrDeleteResponse,
-                nasRecordCount: 0,
-            });
-            if (props.attrDeleteResponse?.code === "DELETE_NAS_ATTRIBUTE_GROUP_SUCCESS") {
-                initLoad(searchId);
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `NAS Record Deleted!!!!`,
-                });
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-                initLoad();
-            } else if (props.attrDeleteResponse?.code === "DELETE_NAS_ATTRIBUTE_GROUP_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!!. NAS Record couldn't get deleted due ${
-                        props.attrDeleteResponse?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.attrDeleteResponse]);
-
-    useEffect(() => {
-        if (
-            (stateObj.subscriberDeleteResponse === null ||
-                props.subscriberDeleteResponse !== null) ||
-            (stateObj.subscriberDeleteResponse !== props.subscriberDeleteResponse)
-        ) {
-            setIsLoading(false);
-            setStateObj({
-                ...stateObj,
-                subscriberDeleteResponse: props.subscriberDeleteResponse,
-                subscriberCount: 0,
-            });
-            if (props.subscriberDeleteResponse?.code === "DELETE_NAS_SUBSCRIBER_SUCCESS") {
-                setAppDataContext({
-                    ...appDataContext,
-                    isOpenDialog: false,
-                });
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `Subscriber Deleted successfully!`,
-                });
-                initLoad();
-            } else if (props.subscriberDeleteResponse?.code === "DELETE_NAS_SUBSCRIBER_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops! Delete subscriber failed due to ${
-                        props.subscriberDeleteResponse?.error ?? ""
-                    }`,
-                });
-            }
-        }
-    }, [props.subscriberDeleteResponse]);
-
 
     useEffect(() => {
         if (
@@ -621,23 +333,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         });
     }
 
-    const openAddNASGroupDialog = () => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <NASAttributeGroupDialog type={DialogType.add}/>
-        });
-    }
-
-    const openEditNASGroupDialog = (props: any) => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <NASAttributeGroupDialog data={props} type={DialogType.edit}/>
-        });
-    }
-
-
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
         setIsLoading(true);
@@ -649,25 +344,6 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
     };
 
-    const handlePageChangeForSub = (event: any, page: number) => {
-        setCurrentPageForSub(page);
-        const request = {
-            page: page - 1,
-            pageSize: 10
-        }
-        props.onGetSubscribe(request);
-    }
-
-    const handlePageChangeForAtt = (event: any, page: number) => {
-        setCurrentPageForAtt(page);
-        setIsLoading(true);
-        const request = {
-            page: page - 1,
-            pageSize: 10
-        }
-        props.onGetAttributes(request);
-
-    };
     const openEditNasDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
@@ -743,7 +419,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         >
             {snackBar.message ?? ""}
         </Snackbar>
-        <HeaderText title={"Network Access Storage"} subTitle={"Manage NAS"}/>
+        <HeaderText title={"Network Access Server"} subTitle={"Manage NAS"}/>
         <Box sx={{
             width: "100%",
             display: 'flex',
@@ -837,13 +513,23 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                             </tr>
                             </thead>
                             <tbody>
-                            {nasEvents?.map((row) => (
+                            {nasEvents?.map((row, i) => (
                                 <tr key={row.nas_id}>
                                     <td>{row.nas_id ?? ""}</td>
                                     <td>{row.nas_name ?? ""}</td>
                                     <td>{row.nas_type ?? ""}</td>
-                                    <td>{row.nas_attrgroup ?? ""}</td>
-                                    <td>{row.nas_secret ?? ""}</td>
+                                    <td>{attributes?.filter((att: any) => att?.group_id === row.nas_attrgroup)?.[0]?.group_name ?? ""}</td>
+                                    <td>
+                                        <Stack direction={"row"} display={"flex"}
+                                               sx={{alignItems: "center", justifyContent: "space-between"}}>
+                                            {isHide && index === i ? row.nas_secret : "***********"}<IconButton
+                                            size={"sm"}
+                                            onClick={() => passwordIsHide(i)}>{isHide && index === i ?
+                                            <VisibilityRoundedIcon/> :
+                                            <VisibilityOffRoundedIcon/>}</IconButton>
+                                        </Stack>
+
+                                    </td>
                                     <td>{row.create_date ?? ""}</td>
                                     <td>
                                         <Box sx={{display: 'flex', gap: 1}}>
@@ -888,7 +574,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     <Pagination
                         count={getPageCount(nasCount, 10)}
                         page={currentPage}
-                        onChange={handlePageChangeForAtt}
+                        onChange={handlePageChange}
                         renderItem={(item) => (
                             <PaginationItem
                                 slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
@@ -910,7 +596,7 @@ const mapStateToProps = (state: RootState) => {
         nasRecordEditResponse: state.nas.nasRecordEditResponse,
         nasRecordDeleteResponse: state.nas.nasRecordDeleteResponse,
         nasRecordsResponse: state.nas.nasRecordsResponse,
-        // attrGroupsResponse: state.nas.attrGroupsResponse,
+        attrGroupsResponse: state.nas.attrGroupsResponse,
         // attrAddResponse: state.nas.attrAddResponse,
         // attrEditResponse: state.nas.attrEditResponse,
         // attrDeleteResponse: state.nas.attrDeleteResponse,
@@ -929,7 +615,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetNasRecord: (id: any) => dispatch(getNASRecord(id)),
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
         onDeleteSubscriber: (payload: any) => dispatch(deleteSubscriber(payload)),
-        onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload))
+        onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload)),
+
 
     };
 };

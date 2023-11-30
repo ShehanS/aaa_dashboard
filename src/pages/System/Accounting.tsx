@@ -361,6 +361,7 @@ const Accounting: FC = (props: any) => {
 
 
     const initLoad = (id?: string) => {
+        setSnackBar({...snackBar, isOpen: false});
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -458,7 +459,7 @@ const Accounting: FC = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"Account"} subTitle={"Manage Account"}/>
+            <HeaderText title={"Records"} subTitle={"Manage Records"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',

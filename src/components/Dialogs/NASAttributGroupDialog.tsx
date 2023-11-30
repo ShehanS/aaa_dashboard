@@ -5,7 +5,7 @@ import Button from "@mui/joy/Button";
 import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Textarea,} from "@mui/joy";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
-import {addAttribute, addNASRecord, editAttribute, editNASRecord} from "../../redux/nas/nas-slice";
+import {addAttribute, editAttribute} from "../../redux/nas/nas-slice";
 import {useAppDataContext} from "../../context/AppDataContext";
 
 export enum DialogType {
@@ -75,13 +75,13 @@ const NASAttributeGroupDialog: FC<Props> = (props) => {
 
                 <Stack direction={"column"} sx={{alignItems: 'center', pt: 3, width: '100%'}}>
 
-                    <FormControl>
-                        <FormLabel>
-                            Group ID:
-                        </FormLabel>
-                        <Input type={"number"} name={"group_id"} value={input?.inputData?.['group_id'] ?? ""}
-                               onChange={handleInput}/>
-                    </FormControl>
+                    {/*<FormControl>*/}
+                    {/*    <FormLabel>*/}
+                    {/*        Group ID:*/}
+                    {/*    </FormLabel>*/}
+                    {/*    <Input type={"number"} name={"group_id"} value={input?.inputData?.['group_id'] ?? ""}*/}
+                    {/*           onChange={handleInput}/>*/}
+                    {/*</FormControl>*/}
                     <FormControl>
                         <FormLabel>
                             Group Name:

@@ -77,6 +77,12 @@ export const ParameterSlice = createSlice({
         getMetaParamsSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             metaParamsGetResponse: action.payload,
+            metaParameterAddResponse: null,
+            metaParameterEditResponse: null,
+            metaParameterDeleteResponse: null,
+            sqlParameterAddResponse: null,
+            sqlParameterEditResponse: null,
+            sqlParameterDeleteResponse: null,
             error: null
         }),
         getMetaParamSuccess: (state, action: PayloadAction<any>) => ({
@@ -123,6 +129,12 @@ export const ParameterSlice = createSlice({
         getSqlParamsSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             sqlParametersGetResponse: action.payload,
+            metaParameterAddResponse: null,
+            metaParameterEditResponse: null,
+            metaParameterDeleteResponse: null,
+            sqlParameterAddResponse: null,
+            sqlParameterEditResponse: null,
+            sqlParameterDeleteResponse: null,
             error: null
         }),
 
