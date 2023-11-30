@@ -9,61 +9,79 @@ import DiscFullRoundedIcon from '@mui/icons-material/DiscFullRounded';
 import WifiTetheringRoundedIcon from '@mui/icons-material/WifiTetheringRounded';
 import FileOpenRoundedIcon from '@mui/icons-material/FileOpenRounded';
 import ModelTrainingRoundedIcon from '@mui/icons-material/ModelTrainingRounded';
+import {Typography} from "@mui/joy";
 
 
+const selected = {
+    borderBottom: '3px solid #e85153', color: 'white', fontWeight: 'bold', backgroundColor: '#0aa59e'
+}
+const unSelected = {
+    borderBottom: 'none', color: '#334357', fontWeight: 'normal', backgroundColor: undefined
+}
 const SideMenu: FC = (props: any) => {
     const location = useLocation();
 
-    const isActive = (route: any): string | undefined => {
-        return location.pathname === route ? "#756AFF" : undefined;
+    const isActive = (route: any): boolean => {
+        return location.pathname === route ? true : false;
     }
 
 
     return (
-        <Box sx={{width: 270}}>
+        <Box sx={{width: 270, alignItems:"center", justifyItems:"center", justifyContent:'center'}}>
+
             <Sidebar defaultCollapsed={true}>
                 <Menu>
-                    <SubMenu label={"System"} defaultOpen={false} prefix={<AutoAwesomeRoundedIcon/>}>
-                        <SubMenu label="Accounting" defaultOpen={false} prefix={<PhotoCameraFrontRoundedIcon/>}>
-                            <MenuItem style={{backgroundColor: isActive(ROUTES.account)}}
+                    <SubMenu label={"System"} style={unSelected}
+                             defaultOpen={isActive(ROUTES.account) || isActive(ROUTES.AVPOverride) || isActive(ROUTES.record_filter)}
+                             prefix={<AutoAwesomeRoundedIcon/>}>
+                        <SubMenu label="Accounting" style={unSelected}
+                                 defaultOpen={isActive(ROUTES.account) || isActive(ROUTES.AVPOverride) || isActive(ROUTES.record_filter)}
+                                 prefix={<PhotoCameraFrontRoundedIcon/>}>
+                            <MenuItem style={isActive(ROUTES.account) ? selected : unSelected}
                                       component={<Link to={ROUTES.account}></Link>}>Records</MenuItem>
-                            <MenuItem style={{backgroundColor: isActive(ROUTES.AVPOverride)}}
+                            <MenuItem style={isActive(ROUTES.AVPOverride) ? selected : unSelected}
                                       component={<Link to={ROUTES.AVPOverride}></Link>}> AVP Override</MenuItem>
-                            <MenuItem style={{backgroundColor: isActive(ROUTES.record_filter)}}
+                            <MenuItem style={isActive(ROUTES.record_filter) ? selected : unSelected}
                                       component={<Link to={ROUTES.record_filter}></Link>}>Record Filter</MenuItem>
                         </SubMenu>
                     </SubMenu>
-                    <SubMenu label={"NAS"} defaultOpen={false} prefix={<DiscFullRoundedIcon/>}>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.nas_attribute_map)}}
+                    <SubMenu label={"NAS"} style={unSelected}
+                             defaultOpen={isActive(ROUTES.nas_attribute_map) || isActive(ROUTES.nas_config) || isActive(ROUTES.subscribers)}
+                             prefix={<DiscFullRoundedIcon/>}>
+                        <MenuItem style={isActive(ROUTES.nas_attribute_map) ? selected : unSelected}
                                   component={<Link to={ROUTES.nas_attribute_map}></Link>}>Attribute Group</MenuItem>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.nas_config)}}
+                        <MenuItem style={isActive(ROUTES.nas_config) ? selected : unSelected}
                                   component={<Link to={ROUTES.nas_config}></Link>}>NAS Manage</MenuItem>
 
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.subscribers)}}
+                        <MenuItem style={isActive(ROUTES.subscribers) ? selected : unSelected}
                                   component={<Link to={ROUTES.subscribers}></Link>}>Manage Subscribers</MenuItem>
                     </SubMenu>
-                    <SubMenu label={"COA/DM"} defaultOpen={false} prefix={<WifiTetheringRoundedIcon/>}>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.coa)}}
+                    <SubMenu style={unSelected} label={"COA/DM"} defaultOpen={isActive(ROUTES.coa)} prefix={<WifiTetheringRoundedIcon/>}>
+                        <MenuItem style={isActive(ROUTES.coa) ? selected : unSelected}
                                   component={<Link to={ROUTES.coa}></Link>}>COA</MenuItem>
                         <MenuItem>DM</MenuItem>
                     </SubMenu>
-                    <SubMenu label={"Plan"} defaultOpen={false} prefix={<FileOpenRoundedIcon/>}>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.plan_type)}}
+                    <SubMenu label={"Plan"} style={unSelected}
+                             defaultOpen={isActive(ROUTES.plan_type) || isActive(ROUTES.plan) || isActive(ROUTES.plan_attribute) || isActive(ROUTES.plan_parameter)}
+                             prefix={<FileOpenRoundedIcon/>}>
+                        <MenuItem style={isActive(ROUTES.plan_type) ? selected : unSelected}
                                   component={<Link to={ROUTES.plan_type}></Link>}>Plan Types</MenuItem>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.plan)}}
+                        <MenuItem style={isActive(ROUTES.plan) ? selected : unSelected}
                                   component={<Link to={ROUTES.plan}></Link>}>Plan</MenuItem>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.plan_attribute)}}
+                        <MenuItem style={isActive(ROUTES.plan_attribute) ? selected : unSelected}
                                   component={<Link to={ROUTES.plan_attribute}></Link>}>Plan Attribute</MenuItem>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.plan_parameter)}}
+                        <MenuItem style={isActive(ROUTES.plan_parameter) ? selected : unSelected}
                                   component={<Link to={ROUTES.plan_parameter}></Link>}>Plan Parameters</MenuItem>
                     </SubMenu>
-                    <SubMenu label={"Parameters"} defaultOpen={false} prefix={<ModelTrainingRoundedIcon/>}>
-                        <MenuItem style={{backgroundColor: isActive(ROUTES.parameter_setting)}}
+                    <SubMenu style={unSelected} label={"Parameters"} defaultOpen={isActive(ROUTES.parameter_setting)}
+                             prefix={<ModelTrainingRoundedIcon/>}>
+                        <MenuItem style={isActive(ROUTES.parameter_setting) ? selected : unSelected}
                                   component={<Link to={ROUTES.parameter_setting}></Link>}>Manage Parameters</MenuItem>
                     </SubMenu>
 
                 </Menu>
             </Sidebar>
+
         </Box>
     );
 };

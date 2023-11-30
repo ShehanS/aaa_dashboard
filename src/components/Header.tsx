@@ -1,20 +1,28 @@
 import React, {FC} from "react";
-import {Card} from "@mui/joy";
+import {Box, Typography} from "@mui/joy";
+
 
 const Header: FC = (props: any) => {
     return (<React.Fragment>
-        <Card orientation="horizontal" sx={{
-            justifyContent: 'start',
+        <Box sx={{
+            justifyContent: 'end',
             alignItems: 'center',
-            justifyItems: 'center',
             position: 'absolute',
             width: '100%',
             height: 80,
             borderRadius: 0,
-            borderBottom: '3px solid  #756AFF',
+            display: 'flex',
+            right: 0,
+            padding: 0,
+            background: '#0bb1aa',
+            zIndex: 9999,
+            boxShadow: '0px 2px 10px 0px #b8b8b8'
         }}>
-            <img loading={"lazy"} src={"http://localhost/robo.png"} width={50}/>
-        </Card>
+            <Box sx={{position: "absolute", height:'100%'}}>
+            </Box>
+            <img loading={"lazy"} src={"http://localhost/bar.png"} style={{height: 80}}/>
+        </Box>
+
     </React.Fragment>)
 }
 

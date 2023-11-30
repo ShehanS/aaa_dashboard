@@ -549,7 +549,6 @@ const RecordFilter: FC = (props: any) => {
                             justifyContent: 'start',
 
                         }}>
-                            <HeaderText title={""} subTitle={"Account Filters"}/>
                             <Sheet
                                 variant="outlined"
                                 sx={{
