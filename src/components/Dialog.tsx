@@ -29,7 +29,7 @@ const Dialog: FC = () => {
                onClose={() => {
                    setAppDataContext({...appDataContext, isOpenDialog: false});
                }}>
-            <ModalDialog variant="outlined" role="alertdialog" sx={{width: appDataContext.dialogWidth, height: appDataContext.dialogHeight}}
+            <ModalDialog variant="outlined" role="alertdialog" sx={{width: appDataContext.dialogWidth, height: appDataContext.dialogHeight, background:'linear-gradient(339deg, rgba(34,193,195,1) 0%, rgba(23,64,65,1) 100%);'}}
                          layout={matches ? "center" : "fullscreen"}>
                 {appDataContext.dialogContent}
             </ModalDialog>

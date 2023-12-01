@@ -142,7 +142,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
                     Parameter Meta Dialog
                 </DialogTitle>
                 <Divider/>
@@ -156,22 +156,22 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                     {/*    <Input type={"number"} name={"parameter_id"} value={input?.inputData?.['parameter_id'] ?? ""}*/}
                     {/*           onChange={handleInput}/>*/}
                     {/*</FormControl>*/}
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Name:
                         </FormLabel>
                         <Input name={"parameter_name"} value={input?.inputData?.['parameter_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Lib Path:
                         </FormLabel>
                         <Input name={"parameter_lib_path"} value={input?.inputData?.['parameter_lib_path'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl sx={{width: 278}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Method Symbol:
                         </FormLabel>
                         {/*<Input type={"number"} name={"nas_attrgroup"} value={input?.inputData?.['nas_attrgroup'] ?? ""}*/}
@@ -186,8 +186,8 @@ const ParameterMetaDialog: FC<Props> = (props) => {
 
                         </Select>
                     </FormControl>
-                    <FormControl sx={{width: '278px'}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Exec Phase:
                         </FormLabel>
                         {/*<Input name={"exec_phase"} value={input?.inputData?.['exec_phase'] ?? ""}*/}
@@ -205,8 +205,8 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                         </Select>
 
                     </FormControl>
-                    <FormControl sx={{width: '278px'}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Status:
                         </FormLabel>
                         {/*<Input name={"parameter_status"} value={input?.inputData?.['parameter_status'] ?? ""}*/}
@@ -223,10 +223,13 @@ const ParameterMetaDialog: FC<Props> = (props) => {
             </Box>
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                            variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                        variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

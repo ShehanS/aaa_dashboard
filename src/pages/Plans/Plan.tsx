@@ -46,6 +46,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [planTypes, setPlanTypes] = useState<IPlanType[]>([]);
+    const [recordCount, setRecordCount] = useState<number>(0);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -97,6 +98,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.plan_id} onDelete={handleDelete}/>
         });
     }
@@ -129,6 +132,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                     ...stateObj,
                     planTypesGetSuccess: props.planTypesGetSuccess
                 });
+                setRecordCount(props.planTypesGetSuccess?.data?.count);
                 setPlanTypes(props.planTypesGetSuccess?.data?.records ?? []);
             } else if (props.planTypesGetSuccess?.code === "GET_ALL_PLAN_TYPE_FAILED") {
                 setSnackBar({
@@ -450,7 +454,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(stateObj.planCount, 10)}
+                            count={getPageCount(recordCount, 10)}
                             page={currentPage}
                             onChange={handlePageChange}
                             renderItem={(item) => (

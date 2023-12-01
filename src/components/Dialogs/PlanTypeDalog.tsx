@@ -71,20 +71,20 @@ const PlanTypeDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>Plan Attribute</DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Plan Type</DialogTitle>
                 <Divider/>
 
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Attribute Name:
                         </FormLabel>
                         <Input name={"type_name"} value={input?.inputData?.['type_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Description:
                         </FormLabel>
                         <Textarea minRows={3} name={"description"} value={input?.inputData?.['description'] ?? ""}
@@ -96,10 +96,12 @@ const PlanTypeDialog: FC<Props> = (props) => {
 
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#77847f'}} sx={{background: '#e85153'}} color={"primary"}
+                            onClick={handleCloseAndUpdate} variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose} variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

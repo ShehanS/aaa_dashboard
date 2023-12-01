@@ -186,13 +186,13 @@ const PlanTypeDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>Plan Parameter</DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Plan Parameter</DialogTitle>
                 <Divider/>
 
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
-                    <FormControl>
-                        <FormLabel sx={{width: 278}}>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Plan Name:
                         </FormLabel>
                         <Select onClick={getPlans} value={input?.inputData?.['plan_id'] ?? ""}
@@ -203,10 +203,10 @@ const PlanTypeDialog: FC<Props> = (props) => {
 
                         </Select>
                     </FormControl>
-                    <FormControl>
+                    <FormControl sx={{width: 300}}>
                         {/*<Input name={"parameter_name"} value={input?.inputData?.['parameter_name'] ?? ""}*/}
                         {/*       onChange={handleInput}/>*/}
-                        <FormLabel sx={{width: 278}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Name:
                         </FormLabel>
                         <Select onClick={getMetaParameters}
@@ -219,16 +219,16 @@ const PlanTypeDialog: FC<Props> = (props) => {
 
                         </Select>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Value:
                         </FormLabel>
                         <Input name={"parameter_value"}
                                value={input?.inputData?.['parameter_value'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel sx={{width: 278}}>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Reject on Failure:
                         </FormLabel>
                         <Select value={input?.inputData?.['reject_on_failure'] ?? ""}
@@ -243,10 +243,13 @@ const PlanTypeDialog: FC<Props> = (props) => {
 
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                            variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                        variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

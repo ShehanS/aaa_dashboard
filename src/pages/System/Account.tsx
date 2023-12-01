@@ -13,7 +13,7 @@ import SearchBar from "../../components/SearchBar";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {deleteAccount, getAccount, getAllAccounts, getAllFilters} from "../../redux/account/account-slice";
-import {Pagination, PaginationItem} from "@mui/material";
+import {Pagination, PaginationItem, useMediaQuery} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AccountDialog from "../../components/Dialogs/AccountDialog";
@@ -74,6 +74,7 @@ const Account: FC = (props: any) => {
     const [records, setRecords] = useState<IAccountingData[]>([]);
     const [accountFilters, setAccountFilters] = useState<IAccountingFilterData[]>([]);
     const {appDataContext, setAppDataContext} = useAppDataContext();
+    const matches = useMediaQuery('(min-width:600px)');
     const [stateObj, setStateObj] = useState<StateObj>({
         records: 0,
         accountAddResponse: null,
@@ -408,6 +409,8 @@ const Account: FC = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.subscriber_id} onDelete={handleDelete}/>
         });
     }

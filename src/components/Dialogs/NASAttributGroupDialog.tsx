@@ -3,7 +3,6 @@ import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Textarea,} from "@mui/joy";
-import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {addAttribute, editAttribute} from "../../redux/nas/nas-slice";
 import {useAppDataContext} from "../../context/AppDataContext";
@@ -68,7 +67,7 @@ const NASAttributeGroupDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
                     NAS Attribute Group
                 </DialogTitle>
                 <Divider/>
@@ -83,14 +82,14 @@ const NASAttributeGroupDialog: FC<Props> = (props) => {
                     {/*           onChange={handleInput}/>*/}
                     {/*</FormControl>*/}
                     <FormControl>
-                        <FormLabel>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Group Name:
                         </FormLabel>
                         <Input name={"group_name"} value={input?.inputData?.['group_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
                     <FormControl sx={{width:278}}>
-                        <FormLabel>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Group Description:
                         </FormLabel>
                         <Textarea minRows={3} name={"group_description"}
@@ -102,10 +101,13 @@ const NASAttributeGroupDialog: FC<Props> = (props) => {
             </Box>
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                            variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                        variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

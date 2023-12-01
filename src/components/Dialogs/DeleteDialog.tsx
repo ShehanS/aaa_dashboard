@@ -7,6 +7,7 @@ import DialogActions from '@mui/joy/DialogActions';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {useAppDataContext} from "../../context/AppDataContext";
 import {useDialogDataContext} from "../../context/DialogDataContext";
+import {Typography} from "@mui/joy";
 
 export enum Context {
     Dialog,
@@ -22,19 +23,21 @@ const DeleteDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const {dialogDataContext, setDialogDataContext} = useDialogDataContext();
     return (<React.Fragment>
-        <DialogTitle>
+        <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
             <WarningRoundedIcon/>
             Confirmation
         </DialogTitle>
         <Divider/>
         <DialogContent>
-            Are you sure you want to delete?
+            <Typography sx={{color: "white"}}>
+                Are you sure you want to delete?
+            </Typography>
         </DialogContent>
         <DialogActions>
             <Button variant="solid" color="danger" onClick={() => props.onDelete(props.id)}>
                 YES
             </Button>
-            <Button variant="plain" color="neutral"
+            <Button variant="solid" color="neutral"
                     onClick={() => {
                         if (props.context === undefined) {
                             setAppDataContext({...appDataContext, isOpenDialog: false});

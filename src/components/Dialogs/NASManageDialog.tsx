@@ -142,7 +142,7 @@ const NASManageDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
                     NAS Event
                 </DialogTitle>
                 <Divider/>
@@ -156,14 +156,14 @@ const NASManageDialog: FC<Props> = (props) => {
                     {/*    <Input type={"number"} name={"nas_id"} value={input?.inputData?.['nas_id'] ?? ""}*/}
                     {/*           onChange={handleInput}/>*/}
                     {/*</FormControl>*/}
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             NAS Name:
                         </FormLabel>
                         <Input name={"nas_name"} value={input?.inputData?.['nas_name'] ?? ""} onChange={handleInput}/>
                     </FormControl>
-                    <FormControl sx={{width: 278}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             NAS Type:
                         </FormLabel>
                         {/*<Input name={"nas_type"} value={input?.inputData?.['nas_type'] ?? ""} onChange={handleInput}/>*/}
@@ -173,8 +173,8 @@ const NASManageDialog: FC<Props> = (props) => {
 
                         </Select>
                     </FormControl>
-                    <FormControl sx={{width: 278}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             NAS Attribute Group:
                         </FormLabel>
                         <Select onClick={onGetAttributes}
@@ -189,8 +189,8 @@ const NASManageDialog: FC<Props> = (props) => {
                         {/*       onChange={handleInput}/>*/}
 
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             NAS Secret:
                         </FormLabel>
                         <Input endDecorator={<IconButton onClick={passwordIsHide}>{isHide ? <VisibilityRoundedIcon/> :
@@ -204,10 +204,13 @@ const NASManageDialog: FC<Props> = (props) => {
             </Box>
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                            variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                        variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

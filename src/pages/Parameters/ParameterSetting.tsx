@@ -401,6 +401,8 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog onDelete={handleDeleteMetaParams} id={props.parameter_id}/>
         });
     }

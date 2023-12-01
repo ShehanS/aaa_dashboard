@@ -135,6 +135,8 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.plan_id} onDelete={handleDelete}/>
         });
     }

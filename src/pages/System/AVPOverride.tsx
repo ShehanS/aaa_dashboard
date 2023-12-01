@@ -266,6 +266,8 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.attrgroup_id} onDelete={handleDelete}/>
         });
     }

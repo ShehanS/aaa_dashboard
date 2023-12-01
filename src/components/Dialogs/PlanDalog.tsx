@@ -142,20 +142,20 @@ const PlanTypeDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>Plan Dialog</DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Plan Dialog</DialogTitle>
                 <Divider/>
 
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Plan Name:
                         </FormLabel>
                         <Input name={"plan_name"} value={input?.inputData?.['plan_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl sx={{width: 278}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Plan Type:
                         </FormLabel>
                         <Select onClick={loadPlanTypes} value={input?.inputData?.['type_id'] ?? ""}
@@ -166,8 +166,8 @@ const PlanTypeDialog: FC<Props> = (props) => {
                             ))}
                         </Select>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Description:
                         </FormLabel>
                         <Textarea value={input?.inputData?.['description'] ?? ""} minRows={3} name={"description"}
@@ -180,10 +180,13 @@ const PlanTypeDialog: FC<Props> = (props) => {
 
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                            variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                        variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

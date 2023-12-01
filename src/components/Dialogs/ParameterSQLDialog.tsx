@@ -255,12 +255,12 @@ const ParameterMetaDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
                     Parameter SQL Dialog
                 </DialogTitle>
                 <Divider/>
                 <Stack direction={"column"}
-                       sx={{alignItems: 'center', pt: 3, width: '100%', overflowY: 'auto', height: '350px'}}>
+                       sx={{alignItems: 'center', pt: 3, width: '100%', overflowY: 'auto', height: '270px'}}>
 
                     {/*<FormControl>*/}
                     {/*    <FormLabel>*/}
@@ -269,63 +269,63 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                     {/*    <Input type={"number"} name={"parameter_id"} value={input?.inputData?.['parameter_id'] ?? ""}*/}
                     {/*           onChange={handleInput}/>*/}
                     {/*</FormControl>*/}
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Name:
                         </FormLabel>
                         <Input name={"parameter_name"} value={input?.inputData?.['parameter_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Action Name:
                         </FormLabel>
                         <Input name={"action_name"} value={input?.inputData?.['action_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Action Phase:
                         </FormLabel>
                         <Input name={"action_phase"} value={input?.inputData?.['action_phase'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl sx={{width: '278px'}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Action SQL:
                         </FormLabel>
                         <Input name={"action_sql"} value={input?.inputData?.['action_sql'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Action Seq:
                         </FormLabel>
                         <Input type={"number"} name={"action_seq"} value={input?.inputData?.['action_seq'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Match Rerun:
                         </FormLabel>
                         <Input type={"number"} name={"match_return"}
                                value={input?.inputData?.['match_return'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Entity:
                         </FormLabel>
                         <Input name={"entity"} value={input?.inputData?.['entity'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <Stack direction={"row"} sx={{display: 'flex', justifyContent: 'end', width: '100%'}}>
-                        <Box sx={{padding: 1}}>
-                            <Button color={"primary"} onClick={handleCloseAndAdd} variant={"solid"}>ADD</Button>
-                        </Box>
-                    </Stack>
                 </Stack>
-
+                <Stack direction={"row"} sx={{display: 'flex', justifyContent: 'end', width: '100%'}}>
+                    <Box sx={{padding: 1}}>
+                        <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                                variant={"solid"}>ADD</Button>
+                    </Box>
+                </Stack>
                 <Box sx={{
                     marginTop: 2,
                     width: "100%",
@@ -507,7 +507,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                 <DialogActions>
                     <Stack direction={"row"} sx={{display: 'flex', justifyContent: 'end', width: '100%'}}>
                         <Box>
-                            <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                            <Button  sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose} variant={"solid"}>CLOSE</Button>
                         </Box>
                     </Stack>
                 </DialogActions>

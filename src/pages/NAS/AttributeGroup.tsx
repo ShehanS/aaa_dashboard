@@ -681,6 +681,8 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
     const openDeleteNasAttrGroupDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 450,
+            dialogHeight: 200,
             isOpenDialog: true,
             dialogContent: <DeleteDialog id={props.group_id} onDelete={handleDeleteNasAttr}/>
         });

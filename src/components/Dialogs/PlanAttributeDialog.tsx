@@ -177,12 +177,12 @@ const PlanAttributeDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>Plan Attribute Group</DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Plan Attribute Group</DialogTitle>
                 <Divider/>
                 <Stack direction={"column"}
-                       sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
-                    <FormControl>
-                        <FormLabel sx={{width: 278}}>
+                       sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Plan Name:
                         </FormLabel>
                         <Select value={input?.inputData?.['plan_id'] ?? ""}
@@ -193,8 +193,8 @@ const PlanAttributeDialog: FC<Props> = (props) => {
 
                         </Select>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Attribute Name:
                         </FormLabel>
                         <Input name={"attribute_name"} value={input?.inputData?.['attribute_name'] ?? ""}
@@ -204,8 +204,8 @@ const PlanAttributeDialog: FC<Props> = (props) => {
                     {/* ... (rest of your existing form controls) */}
 
                     {/* New attributes */}
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Attribute Value:
                         </FormLabel>
                         <Input name={"attribute_value"} value={input?.inputData?.['attribute_value'] ?? ""}
@@ -220,8 +220,8 @@ const PlanAttributeDialog: FC<Props> = (props) => {
                     {/*           value={input?.inputData?.['attribute_group'] ?? ""}*/}
                     {/*           onChange={handleInput}/>*/}
                     {/*</FormControl>*/}
-                    <FormControl sx={{width: 278}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             NAS Attribute Group:
                         </FormLabel>
                         <Select onClick={getAttributeGroup}
@@ -237,19 +237,20 @@ const PlanAttributeDialog: FC<Props> = (props) => {
 
                     </FormControl>
 
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Include Plan State:
                         </FormLabel>
                         <Input name={"include_plan_state"} value={input?.inputData?.['include_plan_state'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
 
-                    <FormControl>
-                        <FormLabel sx={{width: 278}}>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Status:
                         </FormLabel>
-                        <Select value={input?.inputData?.['status'] ?? ""} onChange={(event, value) => handleInput((handleStatus(event, value)))}>
+                        <Select value={input?.inputData?.['status'] ?? ""}
+                                onChange={(event, value) => handleInput((handleStatus(event, value)))}>
                             <Option value={"ACTIVE"}>ACTIVE</Option>
                             <Option value={"INACTIVE"}>INACTIVE</Option>
                         </Select>
@@ -259,10 +260,13 @@ const PlanAttributeDialog: FC<Props> = (props) => {
 
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                            variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                        variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

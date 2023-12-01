@@ -4,7 +4,6 @@ import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {useAppDataContext} from "../../context/AppDataContext";
 import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
-import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {addCOARecord, editCOARecord} from "../../redux/coa/coa-slice";
 
@@ -81,28 +80,28 @@ const RecordDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
                     COA Event
                 </DialogTitle>
                 <Divider/>
 
                 <Stack direction={"column"} sx={{alignItems: 'center', pt: 3, width: '100%'}}>
 
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Event ID:
                         </FormLabel>
                         <Input type={"number"} name={"event_id"} value={input?.inputData?.['event_id'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Username:
                         </FormLabel>
                         <Input name={"username"} value={input?.inputData?.['username'] ?? ""} onChange={handleInput}/>
                     </FormControl>
-                    <FormControl sx={{width: "280px"}}>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Status:
                         </FormLabel>
                         <Select onChange={(event, value) => handleInput(handleStatus(event, value))}
@@ -115,8 +114,8 @@ const RecordDialog: FC<Props> = (props) => {
                         {/*<Input name={"status"} value={input?.inputData?.['status'] ?? ""}*/}
                         {/*       onChange={handleInput}/>*/}
                     </FormControl>
-                    <FormControl>
-                        <FormLabel>
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
                             Event Response:
                         </FormLabel>
                         <Input name={"event_response"} value={input?.inputData?.['event_response'] ?? ""}
@@ -126,10 +125,13 @@ const RecordDialog: FC<Props> = (props) => {
             </Box>
             <DialogActions>
                 {props.type === DialogType.add &&
-                    <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                            variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-                <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                    <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                            variant={"solid"}>UPDATE</Button>}
+                <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                        variant={"solid"}>CLOSE</Button>
             </DialogActions>
         </React.Fragment>
     );

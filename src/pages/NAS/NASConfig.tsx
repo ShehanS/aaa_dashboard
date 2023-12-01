@@ -387,6 +387,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.nas_id} onDelete={handleDelete}/>
         });
     }

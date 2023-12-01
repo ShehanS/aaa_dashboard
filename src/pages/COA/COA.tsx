@@ -96,6 +96,8 @@ const COA: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.event_id} onDelete={handleDelete}/>
         });
     }
@@ -369,7 +371,7 @@ const COA: FC<ReduxProps> = (props: any) => {
                                 stripe="odd"
                                 hoverRow
                                 sx={{
-                                    width: "60%",
+                                    width: "100%",
                                     '& tr > *:first-child': {
                                         position: 'sticky',
                                         left: 0,

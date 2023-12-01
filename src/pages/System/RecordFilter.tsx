@@ -494,7 +494,7 @@ const RecordFilter: FC = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"Account Filters"} subTitle={"Manage Account Filters"}/>
+            <HeaderText title={"Record Filters"} subTitle={"Manage Record Filters"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',

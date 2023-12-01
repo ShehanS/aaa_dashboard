@@ -4,7 +4,6 @@ import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {useAppDataContext} from "../../context/AppDataContext";
 import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input} from "@mui/joy";
-import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {addFilter, editFilter} from "../../redux/account/account-slice";
 
@@ -65,31 +64,31 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
 
     return (<React.Fragment>
         <Box sx={{height: 350}}>
-            <DialogTitle>
+            <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
                 Filter Record
             </DialogTitle>
             <Divider/>
 
             <Stack direction={"column"}
                    sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
-                <FormControl>
-                    <FormLabel>
+                <FormControl sx={{width: 300}}>
+                    <FormLabel sx={{color: '#e4dad0'}}>
                         Attribute Group ID:
                     </FormLabel>
                     <Input type={"number"} name={"attrgroup_id"} value={input?.inputData?.['attrgroup_id'] ?? ""}
                            onChange={handleInput}/>
 
                 </FormControl>
-                <FormControl>
-                    <FormLabel>
+                <FormControl sx={{width: 300}}>
+                    <FormLabel sx={{color: '#e4dad0'}}>
                         Filter AVP:
                     </FormLabel>
                     <Input name={"filter_avp"} value={input?.inputData?.['filter_avp'] ?? ""}
                            onChange={handleInput}/>
 
                 </FormControl>
-                <FormControl sx={{width: "280px"}}>
-                    <FormLabel>
+                <FormControl sx={{width: 300}}>
+                    <FormLabel sx={{color: '#e4dad0'}}>
                         Filter Regexp:
                     </FormLabel>
 
@@ -97,8 +96,8 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
                            value={input?.inputData?.['filter_regexp'] ?? ""} onChange={handleInput}/>
 
                 </FormControl>
-                <FormControl>
-                    <FormLabel>
+                <FormControl sx={{width: 300}}>
+                    <FormLabel sx={{color: '#e4dad0'}}>
                         Filter For:
                     </FormLabel>
                     <Input name={"filter_for"}
@@ -110,10 +109,13 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
         </Box>
         <DialogActions>
             {props.type === DialogType.add &&
-                <Button color={"primary"} onClick={handleCloseAndAdd} variant={"outlined"}>ADD</Button>}
+                <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
+                        variant={"solid"}>ADD</Button>}
             {props.type === DialogType.edit &&
-                <Button color={"primary"} onClick={handleCloseAndUpdate} variant={"outlined"}>UPDATE</Button>}
-            <Button color={"neutral"} onClick={handleClose} variant={"outlined"}>CLOSE</Button>
+                <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndUpdate}
+                        variant={"solid"}>UPDATE</Button>}
+            <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose}
+                    variant={"solid"}>CLOSE</Button>
         </DialogActions>
     </React.Fragment>);
 

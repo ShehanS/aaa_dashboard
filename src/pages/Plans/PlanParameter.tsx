@@ -129,6 +129,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.parameter_name} onDelete={handleDelete}/>
         });
     }
@@ -547,7 +549,6 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetPlanParameters: (payload: any) => dispatch(getPlansParameter(payload)),
-        onDeletePlanType: (payload: any) => dispatch(deletePlanType(payload)),
         onDeletePlanParameter: (payload: any) => dispatch(deletePlanParameter(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
         clearPlanHistory: () => dispatch(clearPlanHistory()),
