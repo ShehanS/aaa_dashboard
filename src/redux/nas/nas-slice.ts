@@ -84,16 +84,6 @@ export const NASSlice = createSlice({
         getAllNASRecordsSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             nasRecordsResponse: action.payload,
-            nasRecordAddResponse: null,
-            nasRecordEditResponse: null,
-            nasRecordDeleteResponse: null,
-            attrAddResponse: null,
-            attrEditResponse: null,
-            attrDeleteResponse: null,
-            subscribeAddResponse: null,
-            subscriberEditResponse: null,
-            subscriberDeleteResponse: null,
-            error: null
         }),
         getNASRecord: (state, action: PayloadAction<any>) => ({
             ...state,
@@ -143,16 +133,6 @@ export const NASSlice = createSlice({
         getAllAttributeGroupsSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             attrGroupsResponse: action.payload,
-            nasRecordAddResponse: null,
-            nasRecordEditResponse: null,
-            nasRecordDeleteResponse: null,
-            attrAddResponse: null,
-            attrEditResponse: null,
-            attrDeleteResponse: null,
-            subscribeAddResponse: null,
-            subscriberEditResponse: null,
-            subscriberDeleteResponse: null,
-            error: null,
         }),
         addSubscriber: (state, action: PayloadAction<any>) => ({
             ...state,
@@ -192,6 +172,10 @@ export const NASSlice = createSlice({
         getAllSubscribersSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             subscribersResponse: action.payload,
+            error: null,
+        }),
+
+        onClearHistory: (state) => ({
             nasRecordAddResponse: null,
             nasRecordEditResponse: null,
             nasRecordDeleteResponse: null,
@@ -201,9 +185,7 @@ export const NASSlice = createSlice({
             subscribeAddResponse: null,
             subscriberEditResponse: null,
             subscriberDeleteResponse: null,
-            error: null,
         }),
-
 
         getError: (state) => ({
             ...state,
@@ -213,6 +195,7 @@ export const NASSlice = createSlice({
 })
 
 export const {
+    onClearHistory,
     getNASRecord,
     getNASRecordSuccess,
     getError,

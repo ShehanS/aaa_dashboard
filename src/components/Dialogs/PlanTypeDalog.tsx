@@ -99,7 +99,7 @@ const PlanTypeDialog: FC<Props> = (props) => {
                     <Button sx={{background: '#e85153'}} color={"primary"} onClick={handleCloseAndAdd}
                             variant={"solid"}>ADD</Button>}
                 {props.type === DialogType.edit &&
-                    <Button sx={{background: '#77847f'}} sx={{background: '#e85153'}} color={"primary"}
+                    <Button sx={{background: '#e85153'}} color={"primary"}
                             onClick={handleCloseAndUpdate} variant={"solid"}>UPDATE</Button>}
                 <Button sx={{background: '#77847f'}} color={"neutral"} onClick={handleClose} variant={"solid"}>CLOSE</Button>
             </DialogActions>

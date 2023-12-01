@@ -5,7 +5,7 @@ import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCh
 import {useAppDataContext} from "../../context/AppDataContext";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {connect, ConnectedProps} from "react-redux";
-import {deleteSubscriber, getAllSubscribers} from "../../redux/nas/nas-slice";
+import {deleteSubscriber, getAllSubscribers, onClearHistory} from "../../redux/nas/nas-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -109,7 +109,7 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
 
 
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
+        props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -381,6 +381,8 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
     const editNASSubscribeDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <NASSubscriberDialog data={props} type={DialogType.edit}/>
         });
@@ -592,7 +594,8 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
         return {
             onDeleteSubscriber: (payload: any) => dispatch(deleteSubscriber(payload)),
-            onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload))
+            onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload)),
+            onClearHistory: () => dispatch(onClearHistory()),
 
         };
     }

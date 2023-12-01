@@ -12,11 +12,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {
-    clearPlanHistory,
     deletePlanParameter,
-    deletePlanType,
     getPlans,
-    getPlansParameter
+    getPlansParameter,
+    onClearHistory
 } from "../../redux/plan/plan-slice";
 import PlanParameterDalog from "../../components/Dialogs/PlanParameterDalog";
 import {IPlan} from "./Plan";
@@ -90,7 +89,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
-        props.clearPlanHistory();
+        props.onClearHistory();
 
         getPlans();
         setSearchId(undefined);
@@ -150,6 +149,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
     const openEditPlanParameterDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <PlanParameterDalog type={DialogType.edit} data={props}/>
         });
@@ -553,6 +554,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
         clearPlanHistory: () => dispatch(clearPlanHistory()),
         onGetMetaParameters: (payload: any) => dispatch(getMetaParams(payload)),
+        onClearHistory: () => dispatch(onClearHistory())
     };
 };
 

@@ -221,7 +221,7 @@ export const PlanSlice = createSlice({
             error: null,
             plansGetSuccess: action.payload,
         }),
-        clearPlanHistory: (state) => ({
+        onClearHistory: (state) => ({
             ...state,
             planAttributeAddSuccess: null,
             planAttributeEditSuccess: null,
@@ -243,7 +243,7 @@ export const PlanSlice = createSlice({
 });
 
 export const {
-    clearPlanHistory,
+    onClearHistory,
     addPlan,
     addPlanSuccess,
     editPlan,

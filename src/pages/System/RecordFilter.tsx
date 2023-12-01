@@ -17,7 +17,8 @@ import {
     deleteFilter,
     getAccount,
     getAllAccounts,
-    getAllFilters
+    getAllFilters,
+    onClearHistory
 } from "../../redux/account/account-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -362,7 +363,7 @@ const RecordFilter: FC = (props: any) => {
 
 
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
+        props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -439,6 +440,8 @@ const RecordFilter: FC = (props: any) => {
     const openEditAccountingFilterDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <AccountingRecordFilterDialog type={DialogType.edit} data={props}/>
         });
@@ -706,7 +709,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetAccount: (payload: any) => dispatch(getAccount(payload)),
         onDelete: (payload: any) => dispatch(deleteAccount(payload)),
         onFilterDelete: (payload: any) => dispatch(deleteFilter(payload)),
-        onGetFilters: (payload: any) => dispatch(getAllFilters(payload))
+        onGetFilters: (payload: any) => dispatch(getAllFilters(payload)),
+        onClearHistory: () => dispatch(onClearHistory()),
     };
 };
 

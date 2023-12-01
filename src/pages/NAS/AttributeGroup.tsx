@@ -8,7 +8,7 @@ import NASManageDialog from "../../components/Dialogs/NASManageDialog";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
-import {deleteAttribute, getAllAttributeGroups} from "../../redux/nas/nas-slice";
+import {deleteAttribute, getAllAttributeGroups, onClearHistory} from "../../redux/nas/nas-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -110,7 +110,7 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
 
 
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
+        props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -629,6 +629,8 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
     const openEditNASGroupDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <NASAttributeGroupDialog data={props} type={DialogType.edit}/>
         });
@@ -945,6 +947,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
+        onClearHistory: () => dispatch(onClearHistory()),
         // onGetNasRecords: (payload: any) => dispatch(getAllNASRecords(payload)),
         onDeleteAttributeRecord: (payload: any) => dispatch(deleteAttribute(payload)),
         // onDeleteNASEvent: (payload: any) => dispatch(deleteNASRecord(payload)),

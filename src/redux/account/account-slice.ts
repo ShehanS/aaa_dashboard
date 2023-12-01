@@ -127,6 +127,17 @@ export const AccountSlice = createSlice({
             error: null
         }),
 
+        onClearHistory: (state) => ({
+            ...state,
+            accountAddResponse: null,
+            accountEditResponse: null,
+            accountDeleteResponse: null,
+            accountRecordsResponse: null,
+            filterAddResponse: null,
+            filterEditResponse: null,
+            filterDeleteResponse: null,
+        }),
+
         getError: (state) => ({
             ...state,
             error: null
@@ -135,6 +146,7 @@ export const AccountSlice = createSlice({
 })
 
 export const {
+    onClearHistory,
     getAllFilters,
     getAllFiltersSuccess,
     addFilter,

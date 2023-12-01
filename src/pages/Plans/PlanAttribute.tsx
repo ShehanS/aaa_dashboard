@@ -11,7 +11,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import PlanAttributeDialog, {DialogType} from "../../components/Dialogs/PlanAttributeDialog";
-import {deletePlanAttribute, getPlans, getPlansAttribute} from "../../redux/plan/plan-slice";
+import {deletePlanAttribute, getPlans, getPlansAttribute, onClearHistory} from "../../redux/plan/plan-slice";
 import {IPlan} from "./Plan";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
@@ -76,6 +76,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
+        props.onClearHistory();
         setSnackBar({...snackBar, isOpen: false});
         setSearchId(undefined);
         setIsLoading(true);
@@ -152,6 +153,8 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
     const openEditAttributeDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <PlanAttributeDialog type={DialogType.edit} data={props}/>
         });
@@ -242,8 +245,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                planAttributeDeleteSuccess: props.planAttributeDeleteSuccess,
-                coaRecordCount: 0,
+                planAttributeDeleteSuccess: props.planAttributeDeleteSuccess
             });
             if (props.planAttributeDeleteSuccess?.code === "DELETE_PLAN_ATTRIBUTE_SUCCESS") {
                 initLoad(searchId);
@@ -298,8 +300,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                planAttributeEditSuccess: props.planAttributeEditSuccess,
-                coaRecordCount: 0,
+                planAttributeEditSuccess: props.planAttributeEditSuccess
             });
             if (props.planAttributeEditSuccess?.code === "EDIT_PLAN_ATTRIBUTE_SUCCESS") {
                 initLoad(searchId);
@@ -548,6 +549,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onDeleteAttribute: (payload) => dispatch(deletePlanAttribute(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
+        onClearHistory: () => dispatch(onClearHistory())
     };
 };
 

@@ -16,6 +16,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {useDialogDataContext} from "../../context/DialogDataContext";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import {onClearHistory} from "../../redux/plan/plan-slice";
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -335,7 +336,7 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
     };
 
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
+        props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -387,6 +388,8 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
     const openEditMetaParameter = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <ParameterMetaDialog type={DialogType.edit} data={props}/>
         });
@@ -640,7 +643,8 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetMetaParameters: (payload: any) => dispatch(getMetaParams(payload)),
         onGetMataParameter: (payload: any) => dispatch(getMetaParams(payload)),
-        onDeleteMetaParameter: (payload: any) => dispatch(deleteMetaParams(payload))
+        onDeleteMetaParameter: (payload: any) => dispatch(deleteMetaParams(payload)),
+        onClearHistory: () => dispatch(onClearHistory())
     };
 };
 

@@ -1,18 +1,20 @@
 import React, {FC, useEffect, useState} from "react";
 import HeaderText from "../../components/HeaderText";
-import {Box, Button, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
+import {Box, Button, IconButton, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import SearchBar from "../../components/SearchBar";
 import {DialogType} from "../../components/Dialogs/AccountingRecordFilterDialog";
 import {useAppDataContext} from "../../context/AppDataContext";
 import COAEventDialog from "../../components/Dialogs/COAEventDialog";
 import {RootState} from "../../redux/store";
-import {deleteCOARecord, getAllCOARecords} from "../../redux/coa/coa-slice";
+import {deleteCOARecord, getAllCOARecords, onClearHistory} from "../../redux/coa/coa-slice";
 import {connect, ConnectedProps} from "react-redux";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
+import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
 type SnackBarProps = {
     isOpen: boolean,
@@ -64,7 +66,7 @@ const COA: FC<ReduxProps> = (props: any) => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
+        props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -113,6 +115,8 @@ const COA: FC<ReduxProps> = (props: any) => {
     const openEditCOARecordDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <COAEventDialog type={DialogType.edit} data={props}/>
         });
@@ -406,22 +410,23 @@ const COA: FC<ReduxProps> = (props: any) => {
                                         <td>{row.request_datetime ?? ""}</td>
                                         <td>
                                             <Box sx={{display: 'flex', gap: 1}}>
-                                                <Button
+                                                <IconButton
                                                     size="sm"
-                                                    variant="plain"
-                                                    color="neutral"
+                                                    variant="soft"
+                                                    color="primary"
                                                     onClick={() => openEditCOARecordDialog(row)}
+
                                                 >
-                                                    Edit
-                                                </Button>
-                                                <Button
+                                                    <CreateRoundedIcon/>
+                                                </IconButton>
+                                                <IconButton
                                                     onClick={() => openDeleteDialog(row)}
                                                     size="sm"
                                                     variant="soft"
                                                     color="danger"
                                                 >
-                                                    Delete
-                                                </Button>
+                                                    <DeleteRoundedIcon/>
+                                                </IconButton>
                                             </Box>
                                         </td>
                                     </tr>
@@ -475,7 +480,8 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetCoaRecords: (payload: any) => dispatch(getAllCOARecords(payload)),
-        onDeleteCoRecord: (payload: any) => dispatch(deleteCOARecord(payload))
+        onDeleteCoRecord: (payload: any) => dispatch(deleteCOARecord(payload)),
+        onClearHistory: () => dispatch(onClearHistory())
     };
 };
 

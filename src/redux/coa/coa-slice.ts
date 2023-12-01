@@ -75,6 +75,12 @@ export const COASlice = createSlice({
             coaRecordResponse: action.payload,
             error: null
         }),
+        onClearHistory: (state) => ({
+            ...state,
+            coaRecordAddResponse: null,
+            coaRecordEditResponse: null,
+            coaRecordDeleteResponse: null,
+        }),
         getCOAError: (state) => ({
             ...state,
             error: null
@@ -83,6 +89,7 @@ export const COASlice = createSlice({
 })
 
 export const {
+    onClearHistory,
     getCOARecord,
     getCOARecordSuccess,
     getCOAError,

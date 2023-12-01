@@ -12,7 +12,13 @@ import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCh
 import SearchBar from "../../components/SearchBar";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import {deleteAccount, getAccount, getAllAccounts, getAllFilters} from "../../redux/account/account-slice";
+import {
+    deleteAccount,
+    getAccount,
+    getAllAccounts,
+    getAllFilters,
+    onClearHistory
+} from "../../redux/account/account-slice";
 import {Pagination, PaginationItem, useMediaQuery} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -358,7 +364,7 @@ const Account: FC = (props: any) => {
 
 
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
+        props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -388,6 +394,8 @@ const Account: FC = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 600,
+            dialogHeight: 450,
             dialogContent: <AccountDialog type={DialogType.edit} data={record}/>
         });
     }
@@ -478,7 +486,7 @@ const Account: FC = (props: any) => {
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openNewAccountDialog}>Add Account</Button>
+                            <IconButton onClick={openNewAccountDialog}>Add Account</IconButton>
                         </Stack>
                     </Stack>
                     <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
@@ -662,6 +670,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
+        onClearHistory: () => dispatch(onClearHistory()),
         onGetAccounts: (payload: any) => dispatch(getAllAccounts(payload)),
         onGetAccount: (payload: any) => dispatch(getAccount(payload)),
         onDelete: (payload: any) => dispatch(deleteAccount(payload)),

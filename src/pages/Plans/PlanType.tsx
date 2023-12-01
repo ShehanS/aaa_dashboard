@@ -11,7 +11,7 @@ import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
-import {deletePlanType, getPlansType} from "../../redux/plan/plan-slice";
+import {deletePlanType, getPlansType, onClearHistory} from "../../redux/plan/plan-slice";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 
@@ -63,6 +63,8 @@ const PlanType: FC<ReduxProps> = (props: any) => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
+
+        props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -111,6 +113,8 @@ const PlanType: FC<ReduxProps> = (props: any) => {
     const openEditPlanTypeDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <PlanTypeDalog type={DialogType.edit} data={props}/>
         });
@@ -453,7 +457,8 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetPlanTypes: (payload: any) => dispatch(getPlansType(payload)),
-        onDeletePlanType: (payload: any) => dispatch(deletePlanType(payload))
+        onDeletePlanType: (payload: any) => dispatch(deletePlanType(payload)),
+        onClearHistory: () => dispatch(onClearHistory())
     };
 };
 

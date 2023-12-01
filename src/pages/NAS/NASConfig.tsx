@@ -20,7 +20,8 @@ import {
     getAllAttributeGroups,
     getAllNASRecords,
     getAllSubscribers,
-    getNASRecord
+    getNASRecord,
+    onClearHistory
 } from "../../redux/nas/nas-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -118,6 +119,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
 
     const initLoad = (id?: string) => {
         setSearchId(undefined);
+        props.onClearHistory();
         setIsLoading(true);
         if (id !== undefined) {
             props.onGetNasRecord(id);
@@ -348,6 +350,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
     const openEditNasDialog = (props: any) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <NASManageDialog data={props} type={DialogType.edit}/>
         });
@@ -620,6 +624,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
         onDeleteSubscriber: (payload: any) => dispatch(deleteSubscriber(payload)),
         onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload)),
+        onClearHistory: () => dispatch(onClearHistory()),
 
 
     };

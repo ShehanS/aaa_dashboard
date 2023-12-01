@@ -77,13 +77,6 @@ export const ParameterSlice = createSlice({
         getMetaParamsSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             metaParamsGetResponse: action.payload,
-            metaParameterAddResponse: null,
-            metaParameterEditResponse: null,
-            metaParameterDeleteResponse: null,
-            sqlParameterAddResponse: null,
-            sqlParameterEditResponse: null,
-            sqlParameterDeleteResponse: null,
-            error: null
         }),
         getMetaParamSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
@@ -129,13 +122,17 @@ export const ParameterSlice = createSlice({
         getSqlParamsSuccess: (state, action: PayloadAction<any>) => ({
             ...state,
             sqlParametersGetResponse: action.payload,
+            error: null
+        }),
+
+        onClearHistory: (state) => ({
+            ...state,
             metaParameterAddResponse: null,
             metaParameterEditResponse: null,
             metaParameterDeleteResponse: null,
             sqlParameterAddResponse: null,
             sqlParameterEditResponse: null,
             sqlParameterDeleteResponse: null,
-            error: null
         }),
 
         getError: (state) => ({

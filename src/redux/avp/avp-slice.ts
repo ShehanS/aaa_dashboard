@@ -77,6 +77,12 @@ export const AVPSlice = createSlice({
             avpRecordResponseSuccess: action.payload,
             error: null
         }),
+        onClearHistory: (state) => ({
+            ...state,
+            avpRecordAddResponse: null,
+            avpRecordEditResponse: null,
+            avpRecordDeleteResponse: null
+        }),
         getError: (state) => ({
             ...state,
             error: null
@@ -86,6 +92,7 @@ export const AVPSlice = createSlice({
 })
 
 export const {
+    onClearHistory,
     getAvpRecord,
     getAvpRecordSuccess,
     getError,

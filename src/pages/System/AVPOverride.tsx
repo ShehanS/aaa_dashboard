@@ -11,7 +11,7 @@ import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {CircularProgress, IconButton, Snackbar, Stack} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
-import {deleteAvpRecord, getAllAvpRecords, getAvpRecord} from "../../redux/avp/avp-slice";
+import {deleteAvpRecord, getAllAvpRecords, getAvpRecord, onClearHistory} from "../../redux/avp/avp-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -66,7 +66,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
 
 
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
+        props.onClearHistory();
         setIsLoading(true);
        // setSearchId(undefined);
         if (id !== undefined) {
@@ -243,6 +243,8 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const openAvpEditDialog = (record: IAVPAttribute) => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <AVPManageDialog type={DialogType.edit} data={record}/>
         });
@@ -480,6 +482,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetAVPRecords: (payload: any) => dispatch(getAllAvpRecords(payload)),
         onGetAvpRecord: (payload: any) => dispatch(getAvpRecord(payload)),
         onDelete: (payload: any) => dispatch(deleteAvpRecord(payload)),
+        onClearHistory: () => dispatch(onClearHistory())
     };
 };
 
