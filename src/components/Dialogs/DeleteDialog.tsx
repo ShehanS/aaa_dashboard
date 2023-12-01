@@ -1,4 +1,4 @@
-import {FC} from "react";
+import React, {FC} from "react";
 import Button from '@mui/joy/Button';
 import Divider from '@mui/joy/Divider';
 import DialogTitle from '@mui/joy/DialogTitle';
@@ -6,8 +6,6 @@ import DialogContent from '@mui/joy/DialogContent';
 import DialogActions from '@mui/joy/DialogActions';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import {useAppDataContext} from "../../context/AppDataContext";
-import {RootState} from "../../redux/store";
-import {connect, ConnectedProps} from "react-redux";
 import {useDialogDataContext} from "../../context/DialogDataContext";
 
 export enum Context {
@@ -15,17 +13,15 @@ export enum Context {
     AppData
 }
 
-type OwnProps = {
+type Props = {
     id: string
     onDelete: (id: string) => void;
     context?: Context
 }
-type ReduxProps = ConnectedProps<typeof connector>;
-type Props = OwnProps & ReduxProps;
 const DeleteDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const {dialogDataContext, setDialogDataContext} = useDialogDataContext();
-    return (<>
+    return (<React.Fragment>
         <DialogTitle>
             <WarningRoundedIcon/>
             Confirmation
@@ -54,19 +50,8 @@ const DeleteDialog: FC<Props> = (props) => {
                 NO
             </Button>
         </DialogActions>
-    </>)
+    </React.Fragment>)
 }
 
-const mapStateToProps = (state: RootState) => {
-    return {
-        deleteAvpRecordSuccess: state.avp.deleteAvpRecordSuccess
-    };
-};
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {};
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-export default connector(DeleteDialog);
+export default DeleteDialog;

@@ -1,4 +1,5 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import type {PayloadAction} from '@reduxjs/toolkit'
+import {createSlice} from '@reduxjs/toolkit'
 
 export interface INASState {
     payload: any;
@@ -21,7 +22,7 @@ export interface INASState {
 
 }
 
-const initialNASState: INASState = {
+const initialState: INASState = {
     payloadSubscriber: null,
     payload: null,
     nasRecordAddResponse: null,
@@ -43,7 +44,7 @@ const initialNASState: INASState = {
 
 export const NASSlice = createSlice({
     name: 'nas',
-    initialState: initialNASState,
+    initialState,
     reducers: {
         addNASRecord: (state, action: PayloadAction<any>) => ({
             ...state,
@@ -56,6 +57,7 @@ export const NASSlice = createSlice({
             error: null
         }),
         deleteNASRecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
@@ -70,6 +72,7 @@ export const NASSlice = createSlice({
             error: null
         }),
         deleteNASRecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             nasRecordDeleteResponse: action.payload,
             error: null
         }),
@@ -93,6 +96,7 @@ export const NASSlice = createSlice({
             error: null
         }),
         getNASRecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),

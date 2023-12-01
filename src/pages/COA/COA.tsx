@@ -34,7 +34,7 @@ export interface ICoaEvent {
     username: string,
     status: string
     event_response: string,
-    request_datetime: Date
+    request_datetime: string
 }
 
 type ReduxProps = ConnectedProps<typeof connector>;
@@ -359,7 +359,8 @@ const COA: FC<ReduxProps> = (props: any) => {
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
                             overflowX: 'auto',
-                            maxWidth: '60%',
+                            maxWidth: '100%',
+                            height:"450px"
                         }}
                     >
                         <Box>
@@ -428,7 +429,7 @@ const COA: FC<ReduxProps> = (props: any) => {
                         </Box>
                     </Sheet>
                     <Stack direction={"row"} sx={{
-                        width: '60%',
+                        width: '100%',
                         bottom: '-50px',
                         right: 0,
                         justifyItems: 'center',

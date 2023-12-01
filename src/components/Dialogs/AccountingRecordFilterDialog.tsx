@@ -55,7 +55,7 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
             },
         }));
     }
-    const handleClose = (event: any) => {
+    const handleClose = () => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: false
@@ -119,9 +119,7 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
 
 }
 
-const mapStateToProps = (state: RootState) => {
-    return {};
-};
+
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
@@ -130,6 +128,6 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(null, mapDispatchToProps);
 
 export default connector(AccountingRecordFilterDialog);

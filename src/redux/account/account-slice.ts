@@ -75,6 +75,7 @@ export const AccountSlice = createSlice({
             error: null
         }),
         getAccount: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),

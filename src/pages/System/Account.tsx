@@ -12,13 +12,7 @@ import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCh
 import SearchBar from "../../components/SearchBar";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import {
-    deleteAccount,
-    deleteFilter,
-    getAccount,
-    getAllAccounts,
-    getAllFilters
-} from "../../redux/account/account-slice";
+import {deleteAccount, getAccount, getAllAccounts, getAllFilters} from "../../redux/account/account-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -33,14 +27,14 @@ export interface IAccountingData {
     acct_session_id: string;
     nas_ip_address: string;
     framed_ip_address: string;
-    acct_status_type: string;
+    acct_status_type: number;
     acct_input_octets: number;
     acct_output_octets: number;
     framed_protocol: string;
     acct_input_gigawords: number;
     acct_output_gigawords: number;
     nas_port_id: string;
-    accunting_datetime: Date
+    accunting_datetime: string
 }
 
 export interface IAccountingFilterData {
@@ -69,18 +63,19 @@ type StateObj = {
     filterEditResponse: any;
     filterDeleteResponse: any;
     filtersResponse: any;
+    records: number;
 }
 
-const Accounting: FC = (props: any) => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [currentPageFilter, setCurrentPageFilter] = useState(1);
+const Account: FC = (props: any) => {
+    const [recordCount, setRecordCount] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const [records, setRecords] = useState<IAccountingData[]>([]);
     const [accountFilters, setAccountFilters] = useState<IAccountingFilterData[]>([]);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [stateObj, setStateObj] = useState<StateObj>({
-        records: null,
+        records: 0,
         accountAddResponse: null,
         accountEditResponse: null,
         accountDeleteResponse: null,
@@ -113,6 +108,7 @@ const Accounting: FC = (props: any) => {
                     accountRecordsResponse: props.accountRecordsResponse,
                     accountCount: props.accountRecordsResponse?.data?.count
                 });
+                setRecordCount(props.accountRecordsResponse?.data?.count ?? 0)
                 setRecords(props.accountRecordsResponse?.data?.records ?? []);
             } else if (props.accountRecordsResponse?.code === "GET_ACCOUNTS_FAILED") {
                 setSnackBar({
@@ -399,7 +395,7 @@ const Accounting: FC = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
-            dialogContent: <AccountDialog type={DialogType.edit}/>
+            dialogContent: <AccountDialog type={DialogType.add}/>
         });
     }
 
@@ -416,9 +412,7 @@ const Accounting: FC = (props: any) => {
         });
     }
 
-    const handleFilterDelete = (id: string) => {
-        props.onFilterDelete(id);
-    }
+
 
 
     const getPageCount = (count: number, pageSize: number): number => {
@@ -529,7 +523,8 @@ const Accounting: FC = (props: any) => {
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
                             overflowX: 'auto',
-                            maxWidth: '100%',
+                            maxWidth: "100%",
+                            height: '450px'
                         }}
                     >
                         <Box>
@@ -538,7 +533,7 @@ const Accounting: FC = (props: any) => {
                                 stripe="odd"
                                 hoverRow
                                 sx={{
-                                    width: "60%",
+                                    width: "100%",
                                     '& tr > *:first-child': {
                                         position: 'sticky',
                                         left: 0,
@@ -628,7 +623,7 @@ const Accounting: FC = (props: any) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(stateObj.accountCount, 10)}
+                            count={getPageCount(recordCount, 10)}
                             page={currentPage}
                             onChange={handlePageChange}
                             renderItem={(item) => (
@@ -667,11 +662,10 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetAccounts: (payload: any) => dispatch(getAllAccounts(payload)),
         onGetAccount: (payload: any) => dispatch(getAccount(payload)),
         onDelete: (payload: any) => dispatch(deleteAccount(payload)),
-        onFilterDelete:(payload: any)=>dispatch(deleteFilter(payload)),
         onGetFilters: (payload: any) => dispatch(getAllFilters(payload))
     };
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(Accounting);
+export default connector(Account);

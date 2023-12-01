@@ -18,6 +18,7 @@ export enum DialogType {
 type StateObj = {
     plansGetSuccess: any;
     attrGroupsResponse: any;
+    planCount: number
 };
 
 type InputStateObj = {
@@ -55,7 +56,8 @@ const PlanAttributeDialog: FC<Props> = (props) => {
     }));
     const [stateObj, setStateObj] = useState<StateObj>({
         plansGetSuccess: null,
-        attrGroupsResponse: null
+        attrGroupsResponse: null,
+        planCount:0
     });
     const [plans, setPlans] = useState<IPlan[]>([]);
 

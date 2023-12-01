@@ -126,9 +126,6 @@ const NASSubscriberDialog: FC<Props> = (props) => {
     );
 };
 
-const mapStateToProps = (state: RootState) => {
-    return {};
-};
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
@@ -137,6 +134,6 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(null, mapDispatchToProps);
 
 export default connector(NASSubscriberDialog);

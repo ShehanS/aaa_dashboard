@@ -37,6 +37,8 @@ type StateObj = {
     subscribeAddResponse: any;
     subscriberEditResponse: any;
     subscriberDeleteResponse: any;
+    nasRecordCount: number;
+    subscriberCount: number;
 
 
 };
@@ -98,7 +100,9 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
         subscribersResponse: null,
         subscribeAddResponse: null,
         subscriberEditResponse: null,
-        subscriberDeleteResponse: null
+        subscriberDeleteResponse: null,
+        nasRecordCount: 0,
+        subscriberCount: 0
     });
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
@@ -821,8 +825,8 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                                     'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                                 backgroundColor: 'background.surface',
                                 overflowX: 'auto',
-                                maxWidth: '60%',
-                                height: "350px"
+                                maxWidth: '100%',
+                                height: "450px"
                             }}
                         >
                             <Box>
@@ -832,7 +836,7 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                                     stripe="odd"
                                     hoverRow
                                     sx={{
-                                        width: "60%",
+                                        width: "100%",
                                         '& tr > *:first-child': {
                                             position: 'sticky',
                                             left: 0,
@@ -889,7 +893,7 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                             </Box>
                         </Sheet>
                         <Stack direction={"row"} sx={{
-                            width: '60%',
+                            width: '100%',
                             bottom: '-50px',
                             right: 0,
                             justifyItems: 'center',

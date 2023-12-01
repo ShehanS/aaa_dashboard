@@ -69,6 +69,7 @@ type StateObj = {
     filterEditResponse: any;
     filterDeleteResponse: any;
     filtersResponse: any;
+    records: number;
 }
 
 const RecordFilter: FC = (props: any) => {
@@ -80,7 +81,7 @@ const RecordFilter: FC = (props: any) => {
     const [accountFilters, setAccountFilters] = useState<IAccountingFilterData[]>([]);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [stateObj, setStateObj] = useState<StateObj>({
-        records: null,
+        records: 0,
         accountAddResponse: null,
         accountEditResponse: null,
         accountDeleteResponse: null,
@@ -580,8 +581,8 @@ const RecordFilter: FC = (props: any) => {
                                         'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                                     backgroundColor: 'background.surface',
                                     overflowX: 'auto',
-                                    maxWidth: '50%',
-                                    height: "350px"
+                                    maxWidth: "100%",
+                                    height: '450px'
                                 }}
                             >
                                 <Box>
@@ -590,7 +591,7 @@ const RecordFilter: FC = (props: any) => {
                                         stripe="odd"
                                         hoverRow
                                         sx={{
-                                            width: "60%",
+                                            width: "100%",
                                             '& tr > *:first-child': {
                                                 position: 'sticky',
                                                 left: 0,
@@ -601,7 +602,7 @@ const RecordFilter: FC = (props: any) => {
                                                 position: 'sticky',
                                                 right: 0,
                                                 bgcolor: 'var(--TableCell-headBackground)',
-                                                width: '120px',
+                                                width: '50px',
                                             },
                                         }}
                                     >
@@ -650,7 +651,7 @@ const RecordFilter: FC = (props: any) => {
                                 </Box>
                             </Sheet>
                             <Stack direction={"row"} sx={{
-                                width: '50%',
+                                width: '100%',
                                 bottom: '-50px',
                                 right: 0,
                                 justifyItems: 'center',

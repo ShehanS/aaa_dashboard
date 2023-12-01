@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {Box, Typography} from "@mui/joy";
+import {Box} from "@mui/joy";
 
 
 const Header: FC = (props: any) => {
@@ -15,7 +15,7 @@ const Header: FC = (props: any) => {
             right: 0,
             padding: 0,
             background: '#0bb1aa',
-            zIndex: 9999,
+            zIndex: 50,
             boxShadow: '0px 2px 10px 0px #b8b8b8'
         }}>
             <Box sx={{position: "absolute", height:'100%'}}>

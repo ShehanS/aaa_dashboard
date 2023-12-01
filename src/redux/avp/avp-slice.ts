@@ -48,6 +48,7 @@ export const AVPSlice = createSlice({
             error: null
         }),
         editAvpRecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             avpRecordEditResponse: action.payload,
             error: null
         }),
@@ -62,6 +63,7 @@ export const AVPSlice = createSlice({
             error: null
         }),
         getAllAvpRecordsSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             avpRecordsResponse: action.payload,
             error: null
         }),
@@ -76,6 +78,7 @@ export const AVPSlice = createSlice({
             error: null
         }),
         getError: (state) => ({
+            ...state,
             error: null
         })
 

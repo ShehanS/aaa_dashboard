@@ -26,6 +26,7 @@ type InputStateObj = {
 type StateObj = {
     plansGetSuccess: any;
     metaParamsGetResponse: any;
+    planCount: number;
 };
 
 
@@ -42,7 +43,8 @@ const PlanTypeDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [stateObj, setStateObj] = useState<StateObj>({
         plansGetSuccess: null,
-        metaParamsGetResponse: null
+        metaParamsGetResponse: null,
+        planCount: 0
     });
     const [plans, setPlans] = useState<IPlan[]>([]);
     const [metaParameters, setMetaParameters] = useState<IParameterMeta[]>([]);

@@ -108,7 +108,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onSearch: (payload: any) => dispatch(search(payload)),
-        onClear: () => dispatch(clearSearch())
+        onClear: () => dispatch(clearSearch)
 
     };
 };

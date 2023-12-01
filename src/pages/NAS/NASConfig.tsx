@@ -14,7 +14,6 @@ import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 
 import {
-    clearNasResponse,
     deleteAttribute,
     deleteNASRecord,
     deleteSubscriber,
@@ -48,6 +47,7 @@ type StateObj = {
     subscribeAddResponse: any;
     subscriberEditResponse: any;
     subscriberDeleteResponse: any;
+    nasRecordCount: number;
 
 
 };
@@ -58,7 +58,7 @@ export interface INasEvent {
     nas_type: string;
     nas_attrgroup: number;
     nas_secret: string;
-    create_date: Date;
+    create_date: string;
 }
 
 export interface IAttribute {
@@ -108,7 +108,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
         subscribersResponse: null,
         subscribeAddResponse: null,
         subscriberEditResponse: null,
-        subscriberDeleteResponse: null
+        subscriberDeleteResponse: null,
+        nasRecordCount:0
     });
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
@@ -157,7 +158,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
             setStateObj({
                 ...stateObj,
                 nasRecordsResponse: props.nasRecordsResponse,
-                nasRecordCount: props?.data?.count
+                nasRecordCount: props?.data?.count ?? 0
             });
             setIsLoading(false);
             if (props.nasRecordsResponse?.code === "GET_NAS_EVENTS_SUCCESS") {
@@ -477,7 +478,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                             'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                         backgroundColor: 'background.surface',
                         overflowX: 'auto',
-                        maxWidth: '80%',
+                        maxWidth: '100%',
+                        height:"450px"
                     }}
                 >
                     <Box>
@@ -486,7 +488,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                             stripe="odd"
                             hoverRow
                             sx={{
-                                width: "60%",
+                                width: "100%",
                                 '& tr > *:first-child': {
                                     position: 'sticky',
                                     left: 0,
@@ -559,7 +561,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     </Box>
                 </Sheet>
                 <Stack direction={"row"} sx={{
-                    width: '80%',
+                    width: '100%',
                     bottom: '-50px',
                     right: 0,
                     justifyItems: 'center',

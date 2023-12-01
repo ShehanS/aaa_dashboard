@@ -65,7 +65,7 @@ const AccountDialog: FC<Props> = (props) => {
             },
         }));
     }
-    const handleClose = (event: any) => {
+    const handleClose = () => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: false
@@ -94,14 +94,14 @@ const AccountDialog: FC<Props> = (props) => {
 
             <Stack direction={"column"}
                    sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
-                <FormControl>
-                    <FormLabel>
-                        Subscriber ID:
-                    </FormLabel>
-                    <Input type={"number"} name={"subscriber_id"} value={input?.inputData?.['subscriber_id'] ?? ""}
-                           onChange={handleInput}/>
+                {/*<FormControl>*/}
+                {/*    <FormLabel>*/}
+                {/*        Subscriber ID:*/}
+                {/*    </FormLabel>*/}
+                {/*    <Input type={"number"} name={"subscriber_id"} value={input?.inputData?.['subscriber_id'] ?? ""}*/}
+                {/*           onChange={handleInput}/>*/}
 
-                </FormControl>
+                {/*</FormControl>*/}
                 <FormControl>
                     <FormLabel>
                         Username:
@@ -208,7 +208,7 @@ const AccountDialog: FC<Props> = (props) => {
 
 }
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = () => {
     return {};
 };
 

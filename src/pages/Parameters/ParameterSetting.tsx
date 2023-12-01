@@ -410,7 +410,7 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
         return pageCount;
     };
 
-    const handlePageChange = (event: number, page: Number) => {
+    const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
         setIsLoading(true);
         const request = {
@@ -512,7 +512,8 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
                             'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                         backgroundColor: 'background.surface',
                         overflowX: 'auto',
-                        maxWidth: '70%',
+                        maxWidth: '100%',
+                        height:"450px"
                     }}
                 >
                     <Box>
@@ -521,7 +522,7 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
                             stripe="odd"
                             hoverRow
                             sx={{
-                                width: "60%",
+                                width: "100%",
                                 '& tr > *:first-child': {
                                     position: 'sticky',
                                     left: 0,

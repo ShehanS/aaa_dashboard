@@ -27,6 +27,7 @@ type StateObj = {
     planTypeDeleteSuccess: any;
     planTypesGetSuccess: any;
     planTypeRecordCount: number;
+    coaRecordCount: number;
 }
 
 export interface IPlanType {
@@ -54,14 +55,14 @@ const PlanType: FC<ReduxProps> = (props: any) => {
             planTypeEditSuccess: null,
             planTypeDeleteSuccess: null,
             planTypesGetSuccess: null,
-            planTypeRecordCount: 0
+            planTypeRecordCount: 0,
+            coaRecordCount: 0,
         }
     )
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
-        setSnackBar({...snackBar, isOpen: false});
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -339,7 +340,8 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
                             overflowX: 'auto',
-                            maxWidth: '40%',
+                            maxWidth: '100%',
+                            height:"450px"
                         }}
                     >
                         <Box>
@@ -348,7 +350,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                                 stripe="odd"
                                 hoverRow
                                 sx={{
-                                    width: "60%",
+                                    width: "100%",
                                     '& tr > *:first-child': {
                                         position: 'sticky',
                                         left: 0,
@@ -405,7 +407,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                         </Box>
                     </Sheet>
                     <Stack direction={"row"} sx={{
-                        width: '40%',
+                        width: '100%',
                         bottom: '-50px',
                         right: 0,
                         justifyItems: 'center',

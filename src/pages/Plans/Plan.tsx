@@ -25,7 +25,7 @@ type SnackBarProps = {
 
 export interface IPlan {
     plan_id: number;
-    type_id: number;
+    type_id: number | undefined;
     plan_name: string;
     description: number;
 }
@@ -368,7 +368,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
                             overflowX: 'auto',
-                            maxWidth: '50%',
+                            maxWidth: '100%',
+                            height:"450px"
                         }}
                     >
                         <Box>
@@ -377,7 +378,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 stripe="odd"
                                 hoverRow
                                 sx={{
-                                    width: "60%",
+                                    width: "100%",
                                     '& tr > *:first-child': {
                                         position: 'sticky',
                                         left: 0,
@@ -405,7 +406,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 {plans?.map((row) => (
                                     <tr key={row.plan_id}>
                                         <td>{row.plan_id ?? ""}</td>
-                                        <td>{mapPlanTypeToPlanTypeName(row.type_id ?? "")}</td>
+                                        <td>{mapPlanTypeToPlanTypeName(row.type_id ?? undefined)}</td>
                                         <td>{row.plan_name ?? ""}</td>
                                         <td>{row.description ?? ""}</td>
                                         <td>
@@ -436,7 +437,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                         </Box>
                     </Sheet>
                     <Stack direction={"row"} sx={{
-                        width: '40%',
+                        width: '100%',
                         bottom: '-50px',
                         right: 0,
                         justifyItems: 'center',

@@ -35,21 +35,21 @@ const ReduxTest: FC<ReduxProps> = ({onIncrement, onDecrement, onLogin}) => {
     );
 };
 
-const mapStateToProps = (state: RootState) => {
-    return {
-        // count: state.counter.value,
-    };
-};
+// const mapStateToProps = (state: RootState) => {
+//     return {
+//         // count: state.counter.value,
+//     };
+// };
+//
+//
+// const mapDispatchToProps = (dispatch: any) => {
+//     return {
+//         onLogin: (user: any) => dispatch(login(user)),
+//         onIncrement: (data: any) => dispatch(increment()),
+//         onDecrement: (accessToken: any) => dispatch(decrement()),
+//     };
+// };
 
-
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        onLogin: (user: any) => dispatch(login(user)),
-        onIncrement: (data: any) => dispatch(increment()),
-        onDecrement: (accessToken: any) => dispatch(decrement()),
-    };
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(null, null);
 
 export default connector(ReduxTest);

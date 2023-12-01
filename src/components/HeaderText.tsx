@@ -35,8 +35,8 @@ const HeaderText: FC<Props> = ({title, subTitle}) => {
                 <Typography level="title-md" sx={{color: '#7e7e7e'}}>{subTitle ?? ""}</Typography>
             </Grow>
             <Stack direction={"row"} sx={{width: "30%",alignItems: 'center'}}>
-                <OtherHousesRoundedIcon size={"sm"} sx={{color:"#f29c70", paddingBottom:.5}}/>
-                <Grow sx={{padding: 0}} in={isLoading}
+                <OtherHousesRoundedIcon fontSize={"small"} sx={{color:"#f29c70", paddingBottom:.5}}/>
+                <Grow in={isLoading}
                       style={{transformOrigin: '0 0 0'}}
                       {...(isLoading ? {timeout: 500} : {})}>
                     <Breadcrumbs sx={{padding: 0}} separator={<KeyboardArrowLeft/>} aria-label="breadcrumbs">

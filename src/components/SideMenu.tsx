@@ -34,7 +34,7 @@ const SideMenu: FC = (props: any) => {
                     <SubMenu label={"System"} style={unSelected}
                              defaultOpen={isActive(ROUTES.account) || isActive(ROUTES.AVPOverride) || isActive(ROUTES.record_filter)}
                              prefix={<AutoAwesomeRoundedIcon/>}>
-                        <SubMenu label="Accounting" style={unSelected}
+                        <SubMenu label="Account" style={unSelected}
                                  defaultOpen={isActive(ROUTES.account) || isActive(ROUTES.AVPOverride) || isActive(ROUTES.record_filter)}
                                  prefix={<PhotoCameraFrontRoundedIcon/>}>
                             <MenuItem style={isActive(ROUTES.account) ? selected : unSelected}

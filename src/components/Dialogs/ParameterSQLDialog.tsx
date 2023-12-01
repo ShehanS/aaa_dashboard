@@ -72,7 +72,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
     const [selectedParam, setSelectedParam] = useState<any>(null);
     const [currentIndex, setCurrentIndex] = useState<number>(9999);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const [stateObj, setStateObj] = useState<StateObj>({
         sqlParameterAddResponse: null,
@@ -210,14 +210,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                 //     isOpenDialog: false,
                 // });
             } else if (props.sqlParameterEditResponse?.code === "EDIT_PARAMETER_SQL_FAILED") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "danger",
-                    message: `Oops!!. NAS Event Record couldn't get updated due ${
-                        props.sqlParameterEditResponse?.error ?? ""
-                    }`,
-                });
+
             }
         }
     }, [props.sqlParameterEditResponse]);
@@ -231,8 +224,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                sqlParameterDeleteResponse: props.sqlParameterDeleteResponse,
-                metaParamsCount: 0,
+                sqlParameterDeleteResponse: props.sqlParameterDeleteResponse
             });
             if (props.sqlParameterDeleteResponse?.code === "DELETE_PARAMETER_SQL_SUCCESS") {
                 setDialogDataContext({
@@ -246,7 +238,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
         }
     }, [props.sqlParameterDeleteResponse]);
 
-    const handlePageChange = (event: number, page: Number) => {
+    const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
         setIsLoading(true);
         const request = {
@@ -316,7 +308,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                         <FormLabel>
                             Match Rerun:
                         </FormLabel>
-                        <Input type={"number"} defalutValue={0} name={"match_return"}
+                        <Input type={"number"} name={"match_return"}
                                value={input?.inputData?.['match_return'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>

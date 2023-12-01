@@ -1,4 +1,5 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import type {PayloadAction} from '@reduxjs/toolkit'
+import {createSlice} from '@reduxjs/toolkit'
 
 export interface ICOAState {
     payload: any;
@@ -10,7 +11,7 @@ export interface ICOAState {
     coaRecordResponse: any;
 }
 
-const initialCOAState: ICOAState = {
+const initialState: ICOAState = {
     payload: null,
     coaRecordAddResponse: null,
     coaRecordEditResponse: null,
@@ -22,49 +23,60 @@ const initialCOAState: ICOAState = {
 
 export const COASlice = createSlice({
     name: 'coa',
-    initialState: initialCOAState,
+    initialState,
     reducers: {
         addCOARecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         editCOARecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         deleteCOARecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         addCOARecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             coaRecordAddResponse: action.payload,
             error: null
         }),
         editCOARecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             coaRecordEditResponse: action.payload,
             error: null
         }),
         deleteCOARecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             coaRecordDeleteResponse: action.payload,
             error: null
         }),
         getAllCOARecords: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         getAllCOARecordsSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             coaRecordsResponse: action.payload,
             error: null
         }),
         getCOARecord: (state, action: PayloadAction<any>) => ({
+            ...state,
             payload: action.payload,
             error: null
         }),
         getCOARecordSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             coaRecordResponse: action.payload,
             error: null
         }),
         getCOAError: (state) => ({
+            ...state,
             error: null
         })
     }

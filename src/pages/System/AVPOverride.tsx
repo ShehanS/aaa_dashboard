@@ -19,6 +19,7 @@ import SearchBar from "../../components/SearchBar";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+
 export interface IAVPAttribute {
     attrgroup_id: number;
     vp_name: string;
@@ -33,6 +34,7 @@ type StateObj = {
     avpRecordsResponse: any;
     avpRecordEditResponse: any;
     avpRecordDeleteResponse: any;
+    records: number;
 }
 
 
@@ -57,7 +59,8 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         avpRecordAddResponse: null,
         avpRecordsResponse: null,
         avpRecordEditResponse: null,
-        avpRecordDeleteResponse: null
+        avpRecordDeleteResponse: null,
+        records: 0
     });
     const [avpRecords, setAvpRecords] = useState<IAVPAttribute[]>([]);
 
@@ -350,14 +353,16 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                 rgba(0, 0, 0, 0)
               )
               0 100%`,
-                        backgroundSize:
-                            '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundAttachment: 'local, local, scroll, scroll',
-                        backgroundPosition:
-                            'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
-                        backgroundColor: 'background.surface',
-                    }}
+                            backgroundSize:
+                                '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundAttachment: 'local, local, scroll, scroll',
+                            backgroundPosition:
+                                'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                            backgroundColor: 'background.surface',
+                            maxWidth: "100%",
+                            height: '450px'
+                        }}
                 >
                     <Table
                         borderAxis="bothBetween"

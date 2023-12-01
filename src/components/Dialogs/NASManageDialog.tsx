@@ -118,7 +118,7 @@ const NASManageDialog: FC<Props> = (props) => {
         return data;
     }
 
-    const handleNASType = (event, value): any => {
+    const handleNASType = (event: any, value: any): any => {
         const data = {
             nativeEvent: {
                 target: {

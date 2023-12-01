@@ -1,14 +1,14 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export interface ISearchState {
-    payload: any;
+    payloadSearch: any;
     searchResponse: any;
     error: any;
 
 }
 
 const initialState: ISearchState = {
-    payload: null,
+    payloadSearch: null,
     searchResponse: null,
     error: null
 }
@@ -18,18 +18,22 @@ export const SearchSlice = createSlice({
     initialState,
     reducers: {
         search: (state, action: PayloadAction<any>) => ({
-            payload: action.payload,
+            ...state,
+            payloadSearch: action.payload,
             error: null
         }),
         searchSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
             searchResponse: action.payload,
             error: null
         }),
         getError: (state, action: PayloadAction<any>) => ({
+            ...state,
             error: action.payload,
             searchResponse: null
         }),
-        clearSearch: (state, action: PayloadAction<any>) => ({
+        clearSearch: (state) => ({
+            ...state,
             searchResponse: null,
             error: null
         }),

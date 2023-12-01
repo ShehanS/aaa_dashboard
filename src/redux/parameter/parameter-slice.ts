@@ -32,7 +32,7 @@ const initialState: ParamsState = {
 
 export const ParameterSlice = createSlice({
     name: 'parameter',
-    initialState: initialState,
+    initialState,
     reducers: {
         addMetaParams: (state, action: PayloadAction<any>) => ({
             ...state,
@@ -139,6 +139,7 @@ export const ParameterSlice = createSlice({
         }),
 
         getError: (state) => ({
+            ...state,
             error: null
         })
     }

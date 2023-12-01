@@ -27,14 +27,16 @@ const Home: FC<Props> = ({children}) => {
         <DialogV1/>
         <Dialog/>
         <Grid
-            sx={{flexGrow: 1, width: '100%', height: '100%'}}
+            sx={{flexGrow: 1}}
             container
             direction="row"
             justifyContent="center"
             alignItems="stretch"
         >
             <Grid md={1} sm={1} lg={1} direction="row">
-                <Header/>
+                <Box sx={{width:"100%"}}>
+                    <Header/>
+                </Box>
              <Box sx={{position:"absolute",  height:"100%"}}>
                  <Box sx={{marginTop: 10, width: "290px", height: "90%", overflowY: "auto", overflowX: "none"}}>
                      <SideMenu/>
@@ -63,7 +65,7 @@ const Home: FC<Props> = ({children}) => {
                         left: 300,
                         top: 100,
                         height: '80%',
-                        width: "80%"
+                        width: "82%"
                     }}>
                     <Box sx={{width: '100%', height: '100%'}}>{children}</Box>
                 </Box></Fade>}

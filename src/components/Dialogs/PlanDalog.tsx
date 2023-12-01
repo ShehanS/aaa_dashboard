@@ -193,7 +193,7 @@ const mapStateToProps = (state: RootState) => {
     return {
         planAddSuccess: state.plan.planAddSuccess,
         planEditSuccess: state.plan.planEditSuccess,
-        planDeleteSuccess: state.planEditSuccess,
+        planDeleteSuccess: state.plan.planDeleteSuccess,
         plansGetSuccess: state.plan.plansGetSuccess,
         planTypesGetSuccess: state.plan.planTypesGetSuccess
 

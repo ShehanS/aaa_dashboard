@@ -48,12 +48,12 @@ const NASAttributeGroupDialog: FC<Props> = (props) => {
         props.onEditAttribute(input.inputData);
     };
 
-    const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInput = (event: any) => {
         setInput((prevInput) => ({
             ...prevInput,
             inputData: {
                 ...prevInput.inputData,
-                [event.target.name]: event.target.value,
+                [event.nativeEvent.target.name]: event.nativeEvent.target.value,
             },
         }));
     };
@@ -111,9 +111,6 @@ const NASAttributeGroupDialog: FC<Props> = (props) => {
     );
 };
 
-const mapStateToProps = (state: RootState) => {
-    return {};
-};
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
@@ -122,6 +119,6 @@ const mapDispatchToProps = (dispatch: any) => {
     };
 };
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
+const connector = connect(null, mapDispatchToProps);
 
 export default connector(NASAttributeGroupDialog);

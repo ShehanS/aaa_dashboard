@@ -40,6 +40,7 @@ type StateObj = {
     planParameterCount: number;
     plansGetSuccess: any;
     metaParamsGetResponse: any;
+    coaRecordCount: number;
 }
 
 export interface IPlanParameter {
@@ -53,10 +54,12 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 const PlanParameter: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
+    const [recordCount, setRecordCount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [plans, setPlans] = useState<IPlan[]>([]);
+    props.planAttributesGetSuccess?.data?.count ?? 0
     const [metaParameters, setMetaParameters] = useState<IParameterMeta[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
@@ -72,7 +75,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             planParametersGetSuccess: null,
             planParameterCount: 0,
             plansGetSuccess: null,
-            metaParamsGetResponse: null
+            metaParamsGetResponse: null,
+            coaRecordCount: 0
         }
     )
     const getPlans = () => {
@@ -138,7 +142,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
     }
 
     const mapPlanIdToPlanTypeName = (id: number): string => {
-        const plan: any = plans?.filter((plan: any) => plan?.plan_id === Number.parseInt(id))?.[0];
+        const plan: any = plans?.filter((plan: any) => plan?.plan_id === Number.parseInt(String(id)))?.[0];
         return plan?.plan_name ?? "";
     }
     const openEditPlanParameterDialog = (props: any) => {
@@ -252,7 +256,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             });
             if (props.metaParamsGetResponse?.code === "GET_PARAMETER_META_SUCCESS") {
                 setMetaParameters(props.metaParamsGetResponse?.data?.records ?? []);
-
+                setRecordCount(props.metaParamsGetResponse?.data?.count ?? 0);
             } else if (props.metaParamsGetResponse?.code === "GET_PARAMETER_META_FAILED") {
             }
         }
@@ -427,7 +431,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
                             overflowX: 'auto',
-                            maxWidth: '50%',
+                            maxWidth: '100%',
+                            height: "450px"
                         }}
                     >
                         <Box>
@@ -436,7 +441,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 stripe="odd"
                                 hoverRow
                                 sx={{
-                                    width: "60%",
+                                    width: "100%",
                                     '& tr > *:first-child': {
                                         position: 'sticky',
                                         left: 0,
@@ -495,7 +500,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                         </Box>
                     </Sheet>
                     <Stack direction={"row"} sx={{
-                        width: '40%',
+                        width: '100%',
                         bottom: '-50px',
                         right: 0,
                         justifyItems: 'center',
@@ -508,7 +513,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(stateObj.planParameterCount, 10)}
+                            count={getPageCount(recordCount, 10)}
                             page={currentPage}
                             onChange={handlePageChange}
                             renderItem={(item) => (

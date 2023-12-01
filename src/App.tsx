@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import {ROUTES} from "./constants/routes";
 import './App.css'
 import AVPOverride from "./pages/System/AVPOverride";
-import Accounting from "./pages/System/Accounting";
+import Accounting from "./pages/System/Account";
 import COA from "./pages/COA/COA";
 import {AppDataContextProvider} from "./context/AppDataContext";
 import React from "react"

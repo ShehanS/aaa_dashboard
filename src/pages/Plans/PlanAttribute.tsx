@@ -15,7 +15,6 @@ import {deletePlanAttribute, getPlans, getPlansAttribute} from "../../redux/plan
 import {IPlan} from "./Plan";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import attributeGroup from "../NAS/AttributeGroup";
 import {IAttribute} from "../NAS/NASConfig";
 import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
 
@@ -33,6 +32,7 @@ type StateObj = {
     attributeRecordCount: number;
     plansGetSuccess: any;
     attrGroupsResponse: any;
+    planAttributeCount: number;
 }
 
 export interface IPlanAttribute {
@@ -47,6 +47,7 @@ export interface IPlanAttribute {
 type ReduxProps = ConnectedProps<typeof connector>;
 
 const PlanAttributes: FC<ReduxProps> = (props: any) => {
+    const [recordCount, setRecordCount] = useState<number>(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
@@ -67,7 +68,8 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
             planAttributesGetSuccess: null,
             attributeRecordCount: 0,
             plansGetSuccess: null,
-            attrGroupsResponse: null
+            attrGroupsResponse: null,
+            planAttributeCount: 0
         }
     )
     const handleClose = () => {
@@ -164,8 +166,9 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                 setStateObj({
                     ...stateObj,
                     planAttributesGetSuccess: props.planAttributesGetSuccess,
-                    attributeRecordCount: props.attributeRecordCount?.data?.count ?? 0,
+                    planAttributeCount: props.planAttributesGetSuccess?.data?.count ?? 0,
                 });
+                setRecordCount(props.planAttributesGetSuccess?.data?.count ?? 0);
                 setPlanAttributes(props.planAttributesGetSuccess?.data?.records ?? []);
             } else if (props.planAttributesGetSuccess?.code === "GET_ALL_PLAN_ATTRIBUTE_FAILED") {
                 setSnackBar({
@@ -421,7 +424,8 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
                             overflowX: 'auto',
-                            maxWidth: '60%',
+                            maxWidth: '100%',
+                            height: "450px"
                         }}
                     >
                         <Box>
@@ -430,7 +434,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                                 stripe="odd"
                                 hoverRow
                                 sx={{
-                                    width: "60%",
+                                    width: "100%",
                                     '& tr > *:first-child': {
                                         position: 'sticky',
                                         left: 0,
@@ -493,7 +497,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                         </Box>
                     </Sheet>
                     <Stack direction={"row"} sx={{
-                        width: '60%',
+                        width: '100%',
                         bottom: '-50px',
                         right: 0,
                         justifyItems: 'center',
@@ -506,7 +510,7 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(stateObj.attributeRecordCount, 10)}
+                            count={getPageCount(recordCount, 10)}
                             page={currentPage}
                             onChange={handlePageChange}
                             renderItem={(item) => (
@@ -539,7 +543,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetPlanAttribute: (payload: any) => dispatch(getPlansAttribute(payload)),
-        onDeleteAttribute:(payload: any)=> dispatch(deletePlanAttribute(payload)),
+        onDeleteAttribute: (payload) => dispatch(deletePlanAttribute(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
     };

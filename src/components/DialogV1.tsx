@@ -9,7 +9,7 @@ type StateObj = {
 }
 
 
-const DialogV1: FC = (props: any) => {
+const DialogV1: FC = () => {
     const matches = useMediaQuery('(min-width:600px)');
     const {dialogDataContext, setDialogDataContext} = useDialogDataContext();
     const [stateObj, setStateObj] = useState<StateObj>({
