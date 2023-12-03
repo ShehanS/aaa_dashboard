@@ -15,4 +15,5 @@ export const ROUTES = {
     plan_parameter: "/parameters/manage-parameters",
     plan: "/plan",
     subscribers: "/home/subscribers",
+    manage_subscribers:"/subscribers/manage-subscribers"
 }

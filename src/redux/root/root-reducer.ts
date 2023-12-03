@@ -9,7 +9,7 @@ import DMReducer from "../dm/dm-slice";
 import NASReducer from "../nas/nas-slice"
 import ParameterReducer from "../parameter/parameter-slice";
 import PlanReducer from "../plan/plan-slice";
-
+import SubscriberReducer from "../subscriber/subscriber-slice"
 const rootReducer = combineReducers({
     counter: counterReducer,
     login: loginReducer,
@@ -20,7 +20,8 @@ const rootReducer = combineReducers({
     nas: NASReducer,
     param: ParameterReducer,
     plan: PlanReducer,
-    dm: DMReducer
+    dm: DMReducer,
+    subscriber: SubscriberReducer
 });
 
 export default rootReducer;

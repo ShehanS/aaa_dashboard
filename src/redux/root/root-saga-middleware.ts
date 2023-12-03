@@ -8,6 +8,7 @@ import NASSaga from "../nas/nas-saga";
 import ParameterSaga from "../parameter/parameter-saga";
 import PlanSaga from "../plan/plan-saga";
 import DMSaga from "../dm/dm-saga";
+import SubscriberSaga from "../subscriber/subscriber-saga";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -21,6 +22,7 @@ export const runRootSagaMiddleware = () => {
     sagaMiddleware.run(NASSaga);
     sagaMiddleware.run(ParameterSaga);
     sagaMiddleware.run(PlanSaga);
+    sagaMiddleware.run(SubscriberSaga);
 
 };
 

@@ -44,8 +44,10 @@ const SideMenu: FC = (props: any) => {
                         </SubMenu>
                     </SubMenu>
 
-                    <SubMenu style={unSelected} label={"Subscribers"} defaultOpen={isActive(ROUTES.subscribers)}
+                    <SubMenu style={unSelected} label={"Subscribers"} defaultOpen={isActive(ROUTES.manage_subscribers)}
                              prefix={<PeopleAltRoundedIcon/>}>
+                        <MenuItem style={isActive(ROUTES.manage_subscribers) ? selected : unSelected}
+                                  component={<Link to={ROUTES.manage_subscribers}></Link>}>Manage Subscribers</MenuItem>
 
                     </SubMenu>
 
