@@ -406,10 +406,14 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                     <Sheet
                         variant="outlined"
                         sx={{
-                            '--TableCell-height': '40px',
+                            '--TableCell-height': '10px',
+                            // the number is the amount of the header rows.
                             '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
                             '--Table-firstColumnWidth': '80px',
                             '--Table-lastColumnWidth': '144px',
+                            // background needs to have transparency to show the scrolling shadows
+                            '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                            '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
                             overflow: 'auto',
                             background: (
                                 theme,
@@ -552,9 +556,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetPlanParameters: (payload: any) => dispatch(getPlansParameter(payload)),
         onDeletePlanParameter: (payload: any) => dispatch(deletePlanParameter(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
-        clearPlanHistory: () => dispatch(clearPlanHistory()),
         onGetMetaParameters: (payload: any) => dispatch(getMetaParams(payload)),
-        onClearHistory: () => dispatch(onClearHistory())
+        onClearHistory: () => dispatch(onClearHistory)
     };
 };
 

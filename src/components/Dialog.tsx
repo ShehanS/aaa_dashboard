@@ -1,8 +1,7 @@
 import React, {FC, useState} from "react"
 import Modal from '@mui/joy/Modal';
-import ModalClose from '@mui/joy/ModalClose';
 import {useAppDataContext} from "../context/AppDataContext";
-import {DialogTitle, Divider, ModalDialog} from "@mui/joy";
+import {Box, ModalDialog} from "@mui/joy";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
 type StateObj = {
@@ -29,7 +28,11 @@ const Dialog: FC = () => {
                onClose={() => {
                    setAppDataContext({...appDataContext, isOpenDialog: false});
                }}>
-            <ModalDialog variant="outlined" role="alertdialog" sx={{width: appDataContext.dialogWidth, height: appDataContext.dialogHeight, background:'linear-gradient(339deg, rgba(34,193,195,1) 0%, rgba(23,64,65,1) 100%);'}}
+            <ModalDialog variant="outlined" role="alertdialog" sx={{
+                width: appDataContext.dialogWidth,
+                height: appDataContext.dialogHeight,
+                background: 'linear-gradient(339deg, rgba(34,193,195,1) 50%, rgba(23,64,65,1) 100%);'
+            }}
                          layout={matches ? "center" : "fullscreen"}>
                 {appDataContext.dialogContent}
             </ModalDialog>

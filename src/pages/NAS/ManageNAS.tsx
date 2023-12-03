@@ -79,7 +79,7 @@ export interface ISubscriber {
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
-const NASConfig: FC<ReduxProps> = (props: any) => {
+const ManageNAS: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageForAtt, setCurrentPageForAtt] = useState(1);
     const [currentPageForSub, setCurrentPageForSub] = useState(1);
@@ -274,7 +274,7 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. Record couldn't get records due ${
+                    message: `Oops!!. ${
                         props.nasRecordAddResponse?.error ?? ""
                     }`,
                 });
@@ -331,6 +331,8 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
     const openAddNasDialog = () => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <NASManageDialog type={DialogType.add}/>
         });
@@ -456,10 +458,14 @@ const NASConfig: FC<ReduxProps> = (props: any) => {
                 <Sheet
                     variant="outlined"
                     sx={{
-                        '--TableCell-height': '40px',
+                        '--TableCell-height': '10px',
+                        // the number is the amount of the header rows.
                         '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
                         '--Table-firstColumnWidth': '80px',
                         '--Table-lastColumnWidth': '144px',
+                        // background needs to have transparency to show the scrolling shadows
+                        '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                        '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
                         overflow: 'auto',
                         background: (
                             theme,
@@ -624,7 +630,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
         onDeleteSubscriber: (payload: any) => dispatch(deleteSubscriber(payload)),
         onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload)),
-        onClearHistory: () => dispatch(onClearHistory()),
+        onClearHistory: () => dispatch(onClearHistory),
 
 
     };
@@ -632,4 +638,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(NASConfig);
+export default connector(ManageNAS);

@@ -7,7 +7,7 @@ import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, IconButton,
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {addNASRecord, editNASRecord, getAllAttributeGroups} from "../../redux/nas/nas-slice";
-import {IAttribute} from "../../pages/NAS/NASConfig";
+import {IAttribute} from "../../pages/NAS/ManageNAS";
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 

@@ -621,6 +621,8 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
     const openAddNASGroupDialog = () => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <NASAttributeGroupDialog type={DialogType.add}/>
         });
@@ -801,10 +803,14 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                         <Sheet
                             variant="outlined"
                             sx={{
-                                '--TableCell-height': '40px',
+                                '--TableCell-height': '10px',
+                                // the number is the amount of the header rows.
                                 '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
                                 '--Table-firstColumnWidth': '80px',
                                 '--Table-lastColumnWidth': '144px',
+                                // background needs to have transparency to show the scrolling shadows
+                                '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                                '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
                                 overflow: 'auto',
                                 background: (
                                     theme,
@@ -947,7 +953,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onClearHistory: () => dispatch(onClearHistory()),
+        onClearHistory: () => dispatch(onClearHistory),
         // onGetNasRecords: (payload: any) => dispatch(getAllNASRecords(payload)),
         onDeleteAttributeRecord: (payload: any) => dispatch(deleteAttribute(payload)),
         // onDeleteNASEvent: (payload: any) => dispatch(deleteNASRecord(payload)),

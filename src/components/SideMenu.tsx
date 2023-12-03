@@ -9,8 +9,7 @@ import DiscFullRoundedIcon from '@mui/icons-material/DiscFullRounded';
 import WifiTetheringRoundedIcon from '@mui/icons-material/WifiTetheringRounded';
 import FileOpenRoundedIcon from '@mui/icons-material/FileOpenRounded';
 import ModelTrainingRoundedIcon from '@mui/icons-material/ModelTrainingRounded';
-import {Typography} from "@mui/joy";
-
+import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 
 const selected = {
     borderBottom: '3px solid #e85153', color: 'white', fontWeight: 'bold', backgroundColor: '#0aa59e'
@@ -28,7 +27,6 @@ const SideMenu: FC = (props: any) => {
 
     return (
         <Box sx={{width: 270, alignItems:"center", justifyItems:"center", justifyContent:'center'}}>
-
             <Sidebar defaultCollapsed={true}>
                 <Menu>
                     <SubMenu label={"System"} style={unSelected}
@@ -45,21 +43,31 @@ const SideMenu: FC = (props: any) => {
                                       component={<Link to={ROUTES.record_filter}></Link>}>Record Filter</MenuItem>
                         </SubMenu>
                     </SubMenu>
+
+                    <SubMenu style={unSelected} label={"Subscribers"} defaultOpen={isActive(ROUTES.subscribers)}
+                             prefix={<PeopleAltRoundedIcon/>}>
+
+                    </SubMenu>
+
                     <SubMenu label={"NAS"} style={unSelected}
                              defaultOpen={isActive(ROUTES.nas_attribute_map) || isActive(ROUTES.nas_config) || isActive(ROUTES.subscribers)}
                              prefix={<DiscFullRoundedIcon/>}>
                         <MenuItem style={isActive(ROUTES.nas_attribute_map) ? selected : unSelected}
                                   component={<Link to={ROUTES.nas_attribute_map}></Link>}>Attribute Group</MenuItem>
                         <MenuItem style={isActive(ROUTES.nas_config) ? selected : unSelected}
-                                  component={<Link to={ROUTES.nas_config}></Link>}>NAS Manage</MenuItem>
-
+                                  component={<Link to={ROUTES.nas_config}></Link>}>Manage NAS</MenuItem>
                         <MenuItem style={isActive(ROUTES.subscribers) ? selected : unSelected}
                                   component={<Link to={ROUTES.subscribers}></Link>}>Manage Subscribers</MenuItem>
+
                     </SubMenu>
-                    <SubMenu style={unSelected} label={"COA/DM"} defaultOpen={isActive(ROUTES.coa)} prefix={<WifiTetheringRoundedIcon/>}>
+                    <SubMenu style={unSelected} label={"COA/DM"}
+                             defaultOpen={isActive(ROUTES.coa) || isActive(ROUTES.dm)}
+                             prefix={<WifiTetheringRoundedIcon/>}>
                         <MenuItem style={isActive(ROUTES.coa) ? selected : unSelected}
                                   component={<Link to={ROUTES.coa}></Link>}>COA</MenuItem>
-                        <MenuItem>DM</MenuItem>
+
+                        <MenuItem style={isActive(ROUTES.dm) ? selected : unSelected}
+                                  component={<Link to={ROUTES.dm}></Link>}>DM</MenuItem>
                     </SubMenu>
                     <SubMenu label={"Plan"} style={unSelected}
                              defaultOpen={isActive(ROUTES.plan_type) || isActive(ROUTES.plan) || isActive(ROUTES.plan_attribute) || isActive(ROUTES.plan_parameter)}

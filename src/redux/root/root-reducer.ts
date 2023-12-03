@@ -5,6 +5,7 @@ import AVPReducer from "../avp/avp-slice";
 import SearchReducer from "../search/search-slice";
 import AccountReducer from "../account/account-slice";
 import COAReducer from "../coa/coa-slice";
+import DMReducer from "../dm/dm-slice";
 import NASReducer from "../nas/nas-slice"
 import ParameterReducer from "../parameter/parameter-slice";
 import PlanReducer from "../plan/plan-slice";
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
     coa: COAReducer,
     nas: NASReducer,
     param: ParameterReducer,
-    plan: PlanReducer
+    plan: PlanReducer,
+    dm: DMReducer
 });
 
 export default rootReducer;

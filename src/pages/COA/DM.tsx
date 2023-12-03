@@ -3,17 +3,19 @@ import HeaderText from "../../components/HeaderText";
 import {Box, Button, IconButton, Sheet, Snackbar, Stack, Table, Typography} from "@mui/joy";
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import SearchBar from "../../components/SearchBar";
-import PlanTypeDalog, {DialogType} from "../../components/Dialogs/PlanTypeDalog";
+import {DialogType} from "../../components/Dialogs/AccountingRecordFilterDialog";
 import {useAppDataContext} from "../../context/AppDataContext";
+import dmEventDialog from "../../components/Dialogs/DMEventDialog";
 import {RootState} from "../../redux/store";
+import {deleteDMRecord, getAllDMRecords, onClearHistory} from "../../redux/dm/dm-slice";
 import {connect, ConnectedProps} from "react-redux";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
-import {deletePlanType, getPlansType, onClearHistory} from "../../redux/plan/plan-slice";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import DMEventDialog from "../../components/Dialogs/DMEventDialog";
 
 type SnackBarProps = {
     isOpen: boolean,
@@ -22,23 +24,25 @@ type SnackBarProps = {
 }
 
 type StateObj = {
-    planTypeAddSuccess: any;
-    planTypeEditSuccess: any;
-    planTypeDeleteSuccess: any;
-    planTypesGetSuccess: any;
-    planTypeRecordCount: number;
-    coaRecordCount: number;
+    dmRecordAddResponse: any;
+    dmRecordEditResponse: any;
+    dmRecordDeleteResponse: any;
+    dmRecordsResponse: any;
+    dmRecordResponse: any;
+    dmRecordCount: any;
 }
 
-export interface IPlanType {
-    type_id: string;
-    type_name: string;
-    description: string
+export interface IdmEvent {
+    event_id: number,
+    username: string,
+    status: string
+    event_response: string,
+    request_datetime: string
 }
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
-const PlanType: FC<ReduxProps> = (props: any) => {
+const DM: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
@@ -48,33 +52,32 @@ const PlanType: FC<ReduxProps> = (props: any) => {
         color: "",
         message: ""
     });
-    const [planTypes, setPlanTypes] = useState<IPlanType[]>([]);
+    const [dmEvents, setDMEvents] = useState<IdmEvent[]>([]);
     const [stateObj, setStateObj] = useState<StateObj>(
         {
-            planTypeAddSuccess: null,
-            planTypeEditSuccess: null,
-            planTypeDeleteSuccess: null,
-            planTypesGetSuccess: null,
-            planTypeRecordCount: 0,
-            coaRecordCount: 0,
+            dmRecordAddResponse: null,
+            dmRecordEditResponse: null,
+            dmRecordDeleteResponse: null,
+            dmRecordsResponse: null,
+            dmRecordResponse: null,
+            dmRecordCount: 0
         }
     )
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
     };
     const initLoad = (id?: string) => {
-
         props.onClearHistory();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
-            //  props.onGetAccount(id);
+            props.onGetAccount(id);
         } else {
             const request = {
                 page: currentPage - 1,
                 pageSize: 10
             }
-            props.onGetPlanTypes(request);
+            props.onGetDMRecords(request);
         }
     }
 
@@ -88,7 +91,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
     }
 
     const handleDelete = (id: string) => {
-        props.onDeletePlanType(id);
+        props.onDeleteDMRecord(id);
     }
 
 
@@ -98,65 +101,78 @@ const PlanType: FC<ReduxProps> = (props: any) => {
             isOpenDialog: true,
             dialogWidth: 450,
             dialogHeight: 200,
-            dialogContent: <DeleteDialog id={props.type_id} onDelete={handleDelete}/>
+            dialogContent: <DeleteDialog id={props.event_id} onDelete={handleDelete}/>
         });
     }
 
-    const openAddPlanTypeDialog = () => {
-        setAppDataContext({
-            ...appDataContext,
-            isOpenDialog: true,
-            dialogContent: <PlanTypeDalog type={DialogType.add}/>
-        });
-    }
-
-    const openEditPlanTypeDialog = (props: any) => {
+    const openAddDMRecordDialog = () => {
         setAppDataContext({
             ...appDataContext,
             dialogWidth: 600,
             dialogHeight: 450,
             isOpenDialog: true,
-            dialogContent: <PlanTypeDalog type={DialogType.edit} data={props}/>
+            dialogContent: <DMEventDialog type={DialogType.add}/>
+        });
+    }
+
+    const openEditDMRecordDialog = (props: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
+            isOpenDialog: true,
+            dialogContent: <DMEventDialog type={DialogType.edit} data={props}/>
         });
     }
 
     useEffect(() => {
         if (
-            (stateObj.planTypesGetSuccess === null ||
-                props.planTypesGetSuccess !== null) ||
-            (stateObj.planTypesGetSuccess !== props.planTypesGetSuccess)
+            (stateObj.dmRecordsResponse === null ||
+                props.dmRecordsResponse !== null) ||
+            (stateObj.dmRecordsResponse !== props.dmRecordsResponse)
         ) {
+            setStateObj({
+                ...stateObj,
+                dmRecordsResponse: props.dmRecordsResponse,
+                dmRecordCount: props?.data?.count
+            });
             setIsLoading(false);
-            if (props.planTypesGetSuccess?.code === "GET_ALL_PLAN_TYPE_SUCCESS") {
+            if (props.dmRecordsResponse?.code === "GET_DM_EVENTS_SUCCESS") {
                 setStateObj({
                     ...stateObj,
-                    planTypesGetSuccess: props.planTypesGetSuccess,
-                    planTypeRecordCount: props.planTypesGetSuccess?.data?.count ?? 0,
+                    dmRecordsResponse: props.dmRecordsResponse,
+                    dmRecordCount: props.dmRecordsResponse?.data?.count ?? 0,
                 });
-                setPlanTypes(props.planTypesGetSuccess?.data?.records ?? []);
-            } else if (props.planTypesGetSuccess?.code === "GET_ALL_PLAN_TYPE_FAILED") {
+                setDMEvents(props.dmRecordsResponse?.data?.records ?? []);
+            } else if (props.dmRecordsResponse?.code === "GET_DM_EVENTS_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!! Couldn't get COA records due to ${props.planTypesGetSuccess?.error ?? ""}`,
+                    message: `Oops!! Couldn't get dm records due to ${props.dmRecordsResponse?.error ?? ""}`,
                 });
             }
         }
-    }, [props.planTypesGetSuccess]);
+    }, [props.dmRecordsResponse]);
 
     useEffect(() => {
         if (
-            (stateObj.planTypeAddSuccess === null ||
-                props.planTypeAddSuccess !== null) ||
-            (stateObj.planTypeAddSuccess !== props.planTypeAddSuccess)
+            (stateObj.dmRecordAddResponse === null ||
+                props.dmRecordAddResponse !== null) ||
+            (stateObj.dmRecordAddResponse !== props.dmRecordAddResponse)
         ) {
             setStateObj({
                 ...stateObj,
-                planTypeAddSuccess: props.planTypeAddSuccess,
+                dmRecordAddResponse: props.dmRecordAddResponse,
             });
             setIsLoading(false);
-            if (props.planTypeAddSuccess?.code === "ADD_PLAN_TYPE_SUCCESS") {
+            if (props.dmRecordAddResponse?.code === "ADD_DM_EVENT_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `New dm record added!!!!`,
+                });
                 setAppDataContext({
                     ...appDataContext,
                     isOpenDialog: false,
@@ -165,90 +181,96 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                     ...snackBar,
                     isOpen: true,
                     color: "success",
-                    message: "Plan type added!!",
+                    message: "dm added!!",
                 });
                 initLoad();
-            } else if (props.planTypeAddSuccess?.code === "ADD_PLAN_TYPE_SUCCESS") {
+            } else if (props.dmRecordAddResponse?.code === "ADD_DM_EVENT_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
                     message: `Oops!!. Record couldn't get records due ${
-                        props.planTypeAddSuccess?.error ?? ""
+                        props.dmRecordAddResponse?.error ?? ""
                     }`,
                 });
             }
         }
-    }, [props.planTypeAddSuccess]);
+    }, [props.dmRecordAddResponse]);
 
     useEffect(() => {
         if (
-            (stateObj.planTypeDeleteSuccess === null ||
-                props.planTypeDeleteSuccess !== null) ||
-            (stateObj.planTypeDeleteSuccess !== props.planTypeDeleteSuccess)
+            (stateObj.dmRecordDeleteResponse === null ||
+                props.dmRecordDeleteResponse !== null) ||
+            (stateObj.dmRecordDeleteResponse !== props.dmRecordDeleteResponse)
         ) {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                planTypeDeleteSuccess: props.planTypeDeleteSuccess,
-                coaRecordCount: 0,
+                dmRecordDeleteResponse: props.dmRecordDeleteResponse,
+                dmRecordCount: 0,
             });
-            if (props.planTypeDeleteSuccess?.code === "DELETE_PLAN_TYPE_SUCCESS") {
+            if (props.dmRecordDeleteResponse?.code === "DELETE_DM_EVENT_SUCCESS") {
                 initLoad(searchId);
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "success",
-                    message: `Plan type deleted!!!!`,
+                    message: `dm Record Deleted!!!!`,
                 });
                 setAppDataContext({
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-            } else if (props.planTypeDeleteSuccess?.code === "DELETE_PLAN_TYPE_FAILED") {
+            } else if (props.dmRecordDeleteResponse?.code === "DELETE_DM_EVENT_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. COA Record couldn't get deleted due ${
-                        props.planTypeDeleteSuccess?.error ?? ""
+                    message: `Oops!!. dm Record couldn't get deleted due ${
+                        props.dmRecordDeleteResponse?.error ?? ""
                     }`,
                 });
             }
         }
-    }, [props.planTypeDeleteSuccess]);
+    }, [props.dmRecordDeleteResponse]);
 
     useEffect(() => {
         if (
-            (stateObj.planTypeEditSuccess === null ||
-                props.planTypeEditSuccess !== null) ||
-            (stateObj.planTypeEditSuccess !== props.planTypeEditSuccess)
+            (stateObj.dmRecordEditResponse === null ||
+                props.dmRecordEditResponse !== null) ||
+            (stateObj.dmRecordEditResponse !== props.dmRecordEditResponse)
         ) {
             setIsLoading(false);
             setStateObj({
                 ...stateObj,
-                planTypeEditSuccess: props.planTypeEditSuccess,
-                coaRecordCount: 0,
+                dmRecordEditResponse: props.dmRecordEditResponse,
+                dmRecordCount: 0,
             });
-            if (props.planTypeEditSuccess?.code === "EDIT_PLAN_TYPE_SUCCESS") {
+            if (props.dmRecordEditResponse?.code === "EDIT_DM_EVENT_SUCCESS") {
                 initLoad(searchId);
                 setSearchId(searchId);
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `dm Event Record updated!!!!`,
+                });
                 setAppDataContext({
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-            } else if (props.planTypeEditSuccess?.code === "EDIT_PLAN_TYPE_FAILED") {
+            } else if (props.dmRecordEditResponse?.code === "EDIT_DM_EVENT_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
                     color: "danger",
-                    message: `Oops!!. COA Event Record couldn't get updated due ${
-                        props.planTypeEditSuccess?.error ?? ""
+                    message: `Oops!!. dm Event Record couldn't get updated due ${
+                        props.dmRecordEditResponse?.error ?? ""
                     }`,
                 });
             }
         }
-    }, [props.planTypeEditSuccess]);
+    }, [props.dmRecordEditResponse]);
 
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
@@ -257,7 +279,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
             page: page - 1,
             pageSize: 10
         }
-        props.onGetPlanTypes(request);
+        props.onGetDMRecords(request);
 
     };
     const getPageCount = (count: number, pageSize: number): number => {
@@ -287,7 +309,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"Plan Types"} subTitle={"Manage plan types"}/>
+            <HeaderText title={"DM Events"} subTitle={"Manage DM Setting"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',
@@ -309,7 +331,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openAddPlanTypeDialog}>Add Type</Button>
+                            <Button onClick={openAddDMRecordDialog}>Add DM Event</Button>
 
                         </Stack>
                     </Stack>
@@ -377,25 +399,29 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                             >
                                 <thead>
                                 <tr>
-                                    <th style={{width: 120}}>Type ID</th>
-                                    <th style={{width: 150}}>Type Name</th>
-                                    <th style={{width: 150}}>Description</th>
+                                    <th style={{width: 120}}>Event ID</th>
+                                    <th style={{width: 150}}>Status</th>
+                                    <th style={{width: 150}}>Username</th>
+                                    <th style={{width: 150}}>Event Response</th>
+                                    <th style={{width: 150}}>Request Time</th>
                                     <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {planTypes?.map((row) => (
-                                    <tr key={row.type_id}>
-                                        <td>{row.type_id ?? ""}</td>
-                                        <td>{row.type_name ?? ""}</td>
-                                        <td>{row.description ?? ""}</td>
+                                {dmEvents?.map((row) => (
+                                    <tr key={row.event_id}>
+                                        <td>{row.event_id ?? ""}</td>
+                                        <td>{row.status ==="1" ? "Enabled" :"Disabled"}</td>
+                                        <td>{row.username ?? ""}</td>
+                                        <td>{row.event_response ?? ""}</td>
+                                        <td>{row.request_datetime ?? ""}</td>
                                         <td>
                                             <Box sx={{display: 'flex', gap: 1}}>
                                                 <IconButton
                                                     size="sm"
                                                     variant="soft"
                                                     color="primary"
-                                                    onClick={() => openEditPlanTypeDialog(row)}
+                                                    onClick={() => openEditDMRecordDialog(row)}
 
                                                 >
                                                     <CreateRoundedIcon/>
@@ -430,7 +456,7 @@ const PlanType: FC<ReduxProps> = (props: any) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(stateObj.planTypeRecordCount, 10)}
+                            count={getPageCount(stateObj.dmRecordCount, 10)}
                             page={currentPage}
                             onChange={handlePageChange}
                             renderItem={(item) => (
@@ -451,21 +477,21 @@ const PlanType: FC<ReduxProps> = (props: any) => {
 
 const mapStateToProps = (state: RootState) => {
     return {
-        planTypeAddSuccess: state.plan.planTypeAddSuccess,
-        planTypeEditSuccess: state.plan.planTypeEditSuccess,
-        planTypeDeleteSuccess: state.plan.planTypeDeleteSuccess,
-        planTypesGetSuccess: state.plan.planTypesGetSuccess
+        dmRecordAddResponse: state.dm.dmRecordAddResponse,
+        dmRecordEditResponse: state.dm.dmRecordEditResponse,
+        dmRecordDeleteResponse: state.dm.dmRecordDeleteResponse,
+        dmRecordsResponse: state.dm.dmRecordsResponse,
     };
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onGetPlanTypes: (payload: any) => dispatch(getPlansType(payload)),
-        onDeletePlanType: (payload: any) => dispatch(deletePlanType(payload)),
+        onGetDMRecords: (payload: any) => dispatch(getAllDMRecords(payload)),
+        onDeleteDMRecord: (payload: any) => dispatch(deleteDMRecord(payload)),
         onClearHistory: () => dispatch(onClearHistory())
     };
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(PlanType);
+export default connector(DM);

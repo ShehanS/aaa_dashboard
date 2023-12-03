@@ -9,7 +9,7 @@ import COA from "./pages/COA/COA";
 import {AppDataContextProvider} from "./context/AppDataContext";
 import React from "react"
 import AttributeMap from "./pages/NAS/AttributeGroup";
-import ConfigNAS from "./pages/NAS/NASConfig";
+import ConfigNAS from "./pages/NAS/ManageNAS";
 import ParameterSetting from "./pages/Parameters/ParameterSetting";
 import {DialogDataContextProvider} from "./context/DialogDataContext";
 import PlanAttributes from "./pages/Plans/PlanAttribute";
@@ -19,6 +19,7 @@ import Plan from "./pages/Plans/Plan";
 import RecordFilter from "./pages/System/RecordFilter";
 import Subscribers from "./pages/NAS/Subscribers";
 import LandingPage from "./pages/home/LandingPage";
+import DM from "./pages/COA/DM";
 
 function App() {
     return (
@@ -35,6 +36,7 @@ function App() {
                                     <Route path={ROUTES.account} element={<Accounting/>}/>
                                     <Route path={ROUTES.record_filter} element={<RecordFilter/>}/>
                                     <Route path={ROUTES.coa} element={<COA/>}/>
+                                    <Route path={ROUTES.dm} element={<DM/>}/>
                                     <Route path={ROUTES.nas_attribute_map} element={<AttributeMap/>}/>
                                     <Route path={ROUTES.nas_config} element={<ConfigNAS/>}/>
                                     <Route path={ROUTES.parameter_setting} element={<ParameterSetting/>}/>

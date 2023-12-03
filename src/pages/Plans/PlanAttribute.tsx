@@ -15,7 +15,7 @@ import {deletePlanAttribute, getPlans, getPlansAttribute, onClearHistory} from "
 import {IPlan} from "./Plan";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import {IAttribute} from "../NAS/NASConfig";
+import {IAttribute} from "../NAS/ManageNAS";
 import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
 
 type SnackBarProps = {
@@ -145,6 +145,8 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
     const openAddAttributeDialog = () => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <PlanAttributeDialog type={DialogType.add}/>
         });
@@ -399,10 +401,14 @@ const PlanAttributes: FC<ReduxProps> = (props: any) => {
                     <Sheet
                         variant="outlined"
                         sx={{
-                            '--TableCell-height': '40px',
+                            '--TableCell-height': '10px',
+                            // the number is the amount of the header rows.
                             '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
                             '--Table-firstColumnWidth': '80px',
                             '--Table-lastColumnWidth': '144px',
+                            // background needs to have transparency to show the scrolling shadows
+                            '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                            '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
                             overflow: 'auto',
                             background: (
                                 theme,

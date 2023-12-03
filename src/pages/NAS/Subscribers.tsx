@@ -5,7 +5,7 @@ import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCh
 import {useAppDataContext} from "../../context/AppDataContext";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {connect, ConnectedProps} from "react-redux";
-import {deleteSubscriber, getAllSubscribers, onClearHistory} from "../../redux/nas/nas-slice";
+import {deleteSubscriber, getAllAttributeGroups, getAllSubscribers, onClearHistory} from "../../redux/nas/nas-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -120,11 +120,36 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
             }
             props.onGetSubscribe(request)
         }
+        const request = {
+            page:0,
+            pageSize: 1000
+        }
+        props.onGetAttributes(request);
     }
 
     useEffect(() => {
         initLoad();
     }, []);
+
+    useEffect(() => {
+        if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
+            setIsLoading(false);
+            if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    attrGroupsResponse: props.attrGroupsResponse,
+                });
+                setAttributes(props.attrGroupsResponse?.data?.records ?? []);
+            } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get NAS records due to ${props.attrGroupsResponse?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.attrGroupsResponse]);
 
 
     useEffect(() => {
@@ -356,6 +381,8 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 600,
+            dialogHeight: 450,
             dialogContent: <NASSubscriberDialog type={DialogType.add}/>
         });
     }
@@ -443,10 +470,14 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
                     <Sheet
                         variant="outlined"
                         sx={{
-                            '--TableCell-height': '40px',
+                            '--TableCell-height': '10px',
+                            // the number is the amount of the header rows.
                             '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
                             '--Table-firstColumnWidth': '80px',
                             '--Table-lastColumnWidth': '144px',
+                            // background needs to have transparency to show the scrolling shadows
+                            '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                            '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
                             overflow: 'auto',
                             background: (
                                 theme,
@@ -512,7 +543,7 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
                                     <tr key={row.subscriber_id}>
                                         <td>{row.subscriber_id ?? ""}</td>
                                         <td>{row.attribute ?? ""}</td>
-                                        <td>{row.attribute_group ?? ""}</td>
+                                        <td>{attributes?.filter((att: any) => att?.group_id === row.attribute_group)?.[0]?.group_name ?? ""}</td>
                                         <td>{row.operation ?? ""}</td>
                                         <td>{row.value ?? ""}</td>
                                         <td>
@@ -586,7 +617,8 @@ const mapStateToProps = (state: RootState) => {
             subscribersResponse: state.nas.subscribersResponse,
             subscribeAddResponse: state.nas.subscribeAddResponse,
             subscriberEditResponse: state.nas.subscriberEditResponse,
-            subscriberDeleteResponse: state.nas.subscriberDeleteResponse
+            subscriberDeleteResponse: state.nas.subscriberDeleteResponse,
+
         };
     }
 ;
@@ -595,7 +627,8 @@ const mapDispatchToProps = (dispatch: any) => {
         return {
             onDeleteSubscriber: (payload: any) => dispatch(deleteSubscriber(payload)),
             onGetSubscribe: (payload: any) => dispatch(getAllSubscribers(payload)),
-            onClearHistory: () => dispatch(onClearHistory()),
+            onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
+            onClearHistory: () => dispatch(onClearHistory),
 
         };
     }

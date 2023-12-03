@@ -403,6 +403,8 @@ const Account: FC = (props: any) => {
     const openNewAccountDialog = () => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <AccountDialog type={DialogType.add}/>
         });
@@ -506,15 +508,19 @@ const Account: FC = (props: any) => {
                     <Sheet
                         variant="outlined"
                         sx={{
-                            '--TableCell-height': '40px',
+                            '--TableCell-height': '10px',
+                            // the number is the amount of the header rows.
                             '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
                             '--Table-firstColumnWidth': '80px',
                             '--Table-lastColumnWidth': '144px',
+                            // background needs to have transparency to show the scrolling shadows
+                            '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                            '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
                             overflow: 'auto',
                             background: (
                                 theme,
-                            ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
-            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
+                            ) => `linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+            linear-gradient(to right, rgba(255, 255, 255, 0), white 70%) 0 100%,
             radial-gradient(
               farthest-side at 0 50%,
               rgba(0, 0, 0, 0.12),
@@ -533,18 +539,17 @@ const Account: FC = (props: any) => {
                             backgroundPosition:
                                 'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                             backgroundColor: 'background.surface',
-                            overflowX: 'auto',
                             maxWidth: "100%",
                             height: '450px'
                         }}
                     >
                         <Box>
                             <Table
+
                                 borderAxis="bothBetween"
                                 stripe="odd"
                                 hoverRow
                                 sx={{
-                                    width: "100%",
                                     '& tr > *:first-child': {
                                         position: 'sticky',
                                         left: 0,
@@ -555,7 +560,6 @@ const Account: FC = (props: any) => {
                                         position: 'sticky',
                                         right: 0,
                                         bgcolor: 'var(--TableCell-headBackground)',
-                                        width: '120px',
                                     },
                                 }}
                             >

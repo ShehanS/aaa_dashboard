@@ -380,6 +380,8 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
     const openAddMetaParameter = () => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <ParameterMetaDialog type={DialogType.add}/>
         });

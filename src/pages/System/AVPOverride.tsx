@@ -49,7 +49,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
-    const[avpRecordCount, setAVPRecordCount] = useState<number>(1);
+    const [recordCount, setRecordCount] = useState<number>(0);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -93,9 +93,9 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                 setStateObj({
                     ...stateObj,
                     avpRecordsResponse: props.avpRecordsResponse,
-                    records: props.avpRecordsResponse?.data?.count ?? 0
                 });
                 setAvpRecords(props.avpRecordsResponse?.data?.records ?? [])
+                setRecordCount(props.avpRecordsResponse?.data?.count ?? 0);
             } else if (props.avpRecordsResponse?.code === "GET_ALL_AVP_RECORD_FAILED") {
                 setSnackBar({
                     ...snackBar,
@@ -116,7 +116,6 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                 avpRecordsResponse: props.avpRecordResponseSuccess
             });
             if (props.avpRecordResponseSuccess?.code === "GET_AVP_RECORD_SUCCESS") {
-                setAVPRecordCount(props?.avpRecordResponseSuccess?.data?.count);
                 setAvpRecords(props.avpRecordResponseSuccess?.data ?? [])
             } else if (props.avpRecordResponseSuccess?.code === "GET_AVP_RECORD_FAILED") {
                 setSnackBar({
@@ -148,7 +147,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                     ...appDataContext,
                     isOpenDialog: false
                 });
-            } else if (props.avpRecordResponseSuccess?.code === "UPDATE_AVP_RECORD_FAILED") {
+            } else if (props.avpRecordEditResponse?.code === "UPDATE_AVP_RECORD_FAILED") {
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
@@ -449,7 +448,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                             Page Navigation
                         </Typography>
                         <Pagination
-                            count={getPageCount(avpRecordCount, 10)}
+                            count={getPageCount(recordCount, 10)}
                             page={currentPage}
                             onChange={handlePageChange}
                             renderItem={(item) => (

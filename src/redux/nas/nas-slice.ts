@@ -176,6 +176,7 @@ export const NASSlice = createSlice({
         }),
 
         onClearHistory: (state) => ({
+            ...state,
             nasRecordAddResponse: null,
             nasRecordEditResponse: null,
             nasRecordDeleteResponse: null,

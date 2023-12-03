@@ -18,7 +18,6 @@ export enum DialogType {
 type StateObj = {
     plansGetSuccess: any;
     attrGroupsResponse: any;
-    planCount: number
 };
 
 type InputStateObj = {
@@ -57,7 +56,6 @@ const PlanAttributeDialog: FC<Props> = (props) => {
     const [stateObj, setStateObj] = useState<StateObj>({
         plansGetSuccess: null,
         attrGroupsResponse: null,
-        planCount:0
     });
     const [plans, setPlans] = useState<IPlan[]>([]);
 
@@ -73,8 +71,7 @@ const PlanAttributeDialog: FC<Props> = (props) => {
             if (props.plansGetSuccess?.code === "GET_ALL_PLAN_SUCCESS") {
                 setStateObj({
                     ...stateObj,
-                    plansGetSuccess: props.plansGetSuccess,
-                    planCount: props.plansGetSuccess?.data?.count ?? 0,
+                    plansGetSuccess: props.plansGetSuccess
                 });
                 setPlans(props.plansGetSuccess?.data?.records ?? []);
             } else if (props.plansGetSuccess?.code === "GET_ALL_PLAN_FAILED") {
@@ -222,7 +219,7 @@ const PlanAttributeDialog: FC<Props> = (props) => {
                     {/*</FormControl>*/}
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
-                            NAS Attribute Group:
+                            Attribute Group:
                         </FormLabel>
                         <Select onClick={getAttributeGroup}
                                 value={input?.inputData?.['attribute_group']}

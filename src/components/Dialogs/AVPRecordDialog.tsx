@@ -71,8 +71,8 @@ const AVPRecordDialog: FC<Props> = (props) => {
                 AVP Records
             </DialogTitle>
             <Divider/>
-
-            <Stack direction={"column"} sx={{alignItems: 'center', pt: 3, width: '100%'}}>
+            <Stack direction={"column"}
+                   sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
 
                 <FormControl sx={{width: 300}}>
                     <FormLabel sx={{color: '#e4dad0'}}>

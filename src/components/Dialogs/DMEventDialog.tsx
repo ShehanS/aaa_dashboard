@@ -5,7 +5,8 @@ import Button from "@mui/joy/Button";
 import {useAppDataContext} from "../../context/AppDataContext";
 import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
-import {addCOARecord, editCOARecord} from "../../redux/coa/coa-slice";
+import {addDMRecord, editDMRecord} from "../../redux/dm/dm-slice";
+
 
 export enum DialogType {
     add,
@@ -29,7 +30,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 type Props = ReduxProps & OwnProps;
 
-const COAEventDialog: FC<Props> = (props) => {
+const DMEventDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
@@ -41,11 +42,11 @@ const COAEventDialog: FC<Props> = (props) => {
     }));
 
     const handleCloseAndAdd = () => {
-        props.onAddCOARecord(input.inputData);
+        props.onAddDMRecord(input.inputData);
     }
 
     const handleCloseAndUpdate = () => {
-        props.onEditCOARecord(input.inputData);
+        props.onEditDMRecord(input.inputData);
     }
 
     const handleStatus = (event: any, value: any): any => {
@@ -81,7 +82,7 @@ const COAEventDialog: FC<Props> = (props) => {
         <React.Fragment>
             <Box sx={{height: 350}}>
                 <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                    COA Event
+                    DM Event
                 </DialogTitle>
                 <Divider/>
 
@@ -140,11 +141,11 @@ const COAEventDialog: FC<Props> = (props) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onAddCOARecord: (payload: any) => dispatch(addCOARecord(payload)),
-        onEditCOARecord: (payload: any) => dispatch(editCOARecord(payload)),
+        onAddDMRecord: (payload: any) => dispatch(addDMRecord(payload)),
+        onEditDMRecord: (payload: any) => dispatch(editDMRecord(payload)),
     };
 };
 
 const connector = connect(null, mapDispatchToProps);
 
-export default connector(COAEventDialog);
+export default connector(DMEventDialog);
