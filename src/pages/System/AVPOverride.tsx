@@ -19,6 +19,8 @@ import SearchBar from "../../components/SearchBar";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
+import {IAttribute} from "../NAS/ManageNAS";
 
 export interface IAVPAttribute {
     attrgroup_id: number;
@@ -34,6 +36,7 @@ type StateObj = {
     avpRecordsResponse: any;
     avpRecordEditResponse: any;
     avpRecordDeleteResponse: any;
+    attrGroupsResponse: any;
     records: number;
 }
 
@@ -50,6 +53,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const [recordCount, setRecordCount] = useState<number>(0);
+    const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -60,6 +64,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         avpRecordsResponse: null,
         avpRecordEditResponse: null,
         avpRecordDeleteResponse: null,
+        attrGroupsResponse: null,
         records: 0
     });
     const [avpRecords, setAvpRecords] = useState<IAVPAttribute[]>([]);
@@ -67,6 +72,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
 
     const initLoad = (id?: string) => {
         props.onClearHistory();
+        getAttributeGroup()
         setIsLoading(true);
        // setSearchId(undefined);
         if (id !== undefined) {
@@ -225,10 +231,24 @@ const AVPOverride: FC<ReduxProps> = (props) => {
     const openAvpAddDialog = () => {
         setAppDataContext({
             ...appDataContext,
+            dialogWidth: 600,
+            dialogHeight: 450,
             isOpenDialog: true,
             dialogContent: <AVPManageDialog type={DialogType.add}/>
         });
     }
+    useEffect(() => {
+        if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
+            if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    attrGroupsResponse: props.attrGroupsResponse,
+                });
+                setAttributes(props.attrGroupsResponse?.data?.records ?? []);
+            } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
+            }
+        }
+    }, [props.attrGroupsResponse]);
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
         setIsLoading(true);
@@ -261,6 +281,13 @@ const AVPOverride: FC<ReduxProps> = (props) => {
 
     const handleDelete = (id: string) => {
         props.onDelete(id);
+    }
+    const getAttributeGroup = () => {
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetAttributes(request);
     }
 
     const openDeleteDelete = (props: any) => {
@@ -387,7 +414,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                     >
                         <thead>
                         <tr>
-                            <th style={{width: 200}}>Attribute Group Id</th>
+                            <th style={{width: 200}}>Attribute Group</th>
                             <th style={{width: 200}}>VP Name</th>
                             <th style={{width: 200}}>Substitute VP</th>
                             <th style={{width: 200}}>Extract Regexp</th>
@@ -402,7 +429,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                         <tbody>
                         {avpRecords?.map((row) => (
                             <tr key={row.attrgroup_id}>
-                                <td>{row.attrgroup_id ?? ""}</td>
+                                <td>{attributes?.filter((att: any) => att?.group_id === row.attrgroup_id)?.[0]?.group_name ?? ""}</td>
                                 <td>{row.vp_name}</td>
                                 <td>{row.substitute_vp ?? ""}</td>
                                 <td>{row.extract_regexp ?? ""}</td>
@@ -472,7 +499,8 @@ const mapStateToProps = (state: RootState) => {
         avpRecordsResponse: state.avp.avpRecordsResponse,
         avpRecordResponseSuccess: state.avp.avpRecordResponseSuccess,
         avpRecordEditResponse: state.avp.avpRecordEditResponse,
-        avpRecordDeleteResponse: state.avp.avpRecordDeleteResponse
+        avpRecordDeleteResponse: state.avp.avpRecordDeleteResponse,
+        attrGroupsResponse: state.nas.attrGroupsResponse,
     };
 };
 
@@ -481,6 +509,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetAVPRecords: (payload: any) => dispatch(getAllAvpRecords(payload)),
         onGetAvpRecord: (payload: any) => dispatch(getAvpRecord(payload)),
         onDelete: (payload: any) => dispatch(deleteAvpRecord(payload)),
+        onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
         onClearHistory: () => dispatch(onClearHistory())
     };
 };
