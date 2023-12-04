@@ -15,6 +15,8 @@ import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {deleteSubscriber, getAllSubscribers, onClearHistory} from "../../redux/subscriber/subscriber-slice";
 import SubscriberDialog from "../../components/Dialogs/SubscriberDialog";
+import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
+import Insight from "../../components/Insight";
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -92,6 +94,9 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
         initLoad();
     }, []);
 
+    const openInsight = (sub: any) => {
+        setAppDataContext({...appDataContext,dialogWidth:'100%', dialogHeight:'100%', dialogContent: <Insight subscriber={sub}/>, isOpenDialog: true, isFullScreen: true})
+    }
 
     useEffect(() => {
         if (
@@ -467,6 +472,14 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                                                         <CreateRoundedIcon/>
                                                     </IconButton>
                                                     <IconButton
+                                                        onClick={() => openInsight(row)}
+                                                        size="sm"
+                                                        variant="soft"
+                                                        color="success"
+                                                    >
+                                                        <AssessmentRoundedIcon/>
+                                                    </IconButton>
+                                                    <IconButton
                                                         onClick={() => openDeleteSubscribeDialog(row)}
                                                         size="sm"
                                                         variant="soft"
@@ -474,6 +487,7 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                                                     >
                                                         <DeleteRoundedIcon/>
                                                     </IconButton>
+
                                                 </Box>
                                             </td>
                                         </tr>

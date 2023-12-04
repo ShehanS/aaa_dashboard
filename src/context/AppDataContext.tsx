@@ -8,6 +8,7 @@ type AppDataContextType = {
         dialogWidth: number;
         dialogHeight: number;
         dialogContent: any;
+        isFullScreen: boolean;
 
 
     };
@@ -28,6 +29,7 @@ const AppDataContextProvider = ({children}: AppDataContextProviderProps) => {
         dialogContent: null,
         dialogWidth: 600,
         dialogHeight: 450,
+        isFullScreen: false
 
 
     });
