@@ -143,7 +143,7 @@ const NASManageDialog: FC<Props> = (props) => {
         <React.Fragment>
             <Box sx={{height: 350}}>
                 <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                    NAS Event
+                    Manage NAS
                 </DialogTitle>
                 <Divider/>
 

@@ -81,14 +81,14 @@ const NASAttributeGroupDialog: FC<Props> = (props) => {
                     {/*    <Input type={"number"} name={"group_id"} value={input?.inputData?.['group_id'] ?? ""}*/}
                     {/*           onChange={handleInput}/>*/}
                     {/*</FormControl>*/}
-                    <FormControl>
+                    <FormControl sx={{width:300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Group Name:
                         </FormLabel>
                         <Input name={"group_name"} value={input?.inputData?.['group_name'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
-                    <FormControl sx={{width:278}}>
+                    <FormControl sx={{width:300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Group Description:
                         </FormLabel>
