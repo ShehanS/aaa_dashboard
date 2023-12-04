@@ -106,6 +106,8 @@ const PlanType: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 600,
+            dialogHeight: 450,
             dialogContent: <PlanTypeDalog type={DialogType.add}/>
         });
     }

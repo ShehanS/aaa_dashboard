@@ -130,7 +130,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             isOpenDialog: true,
             dialogWidth: 450,
             dialogHeight: 200,
-            dialogContent: <DeleteDialog id={props.parameter_name} onDelete={handleDelete}/>
+            dialogContent: <DeleteDialog id={props.plan_id} onDelete={handleDelete}/>
         });
     }
 

@@ -160,7 +160,6 @@ const PlanTypeDialog: FC<Props> = (props) => {
                         </FormLabel>
                         <Select onClick={loadPlanTypes} value={input?.inputData?.['type_id'] ?? ""}
                                 onChange={(event, value) => handleInput(handlePlanType(event, value))}>
-                            <Option value={""}>{"None"}</Option>
                             {planTypes?.map((type: any) => (
                                 <Option value={type?.type_id}>{type?.type_name ?? ""}</Option>
                             ))}
