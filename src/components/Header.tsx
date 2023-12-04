@@ -10,6 +10,7 @@ const Header: FC = (props: any) => {
             position: 'absolute',
             width: '100%',
             height: 80,
+            left:0,
             borderRadius: 0,
             display: 'flex',
             right: 0,

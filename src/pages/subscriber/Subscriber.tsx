@@ -361,7 +361,7 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                 </Typography>
 
 
-                <Stack direction={"row"} display={"flex"} spacing={2}>
+
                     <Box sx={{
                         width: "100%",
                         display: 'flex',
@@ -508,7 +508,6 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
                             />
                         </Stack>
                     </Box>
-                </Stack>
             </Box>
         </Box>
     </React.Fragment>)

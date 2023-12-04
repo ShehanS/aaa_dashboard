@@ -34,7 +34,7 @@ const Home: FC<Props> = ({children}) => {
             alignItems="stretch"
         >
             <Grid md={1} sm={1} lg={1} direction="row">
-                <Box sx={{width:"100%"}}>
+                <Box sx={{width:"100%", position:'fixed',zIndex:55}}>
                     <Header/>
                 </Box>
              <Box sx={{position:"absolute",  height:"100%"}}>
@@ -60,12 +60,31 @@ const Home: FC<Props> = ({children}) => {
                     sx={{
                         backgroundColor: 'rgba(246,244,244,0.8)',
                         borderRadius: 10,
-                        padding:2,
+                        padding: 2,
                         position: 'absolute',
                         left: 300,
                         top: 100,
                         height: '80%',
-                        width: "82%"
+                        width: "82%",
+                        '@media (max-width: 1700px)': {
+                            width: '80%',
+                        },
+                        '@media (max-width: 1600px)': {
+                            width: '78%',
+                        },
+                        '@media (max-width: 1400px)': {
+                            width: '75%',
+                        },
+                        '@media (max-width: 1200px)': {
+                            width: '65%',
+                        },
+                        '@media (max-width: 900px)': {
+                            width: '60%',
+                        },
+                        '@media (max-width: 600px)': {
+                            width: '95%',
+                        },
+                        /* Add more media queries as needed */
                     }}>
                     <Box sx={{width: '100%', height: '100%'}}>{children}</Box>
                 </Box></Fade>}
