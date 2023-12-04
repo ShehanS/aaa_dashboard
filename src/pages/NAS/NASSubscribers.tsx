@@ -68,7 +68,7 @@ export interface ISubscriber {
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
-const Subscriber: FC<ReduxProps> = (props: any) => {
+const NASSubscribers: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageForAtt, setCurrentPageForAtt] = useState(1);
     const [currentPageForSub, setCurrentPageForSub] = useState(1);
@@ -440,7 +440,7 @@ const Subscriber: FC<ReduxProps> = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"Subscribers"} subTitle={"Manage subscriber"}/>
+            <HeaderText title={"NAS Subscribers"} subTitle={"Manage NAS subscriber"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',
@@ -636,4 +636,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(Subscriber);
+export default connector(NASSubscribers);

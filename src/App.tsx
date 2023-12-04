@@ -20,6 +20,7 @@ import RecordFilter from "./pages/System/RecordFilter";
 import LandingPage from "./pages/home/LandingPage";
 import DM from "./pages/COA/DM";
 import Subscribers from "./pages/subscriber/Subscriber";
+import NASSubscribers from "./pages/NAS/NASSubscribers";
 
 function App() {
     return (
@@ -39,6 +40,7 @@ function App() {
                                     <Route path={ROUTES.dm} element={<DM/>}/>
                                     <Route path={ROUTES.nas_attribute_map} element={<AttributeMap/>}/>
                                     <Route path={ROUTES.nas_config} element={<ConfigNAS/>}/>
+                                    <Route path={ROUTES.nas_subscribers} element={<NASSubscribers/>}/>
                                     <Route path={ROUTES.parameter_setting} element={<ParameterSetting/>}/>
                                     <Route path={ROUTES.plan_type} element={<PlanType/>}/>
                                     <Route path={ROUTES.plan_attribute} element={<PlanAttributes/>}/>

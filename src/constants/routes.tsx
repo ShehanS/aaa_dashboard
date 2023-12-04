@@ -9,6 +9,7 @@ export const ROUTES = {
     dm: "/co-dm/dm",
     nas_config: "/nas/nas-manage",
     nas_attribute_map: "/nas/attribute-group",
+    nas_subscribers: "/nas/-manage-subscribers",
     parameter_setting: "/home/parameter-settings",
     plan_type: "/plan/type",
     plan_attribute: "/plan/attributes",
