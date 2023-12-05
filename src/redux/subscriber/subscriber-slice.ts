@@ -13,6 +13,14 @@ export interface ISubscriberState {
     deleteNasWhitelistResponse: any;
     getAllNasWhitelistResponse: any;
     getNasWhitelistResponse: any;
+    addSubscriberParameterResponse: any;
+    getAllSubscriberParametersResponse: any;
+    deleteSubscriberParameterResponse: any;
+    addSubscriberPlanResponse: any;
+    deleteSubscriberPlanResponse: any;
+    editSubscriberPlanResponse: any;
+    getSubscriberPlansResponse: any;
+    getSubscriberPlanResponse: any;
     error: any;
 }
 
@@ -28,6 +36,14 @@ const initialState: ISubscriberState = {
     deleteNasWhitelistResponse: null,
     getAllNasWhitelistResponse: null,
     getNasWhitelistResponse: null,
+    addSubscriberParameterResponse: null,
+    getAllSubscriberParametersResponse: null,
+    deleteSubscriberParameterResponse: null,
+    addSubscriberPlanResponse: null,
+    deleteSubscriberPlanResponse: null,
+    editSubscriberPlanResponse: null,
+    getSubscriberPlansResponse: null,
+    getSubscriberPlanResponse: null,
     error: null
 }
 
@@ -135,6 +151,87 @@ export const SubscriberSlice = createSlice({
             getNasWhitelistResponse: action.payload,
             error: null
         }),
+        addSubscriberParameter: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        addSubscriberParameterSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            addSubscriberParameterResponse: action.payload,
+            error: null
+        }),
+        getAllSubscriberParameter: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        getAllSubscriberParameterSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            getAllSubscriberParametersResponse: action.payload,
+            error: null
+        }),
+        deleteSubscriberParameter: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        deleteSubscriberParameterSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            deleteSubscriberParameterResponse: action.payload,
+            error: null
+        }),
+        addSubscriberPlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        addSubscriberPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            addSubscriberPlanResponse: action.payload,
+            error: null
+        }),
+        editSubscriberPlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        editSubscriberPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            editSubscriberPlanResponse: action.payload,
+            error: null
+        }),
+        deleteSubscriberPlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        deleteSubscriberPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            deleteSubscriberPlanResponse: action.payload,
+            error: null
+        }),
+        getSubscriberPlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        getSubscriberPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            getSubscriberPlanResponse: action.payload,
+            error: null
+        }),
+        getAllSubscriberPlan: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        getAllSubscriberPlanSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            getSubscriberPlansResponse: action.payload,
+            error: null
+        }),
+
         onClearHistory: (state) => ({
             ...state,
             getAllSubscriberResponse: null,
@@ -147,6 +244,14 @@ export const SubscriberSlice = createSlice({
             deleteNasWhitelistResponse: null,
             getAllNasWhitelistResponse: null,
             getNasWhitelistResponse: null,
+            addSubscriberParameterResponse: null,
+            getAllSubscriberParametersResponse: null,
+            deleteSubscriberParameterResponse: null,
+            addSubscriberPlanResponse: null,
+            deleteSubscriberPlanResponse: null,
+            editSubscriberPlanResponse: null,
+            getSubscriberPlansResponse: null,
+            getSubscriberPlanResponse: null,
             error: null
         }),
         getError: (state) => ({
@@ -157,6 +262,22 @@ export const SubscriberSlice = createSlice({
 })
 
 export const {
+    addSubscriberPlan,
+    addSubscriberPlanSuccess,
+    editSubscriberPlan,
+    editSubscriberPlanSuccess,
+    deleteSubscriberPlan,
+    deleteSubscriberPlanSuccess,
+    getSubscriberPlan,
+    getSubscriberPlanSuccess,
+    getAllSubscriberPlan,
+    getAllSubscriberPlanSuccess,
+    addSubscriberParameter,
+    addSubscriberParameterSuccess,
+    getAllSubscriberParameter,
+    getAllSubscriberParameterSuccess,
+    deleteSubscriberParameter,
+    deleteSubscriberParameterSuccess,
     addNasWhitelist,
     addNasWhitelistSuccess,
     editNasWhitelist,

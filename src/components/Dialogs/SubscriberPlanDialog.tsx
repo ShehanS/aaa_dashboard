@@ -2,13 +2,14 @@ import React, {FC, useEffect, useState} from "react";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
+import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Option, Select} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../redux/store";
 import {addPlanAttribute, editPlanAttribute, getPlans} from "../../redux/plan/plan-slice";
 import {IPlan} from "../../pages/Plans/Plan";
 import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
 import {IAttribute} from "../../pages/NAS/AttributeGroup";
+import {addSubscriberPlan} from "../../redux/subscriber/subscriber-slice";
 
 export enum DialogType {
     add,
@@ -23,35 +24,30 @@ type StateObj = {
 
 type InputStateObj = {
     inputData: {
-        plan_id: string;
-        attribute_name: string;
-        attribute_value: string;
-        attribute_group: string;
-        include_plan_state: string;
-        status: string;
+        plan_id: number;
+        subscriber_id: number;
+        plan_state: string;
     };
 };
 
 type OwnProps = {
     data?: any;
     type: DialogType;
+    subscriberId?: number
 };
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
 type Props = ReduxProps & OwnProps;
 
-const PlanAttributeDialog: FC<Props> = (props) => {
+const SubscriberPlanDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
             plan_id: "",
-            attribute_name: "",
-            attribute_value: "",
-            attribute_group: "",
-            include_plan_state: "",
-            status: "",
+            subscriber_id: props.subscriberId,
+            plan_state:""
         },
     }));
     const [stateObj, setStateObj] = useState<StateObj>({
@@ -61,16 +57,9 @@ const PlanAttributeDialog: FC<Props> = (props) => {
     const [plans, setPlans] = useState<IPlan[]>([]);
 
     const handleCloseAndAdd = () => {
-        props.onAddPlanAttribute(input.inputData)
+        props.onAddSubscriberPlan(input.inputData)
+        console.log(props.subscriberId)
     };
-
-    const getPlans = () => {
-        const request = {
-            page: 0,
-            pageSize: 1000
-        }
-        props.onGetPlans(request);
-    }
 
     useEffect(() => {
         if ((stateObj.plansGetSuccess === null ||
@@ -100,10 +89,17 @@ const PlanAttributeDialog: FC<Props> = (props) => {
         }
         props.onGetAttributes(request);
     }
+    const getPlans = () => {
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetPlans(request);
+    }
 
     useEffect(() => {
         getAttributeGroup();
-        getPlans();
+        getPlans()
     }, []);
 
     const handleInput = (event: any) => {
@@ -127,7 +123,7 @@ const PlanAttributeDialog: FC<Props> = (props) => {
         const data = {
             nativeEvent: {
                 target: {
-                    name: "status",
+                    name: "plan_state",
                     value: value,
                 },
             },
@@ -135,18 +131,6 @@ const PlanAttributeDialog: FC<Props> = (props) => {
         return data;
     };
 
-    useEffect(() => {
-        if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
-            if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
-                setStateObj({
-                    ...stateObj,
-                    attrGroupsResponse: props.attrGroupsResponse,
-                });
-                setAttributes(props.attrGroupsResponse?.data?.records ?? []);
-            } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
-            }
-        }
-    }, [props.attrGroupsResponse]);
 
 
     const handlePlanId = (event: any, value: any): any => {
@@ -172,19 +156,19 @@ const PlanAttributeDialog: FC<Props> = (props) => {
         return data;
     }
 
-    const getAttributeNameById = (id: number): string | undefined => {
-        const attribute = attributes.filter((attr: any) => attr?.group_id === id)?.[0];
-        if (attribute?.group_id === id) {
-            const name = attribute.group_name ?? undefined;
-            return name;
-        }
-        return undefined;
-    }
+    // const getAttributeNameById = (id: number): string | undefined => {
+    //     const attribute = attributes.filter((attr: any) => attr?.group_id === id)?.[0];
+    //     if (attribute?.group_id === id) {
+    //         const name = attribute.group_name ?? undefined;
+    //         return name;
+    //     }
+    //     return undefined;
+    // }
 
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Plan Attribute Group</DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Add Plan</DialogTitle>
                 <Divider/>
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
@@ -200,63 +184,12 @@ const PlanAttributeDialog: FC<Props> = (props) => {
 
                         </Select>
                     </FormControl>
-                    <FormControl sx={{width: 300}}>
-                        <FormLabel sx={{color: '#e4dad0'}}>
-                            Attribute Name:
-                        </FormLabel>
-                        <Input name={"attribute_name"} value={input?.inputData?.['attribute_name'] ?? ""}
-                               onChange={handleInput}/>
-                    </FormControl>
-
-                    {/* ... (rest of your existing form controls) */}
-
-                    {/* New attributes */}
-                    <FormControl sx={{width: 300}}>
-                        <FormLabel sx={{color: '#e4dad0'}}>
-                            Attribute Value:
-                        </FormLabel>
-                        <Input name={"attribute_value"} value={input?.inputData?.['attribute_value'] ?? ""}
-                               onChange={handleInput}/>
-                    </FormControl>
-
-                    {/*<FormControl>*/}
-                    {/*    <FormLabel>*/}
-                    {/*        Attribute Group:*/}
-                    {/*    </FormLabel>*/}
-                    {/*    <Input type={"number"} name={"attribute_group"}*/}
-                    {/*           value={input?.inputData?.['attribute_group'] ?? ""}*/}
-                    {/*           onChange={handleInput}/>*/}
-                    {/*</FormControl>*/}
-                    <FormControl sx={{width: 300}}>
-                        <FormLabel sx={{color: '#e4dad0'}}>
-                            Attribute Group:
-                        </FormLabel>
-                        <Select onClick={getAttributeGroup}
-                                value={input?.inputData?.['attribute_group']}
-                                onChange={(event, value) => handleInput(handleAttGroup(event, value))}>
-                            {attributes?.map((att: any) => (
-                                <Option value={att.group_id}>{getAttributeNameById(att?.group_id)}</Option>
-                            ))}
-
-                        </Select>
-                        {/*<Input type={"number"} name={"nas_attrgroup"} value={input?.inputData?.['nas_attrgroup'] ?? ""}*/}
-                        {/*       onChange={handleInput}/>*/}
-
-                    </FormControl>
 
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
-                            Include Plan State:
+                            Plan State:
                         </FormLabel>
-                        <Input name={"include_plan_state"} value={input?.inputData?.['include_plan_state'] ?? ""}
-                               onChange={handleInput}/>
-                    </FormControl>
-
-                    <FormControl sx={{width: 300}}>
-                        <FormLabel sx={{color: '#e4dad0'}}>
-                            Status:
-                        </FormLabel>
-                        <Select value={input?.inputData?.['status'] ?? ""}
+                        <Select value={input?.inputData?.['plan_state'] ?? ""}
                                 onChange={(event, value) => handleInput((handleStatus(event, value)))}>
                             <Option value={"ACTIVE"}>ACTIVE</Option>
                             <Option value={"INACTIVE"}>INACTIVE</Option>
@@ -288,8 +221,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onAddPlanAttribute: (payload: any) => dispatch(addPlanAttribute(payload)),
-        onEditPlanAttribute: (payload: any) => dispatch(editPlanAttribute(payload)),
+        onAddSubscriberPlan: (payload: any) => dispatch(addSubscriberPlan(payload)),
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
     };
@@ -297,4 +229,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(PlanAttributeDialog);
+export default connector(SubscriberPlanDialog);

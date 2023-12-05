@@ -4,7 +4,11 @@ import {connect, ConnectedProps} from "react-redux";
 import {
     addSubscriber,
     deleteNasWhitelist,
+    deleteSubscriberParameter,
+    deleteSubscriberPlan,
     getAllNasWhitelist,
+    getAllSubscriberParameter,
+    getAllSubscriberPlan,
     onClearHistory
 } from "../redux/subscriber/subscriber-slice";
 import {RootState} from "../redux/store";
@@ -13,31 +17,34 @@ import Step, {stepClasses} from '@mui/joy/Step';
 import StepIndicator, {stepIndicatorClasses} from '@mui/joy/StepIndicator';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
-import {
-    Button,
-    Chip,
-    FormControl,
-    FormLabel,
-    Input,
-    ListDivider,
-    ListItem,
-    ListItemDecorator,
-    Snackbar,
-    Stack
-} from "@mui/joy";
+import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
+import {Button, FormControl, FormLabel, IconButton, Input, Sheet, Snackbar, Stack, Table} from "@mui/joy";
 import ManageHistoryRoundedIcon from '@mui/icons-material/ManageHistoryRounded';
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
-import List from '@mui/joy/List';
 import {useAppDataContext} from "../context/AppDataContext";
 import PatternDialog, {DialogType} from "./Dialogs/PatternDialog";
-import ArrowCircleRightRoundedIcon from '@mui/icons-material/ArrowCircleRightRounded';
 import DeleteDialog from "./Dialogs/DeleteDialog";
+import SubscriberParameterDalog from "./Dialogs/SubscriberParameterDalog";
+import SubscriberPlanDialog from "./Dialogs/SubscriberPlanDialog";
+import {IPlan} from "../pages/Plans/Plan";
+import {getPlans} from "../redux/plan/plan-slice";
+import {Fade} from "@mui/material";
 
 type StateObj = {
     addSubscriberResponse: any;
     addNasWhitelistResponse: any;
     getAllNasWhitelistResponse: any;
     deleteNasWhitelistResponse: any;
+    addSubscriberParameterResponse: any;
+    getAllSubscriberParametersResponse: any;
+    deleteSubscriberParameterResponse: any;
+    addSubscriberPlanResponse: any;
+    deleteSubscriberPlanResponse: any;
+    editSubscriberPlanResponse: any;
+    getSubscriberPlansResponse: any;
+    getSubscriberPlanResponse: any;
+    plansGetSuccess: any;
 
 };
 
@@ -67,6 +74,9 @@ type ReduxProps = ConnectedProps<typeof connector>;
 const AddSubscriberForm: FC<ReduxProps> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [patterns, setPatterns] = useState<string[]>([]);
+    const [subscriberParameters, setSubscriberParameters] = useState<any[]>([]);
+    const [subscribersPlans, setSubscriberPlans] = useState<any[]>([]);
+    const [plans, setPlans] = useState<IPlan[]>([]);
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -76,11 +86,22 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
         addSubscriberResponse: null,
         addNasWhitelistResponse: null,
         getAllNasWhitelistResponse: null,
-        deleteNasWhitelistResponse: null
+        deleteNasWhitelistResponse: null,
+        addSubscriberParameterResponse: null,
+        getAllSubscriberParametersResponse: null,
+        deleteSubscriberParameterResponse: null,
+        addSubscriberPlanResponse: null,
+        deleteSubscriberPlanResponse: null,
+        editSubscriberPlanResponse: null,
+        getSubscriberPlansResponse: null,
+        getSubscriberPlanResponse: null,
+        plansGetSuccess: null
     });
     const [steps, setSteps] = useState<any>({
-        basic: true,
-        mapping: false,
+        user: true,
+        whitelist: false,
+        parameter: false,
+        plan: false,
         finish: false
     })
     const [input, setInput] = useState<InputStateObj>(() => ({
@@ -97,10 +118,82 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
 
     }));
 
+    const getPlans = () => {
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetPlans(request);
+    }
+    useEffect(() => {
+        if ((stateObj.plansGetSuccess === null ||
+                props.plansGetSuccess !== null) ||
+            (stateObj.plansGetSuccess !== props.plansGetSuccess)
+        ) {
+            if (props.plansGetSuccess?.code === "GET_ALL_PLAN_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    plansGetSuccess: props.plansGetSuccess
+                });
+                setPlans(props.plansGetSuccess?.data?.records ?? []);
+            } else if (props.plansGetSuccess?.code === "GET_ALL_PLAN_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! Couldn't get plan records due to ${props.plansGetSuccess?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.plansGetSuccess]);
+////////////////////////////////////////////////////////////////////////////////////////////
     useEffect(() => {
         props.onClearHistory();
-        setSteps({basic: false, advanced: true, finish: false});
+        getPlans();
+        setSteps({
+            user: true,
+            whitelist: false,
+            parameter: false,
+            plan: false,
+            finish: false
+        });
     }, []);
+
+    const resetAll = () => {
+        setPatterns([]);
+        setSubscriberParameters([]);
+        setSubscriberPlans([])
+        setSteps({
+            user: true,
+            whitelist: false,
+            parameter: false,
+            plan: false,
+            finish: false
+        });
+        setInput({
+            ...input, inputData: {
+                subscriber_id: "",
+                username: "",
+                password: "",
+                status: "",
+                created_date: "",
+                updated_time: "",
+                contact_no: "",
+                email: ""
+            }
+        })
+    }
+
+    const finishSteps = () => {
+        resetAll();
+        setSnackBar({
+            ...snackBar,
+            isOpen: true,
+            color: "success",
+            message: `User adding success!!!`,
+        });
+        setSteps({user: true, whitelist: false, parameter: false, plan: false})
+    }
 
 
     const handleInput = (event: any) => {
@@ -123,16 +216,67 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                           subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id}/>
         });
     }
-
-    const openEditPatternDialog = (pattern: any) => {
+    const openAddPlanDialog = () => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
-            dialogWidth: 450,
-            dialogHeight: 270,
-            dialogContent: <PatternDialog data={pattern} type={DialogType.edit}/>
+            dialogWidth: 600,
+            dialogHeight: 450,
+            dialogContent: <SubscriberPlanDialog type={DialogType.add}
+                                                 subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id}/>
         });
     }
+
+
+    const openAddParameterDialog = () => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogWidth: 600,
+            dialogHeight: 450,
+            dialogContent: <SubscriberParameterDalog subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id}
+                                                     type={DialogType.add}/>
+        })
+        ;
+    }
+
+
+    useEffect(() => {
+        if (
+            (stateObj.addSubscriberPlanResponse === null ||
+                props.addSubscriberPlanResponse !== null) ||
+            (stateObj.addSubscriberPlanResponse !== props.addSubscriberPlanResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                addSubscriberPlanResponse: props.addSubscriberPlanResponse,
+            });
+            if (props.addSubscriberPlanResponse?.code === "ADD_SUBSCRIBER_PLAN_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Add plan added!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                props.onGetSubscriberPlans(stateObj.addSubscriberResponse?.data?.subscriber_id)
+
+            } else if (props.addSubscriberPlanResponse?.code === "ADD_SUBSCRIBER_PLAN_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Add subscriber failed due to ${
+                        props.addSubscriberPlanResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.addSubscriberPlanResponse]);
+
 
     useEffect(() => {
         if (
@@ -158,7 +302,13 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                 props.onGetNasWhiteList(stateObj.addSubscriberResponse?.data?.subscriber_id)
 
             } else if (props.addNasWhitelistResponse?.code === "ADD_NAS_WIHITELIST_FAILED") {
-                setSteps({basic: true, advanced: false, finish: false});
+                setSteps({
+                    user: false,
+                    whitelist: true,
+                    parameter: false,
+                    plan: false,
+                    finish: false
+                });
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
@@ -195,7 +345,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                 props.onGetNasWhiteList(stateObj.addSubscriberResponse?.data?.subscriber_id)
 
             } else if (props.deleteNasWhitelistResponse?.code === "DELETE_NAS_WIHITELIST_SUCCESS") {
-                setSteps({basic: true, advanced: false, finish: false});
+
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
@@ -207,6 +357,82 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             }
         }
     }, [props.deleteNasWhitelistResponse]);
+
+
+    useEffect(() => {
+        if (
+            (stateObj.deleteSubscriberPlanResponse === null ||
+                props.deleteSubscriberPlanResponse !== null) ||
+            (stateObj.deleteSubscriberPlanResponse !== props.deleteSubscriberPlanResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                deleteSubscriberPlanResponse: props.deleteSubscriberPlanResponse,
+            });
+            if (props.deleteSubscriberPlanResponse?.code === "DELETE_SUBSCRIBER_PLAN_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Plan deleted!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                props.onGetSubscriberPlans(stateObj.addSubscriberResponse?.data?.subscriber_id)
+
+            } else if (props.deleteSubscriberPlanResponse?.code === "DELETE_SUBSCRIBER_PLAN_FAILED") {
+
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Add subscriber failed due to ${
+                        props.deleteSubscriberPlanResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.deleteSubscriberPlanResponse]);
+
+
+    useEffect(() => {
+        if (
+            (stateObj.deleteSubscriberParameterResponse === null ||
+                props.deleteSubscriberParameterResponse !== null) ||
+            (stateObj.deleteSubscriberParameterResponse !== props.deleteSubscriberParameterResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                deleteSubscriberParameterResponse: props.deleteSubscriberParameterResponse,
+            });
+            if (props.deleteSubscriberParameterResponse?.code === "DELETE_SUBSCRIBER_PARAMETER_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Parameter deleted!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                props.onGetSubscriberParametersList(stateObj.addSubscriberResponse?.data?.subscriber_id)
+
+            } else if (props.deleteSubscriberParameterResponse?.code === "DELETE_SUBSCRIBER_PARAMETER_SUCCESS") {
+
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! delete parameter failed due to ${
+                        props.deleteSubscriberParameterResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.deleteSubscriberParameterResponse]);
 
 
     useEffect(() => {
@@ -234,6 +460,57 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
         }
     }, [props.getAllNasWhitelistResponse]);
 
+    useEffect(() => {
+        if (
+            (stateObj.getSubscriberPlansResponse === null ||
+                props.getSubscriberPlansResponse !== null) ||
+            (stateObj.getSubscriberPlansResponse !== props.getSubscriberPlansResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                getSubscriberPlansResponse: props.getSubscriberPlansResponse,
+            });
+            if (props.getSubscriberPlansResponse?.code === "GET_ALL_SUBSCRIBER_PLAN_SUCCESS") {
+                setSubscriberPlans(props.getSubscriberPlansResponse?.data)
+            } else if (props.getSubscriberPlansResponse?.code === "GET_ALL_SUBSCRIBER_PLAN_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!  ${
+                        props.getSubscriberPlansResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.getSubscriberPlansResponse]);
+
+
+    useEffect(() => {
+        if (
+            (stateObj.getAllSubscriberParametersResponse === null ||
+                props.getAllSubscriberParametersResponse !== null) ||
+            (stateObj.getAllSubscriberParametersResponse !== props.getAllSubscriberParametersResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                getAllSubscriberParametersResponse: props.getAllSubscriberParametersResponse,
+            });
+            if (props.getAllSubscriberParametersResponse?.code === "GET_ALL_SUBSCRIBER_PARAMETER_SUCCESS") {
+                setSubscriberParameters(props.getAllSubscriberParametersResponse?.data)
+            } else if (props.getAllSubscriberParametersResponse?.code === "GET_ALL_SUBSCRIBER_PARAMETER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Add subscriber failed due to ${
+                        props.getAllSubscriberParametersResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.getAllSubscriberParametersResponse]);
+
 
     useEffect(() => {
         if (
@@ -252,9 +529,21 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     color: "success",
                     message: `Subscriber added!!!!`,
                 });
-                setSteps({basic: false, advanced: true, finish: false});
+                setSteps({
+                    user: false,
+                    whitelist: true,
+                    parameter: false,
+                    plan: false,
+                    finish: false
+                });
             } else if (props.addSubscriberResponse?.code === "ADD_SUBSCRIBER_FAILED") {
-                setSteps({basic: true, advanced: false, finish: false});
+                setSteps({
+                    user: true,
+                    whitelist: false,
+                    parameter: false,
+                    plan: false,
+                    finish: false
+                });
                 setSnackBar({
                     ...snackBar,
                     isOpen: true,
@@ -275,9 +564,59 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
         setSnackBar({...snackBar, isOpen: false});
     };
 
+
+    useEffect(() => {
+        if (
+            (stateObj.addSubscriberParameterResponse === null ||
+                props.addSubscriberParameterResponse !== null) ||
+            (stateObj.addSubscriberParameterResponse !== props.addSubscriberParameterResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                addSubscriberParameterResponse: props.addSubscriberParameterResponse,
+            });
+            if (props.addSubscriberParameterResponse?.code === "ADD_SUBSCRIBER_PARAMETER_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Parameter added!!!!`,
+                });
+                setAppDataContext({
+                    ...appDataContext,
+                    isOpenDialog: false,
+                });
+                props.onGetSubscriberParametersList(stateObj.addSubscriberResponse?.data?.subscriber_id)
+
+            } else if (props.addSubscriberParameterResponse?.code === "ADD_SUBSCRIBER_PARAMETER_FAILED") {
+                setSteps({
+                    user: false,
+                    whitelist: false,
+                    parameter: true,
+                    plan: false,
+                    finish: false
+                });
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Add subscriber failed due to ${
+                        props.addSubscriberParameterResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.addSubscriberParameterResponse]);
+
+
     const handleDelete = (deleteItem: any) => {
         props.onDeleteNasWhiteList(deleteItem);
     }
+    const mapPlanIdToPlanTypeName = (id: string): string => {
+        const plan: any = plans?.filter((plan: any) => plan?.plan_id === Number.parseInt(id))?.[0];
+        return plan?.plan_name ?? "";
+    }
+
 
     const openDeleteNasWhiteList = (data: any) => {
         setAppDataContext({
@@ -286,6 +625,34 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             dialogWidth: 450,
             dialogHeight: 200,
             dialogContent: <DeleteDialog deleteItem={data} onDelete={handleDelete}/>
+        });
+    }
+
+    const handleDeleteSubscriberPlan = (id: any) => {
+        props.onDeleteSubscriberPlan(id)
+    }
+
+    const openDeleteSubscriberPlan = (data: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
+            dialogContent: <DeleteDialog id={data?.instance_id} onDelete={handleDeleteSubscriberPlan}/>
+        });
+    }
+
+    const handleDeleteSubscriberParameter = (deleteItem: any) => {
+        props.onDeleteSubscriberParameter(deleteItem);
+    }
+
+    const openDeleteSubscriberParameter = (data: any) => {
+        setAppDataContext({
+            ...appDataContext,
+            isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
+            dialogContent: <DeleteDialog deleteItem={data} onDelete={handleDeleteSubscriberParameter}/>
         });
     }
 
@@ -345,7 +712,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     }}
                 >
                     <Step
-                        completed={!steps.basic}
+                        completed={!steps.user}
                         orientation="vertical"
                         indicator={
                             <StepIndicator variant="outlined" color="primary">
@@ -354,7 +721,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                         }
                     />
                     <Step
-                        completed={!steps.advanced}
+                        completed={!steps.whitelist}
                         orientation="vertical"
                         indicator={
                             <StepIndicator variant="outlined" color="primary">
@@ -363,7 +730,18 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                         }
                     />
                     <Step
-                        completed={!steps.finish}
+                        completed={!steps.parameter}
+                        orientation="vertical"
+                        indicator={
+                            <StepIndicator variant="outlined" color="primary">
+                                <ExtensionRoundedIcon/>
+                            </StepIndicator>
+                        }
+
+                    >
+                    </Step>
+                    <Step
+                        completed={!steps.plan}
                         orientation="vertical"
                         indicator={
                             <StepIndicator variant="outlined" color="primary">
@@ -375,7 +753,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     </Step>
                 </Stepper>
 
-                {steps.basic && <Box>
+                {steps.user && <Fade in={!steps.use}><Box>
 
                     <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
                         <Stack direction={"column"}
@@ -427,69 +805,401 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                             NEXT
                         </Button>
                     </Stack>
-                </Box>}
+                </Box></Fade>}
 
-                {steps.advanced && <Box>
+                {steps.whitelist && <Fade in={steps.whitelist}><Box sx={{
+                    width: "100%",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'start'
+                }}>
                     <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
                         <Stack direction={"column"}
                                sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
                             <Stack direction="row" sx={{width: "100%", justifyContent: 'end'}}>
                                 <Button onClick={openAddPatternDialog}>Add Pattern</Button>
                             </Stack>
-                            <List
-                                variant="outlined"
-                                sx={{
-                                    minWidth: 240,
-                                    maxHeight: 350,
-                                    borderRadius: 'sm',
-                                }}
-                            >  {patterns?.map((pattern: any) => (
-                                <>
-                                    <ListItem>
-                                        <ListItemDecorator>
-                                            <ArrowCircleRightRoundedIcon/>
-                                        </ListItemDecorator>
-                                        {pattern?.nas_id_pattern ?? ""} <Chip
-                                        color="danger"
-                                        onClick={() => openDeleteNasWhiteList(pattern)}
-                                        size="sm"
-                                    >Remove</Chip>
-                                    </ListItem>
-                                    <ListDivider inset={"startContent"}/>
-                                </>
-                            ))}
-                            </List>
+
+
+                            <Box sx={{
+                                width: "100%",
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                paddingTop: 10
+
+                            }}>
+                                <Sheet
+                                    variant="outlined"
+                                    sx={{
+                                        '--TableCell-height': '10px',
+                                        // the number is the amount of the header rows.
+                                        '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                                        '--Table-firstColumnWidth': '80px',
+                                        '--Table-lastColumnWidth': '144px',
+                                        // background needs to have transparency to show the scrolling shadows
+                                        '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                                        '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
+                                        overflow: 'auto',
+                                        background: (
+                                            theme,
+                                        ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
+            radial-gradient(
+              farthest-side at 0 50%,
+              rgba(0, 0, 0, 0.12),
+              rgba(0, 0, 0, 0)
+            ),
+            radial-gradient(
+                farthest-side at 100% 50%,
+                rgba(0, 0, 0, 0.12),
+                rgba(0, 0, 0, 0)
+              )
+              0 100%`,
+                                        backgroundSize:
+                                            '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundAttachment: 'local, local, scroll, scroll',
+                                        backgroundPosition:
+                                            'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                                        backgroundColor: 'background.surface',
+                                        overflowX: 'auto',
+                                        maxWidth: '40%',
+                                        height: "250px"
+                                    }}
+                                >
+                                    <Box sx={{width: "100%"}}>
+                                        <Table
+                                            borderAxis="bothBetween"
+                                            stripe="odd"
+                                            hoverRow
+                                            sx={{
+                                                width: "100%",
+                                                '& tr > *:first-child': {
+                                                    position: 'sticky',
+                                                    left: 0,
+                                                    boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                                    bgcolor: 'background.surface',
+                                                },
+                                                '& tr > *:last-child': {
+                                                    position: 'sticky',
+                                                    right: 0,
+                                                    bgcolor: 'var(--TableCell-headBackground)',
+                                                    width: '120px',
+                                                },
+                                            }}
+                                        >
+                                            <thead>
+                                            <tr>
+                                                <th style={{width: 50}}>Pattern</th>
+
+                                                <th style={{width: 50}}/>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {patterns?.map((row, index) => (
+                                                <tr key={index}>
+                                                    <td>{row?.nas_id_pattern ?? ""}</td>
+                                                    <td>
+                                                        <Box sx={{display: 'flex', gap: 1}}>
+                                                            <IconButton
+                                                                onClick={() => openDeleteSubscriberParameter(row)}
+                                                                size="sm"
+                                                                variant="soft"
+                                                                color="danger"
+                                                            >
+                                                                <DeleteRoundedIcon/>
+                                                            </IconButton>
+                                                        </Box>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </Table>
+                                    </Box>
+                                </Sheet>
+                            </Box>
                         </Stack>
                     </Stack>
-                    <Stack direction={"row"} sx={{justifyContent: 'space-between', width: '60%'}}>
+                    <Stack direction={"row"} sx={{justifyContent: 'space-around', width: '100%', paddingTop: 1}}>
                         <Button onClick={() => {
-                            props.onClearHistory();
-                            setSteps({basic: true, advanced: false, finish: false})
+                            setSteps({user: true, whitelist: false, parameter: false, plan: false})
                         }
                         }>
                             BACK
                         </Button>
                         <Button onClick={() => {
 
-                            setSteps({basic: false, advanced: false, finish: true})
+                            setSteps({user: false, whitelist: false, parameter: true, plan: false})
                         }
                         }>NEXT</Button>
                     </Stack>
 
 
-                </Box>}
+                </Box></Fade>}
 
-                {steps.finish && <Box>
-                    Finish
+                {steps.parameter && <Fade in={steps.parameter}><Box sx={{
+                    width: "100%",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'start',
+                    justifyContent: 'start',
+
+                }}>
                     <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
+                        <Stack direction={"column"}
+                               sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
+                            <Stack direction="row" sx={{width: "100%", justifyContent: 'end'}}>
+                                <Button onClick={openAddParameterDialog}>Add Parameter</Button>
+                            </Stack>
+                        </Stack>
+                    </Stack>
+                    <Box sx={{
+                        width: "100%",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingTop: 10
+
+                    }}>
+                        <Sheet
+                            variant="outlined"
+                            sx={{
+                                '--TableCell-height': '10px',
+                                // the number is the amount of the header rows.
+                                '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                                '--Table-firstColumnWidth': '80px',
+                                '--Table-lastColumnWidth': '144px',
+                                // background needs to have transparency to show the scrolling shadows
+                                '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                                '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
+                                overflow: 'auto',
+                                background: (
+                                    theme,
+                                ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
+            radial-gradient(
+              farthest-side at 0 50%,
+              rgba(0, 0, 0, 0.12),
+              rgba(0, 0, 0, 0)
+            ),
+            radial-gradient(
+                farthest-side at 100% 50%,
+                rgba(0, 0, 0, 0.12),
+                rgba(0, 0, 0, 0)
+              )
+              0 100%`,
+                                backgroundSize:
+                                    '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundAttachment: 'local, local, scroll, scroll',
+                                backgroundPosition:
+                                    'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                                backgroundColor: 'background.surface',
+                                overflowX: 'auto',
+                                maxWidth: '50%',
+                                height: "250px"
+                            }}
+                        >
+                            <Box sx={{width: "100%"}}>
+                                <Table
+                                    borderAxis="bothBetween"
+                                    stripe="odd"
+                                    hoverRow
+                                    sx={{
+                                        width: "100%",
+                                        '& tr > *:first-child': {
+                                            position: 'sticky',
+                                            left: 0,
+                                            boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                            bgcolor: 'background.surface',
+                                        },
+                                        '& tr > *:last-child': {
+                                            position: 'sticky',
+                                            right: 0,
+                                            bgcolor: 'var(--TableCell-headBackground)',
+                                            width: '120px',
+                                        },
+                                    }}
+                                >
+                                    <thead>
+                                    <tr>
+                                        <th style={{width: 150}}>Parameter Name</th>
+                                        <th style={{width: 150}}>Parameter Value</th>
+                                        <th style={{width: 150}}>Reject On Failure</th>
+                                        <th style={{width: 50}}/>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {subscriberParameters?.map((row, index) => (
+                                        <tr key={index}>
+                                            <td>{row.parameter_name ?? ""}</td>
+                                            <td>{row.parameter_value ?? ""}</td>
+                                            <td>{row.reject_on_failure ? "ACTIVE" : "INACTIVE"}</td>
+                                            <td>
+                                                <Box sx={{display: 'flex', gap: 1}}>
+                                                    <IconButton
+                                                        onClick={() => openDeleteSubscriberParameter(row)}
+                                                        size="sm"
+                                                        variant="soft"
+                                                        color="danger"
+                                                    >
+                                                        <DeleteRoundedIcon/>
+                                                    </IconButton>
+                                                </Box>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </Table>
+                            </Box>
+                        </Sheet>
+                    </Box>
+                    <Stack direction={"row"} sx={{justifyContent: 'space-around', width: '100%', paddingTop: 1}}>
                         <Button onClick={() => {
-                            setSteps({basic: true, advanced: false, finish: false})
+                            setSteps({user: false, whitelist: true, parameter: false, plan: false})
                         }
                         }>
-                            Finish
+                            BACK
                         </Button>
+                        <Button onClick={() => {
+
+                            setSteps({user: false, whitelist: false, parameter: false, plan: true})
+                        }
+                        }>NEXT</Button>
                     </Stack>
-                </Box>}
+                </Box></Fade>}
+
+                {steps.plan && <Fade in={steps.plan}><Box sx={{
+                    width: "100%",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'start',
+                    justifyContent: 'start',
+
+                }}>
+                    <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
+                        <Stack direction={"column"}
+                               sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
+                            <Stack direction="row" sx={{width: "100%", justifyContent: 'end'}}>
+                                <Button onClick={openAddPlanDialog}>Add Plan</Button>
+                            </Stack>
+                        </Stack>
+                    </Stack>
+                    <Box sx={{
+                        width: "100%",
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingTop: 10
+
+                    }}>
+                        <Sheet
+                            variant="outlined"
+                            sx={{
+                                '--TableCell-height': '10px',
+                                // the number is the amount of the header rows.
+                                '--TableHeader-height': 'calc(1 * var(--TableCell-height))',
+                                '--Table-firstColumnWidth': '80px',
+                                '--Table-lastColumnWidth': '144px',
+                                // background needs to have transparency to show the scrolling shadows
+                                '--TableRow-stripeBackground': 'rgba(0 0 0 / 0.04)',
+                                '--TableRow-hoverBackground': 'rgba(0 0 0 / 0.08)',
+                                overflow: 'auto',
+                                background: (
+                                    theme,
+                                ) => `linear-gradient(to right, ${theme.vars.palette.background.surface} 30%, rgba(255, 255, 255, 0)),
+            linear-gradient(to right, rgba(255, 255, 255, 0), ${theme.vars.palette.background.surface} 70%) 0 100%,
+            radial-gradient(
+              farthest-side at 0 50%,
+              rgba(0, 0, 0, 0.12),
+              rgba(0, 0, 0, 0)
+            ),
+            radial-gradient(
+                farthest-side at 100% 50%,
+                rgba(0, 0, 0, 0.12),
+                rgba(0, 0, 0, 0)
+              )
+              0 100%`,
+                                backgroundSize:
+                                    '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundAttachment: 'local, local, scroll, scroll',
+                                backgroundPosition:
+                                    'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                                backgroundColor: 'background.surface',
+                                overflowX: 'auto',
+                                maxWidth: '50%',
+                                height: "250px"
+                            }}
+                        >
+                            <Box sx={{width: "100%"}}>
+                                <Table
+                                    borderAxis="bothBetween"
+                                    stripe="odd"
+                                    hoverRow
+                                    sx={{
+                                        width: "100%",
+                                        '& tr > *:first-child': {
+                                            position: 'sticky',
+                                            left: 0,
+                                            boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                            bgcolor: 'background.surface',
+                                        },
+                                        '& tr > *:last-child': {
+                                            position: 'sticky',
+                                            right: 0,
+                                            bgcolor: 'var(--TableCell-headBackground)',
+                                            width: '120px',
+                                        },
+                                    }}
+                                >
+                                    <thead>
+                                    <tr>
+                                        <th style={{width: 150}}>Plan Name</th>
+                                        <th style={{width: 150}}>Plan State</th>
+                                        <th style={{width: 80}}/>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {subscribersPlans?.map((row, index) => (
+                                        <tr key={index}>
+                                            <td>{mapPlanIdToPlanTypeName(row.plan_id)}</td>
+                                            <td>{row.plan_state}</td>
+                                            <td>
+                                                <Box sx={{display: 'flex', gap: 1}}>
+                                                    <IconButton
+                                                        onClick={() => openDeleteSubscriberPlan(row)}
+                                                        size="sm"
+                                                        variant="soft"
+                                                        color="danger"
+                                                    >
+                                                        <DeleteRoundedIcon/>
+                                                    </IconButton>
+                                                </Box>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </Table>
+                            </Box>
+                        </Sheet>
+                    </Box>
+                    <Stack direction={"row"} sx={{justifyContent: 'space-around', width: '100%', paddingTop: 1}}>
+                        <Button onClick={() => {
+                            setSteps({user: false, whitelist: false, parameter: true, plan: false})
+                        }
+                        }>
+                            BACK
+                        </Button>
+                        <Button onClick={finishSteps}>Finish</Button>
+                    </Stack>
+                </Box></Fade>}
+
 
             </Box>
 
@@ -503,7 +1213,16 @@ const mapStateToProps = (state: RootState) => {
         addNasWhitelistResponse: state.subscriber.addNasWhitelistResponse,
         addNasWhitelistSuccess: state.subscriber.addNasWhitelistSuccess,
         getAllNasWhitelistResponse: state.subscriber.getAllNasWhitelistResponse,
-        deleteNasWhitelistResponse: state.subscriber.deleteNasWhitelistResponse
+        deleteNasWhitelistResponse: state.subscriber.deleteNasWhitelistResponse,
+        addSubscriberParameterResponse: state.subscriber.addSubscriberParameterResponse,
+        getAllSubscriberParametersResponse: state.subscriber.getAllSubscriberParametersResponse,
+        deleteSubscriberParameterResponse: state.subscriber.deleteSubscriberParameterResponse,
+        addSubscriberPlanResponse: state.subscriber.addSubscriberPlanResponse,
+        deleteSubscriberPlanResponse: state.subscriber.deleteSubscriberPlanResponse,
+        editSubscriberPlanResponse: state.subscriber.editSubscriberPlanResponse,
+        getSubscriberPlansResponse: state.subscriber.getSubscriberPlansResponse,
+        getSubscriberPlanResponse: state.subscriber.getSubscriberPlanResponse,
+        plansGetSuccess: state.plan.plansGetSuccess,
 
     };
 };
@@ -512,8 +1231,13 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onAddSubscriber: (payload: any) => dispatch(addSubscriber(payload)),
         onClearHistory: () => dispatch(onClearHistory()),
+        onGetSubscriberParametersList: (subscribeId: number) => dispatch(getAllSubscriberParameter({subscriberId: subscribeId})),
         onGetNasWhiteList: (subscribeId: number) => dispatch(getAllNasWhitelist({subscriberId: subscribeId})),
-        onDeleteNasWhiteList: (payload: any) => dispatch(deleteNasWhitelist(payload))
+        onDeleteNasWhiteList: (payload: any) => dispatch(deleteNasWhitelist(payload)),
+        onDeleteSubscriberParameter: (payload) => dispatch(deleteSubscriberParameter(payload)),
+        onGetSubscriberPlans: (payload) => dispatch(getAllSubscriberPlan({subscriberId: payload})),
+        onGetPlans: (payload: any) => dispatch(getPlans(payload)),
+        onDeleteSubscriberPlan: (payload: any) => dispatch(deleteSubscriberPlan({id: payload}))
     };
 };
 
