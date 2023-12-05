@@ -19,8 +19,9 @@ import Plan from "./pages/Plans/Plan";
 import RecordFilter from "./pages/System/RecordFilter";
 import LandingPage from "./pages/home/LandingPage";
 import DM from "./pages/COA/DM";
-import Subscribers from "./pages/subscriber/Subscriber";
+import ViewSubscribers from "./pages/subscribers/ViewSubscribers";
 import NASSubscribers from "./pages/NAS/NASSubscribers";
+import AddSubscribers from "./pages/subscribers/AddSubscribers";
 
 function App() {
     return (
@@ -46,7 +47,8 @@ function App() {
                                     <Route path={ROUTES.plan_attribute} element={<PlanAttributes/>}/>
                                     <Route path={ROUTES.plan_parameter} element={<PlanParameter/>}/>
                                     <Route path={ROUTES.plan} element={<Plan/>}/>
-                                    <Route path={ROUTES.manage_subscribers} element={<Subscribers/>}/>
+                                    <Route path={ROUTES.view_subscribers} element={<ViewSubscribers/>}/>
+                                    <Route path={ROUTES.add_subscribers} element={<AddSubscribers/>}/>
                                 </Routes>
                             </Home>
                         </BrowserRouter>

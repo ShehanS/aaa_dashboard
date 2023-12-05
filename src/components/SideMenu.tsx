@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import {Menu, MenuItem, Sidebar, SubMenu} from 'react-pro-sidebar';
 import {Link, useLocation} from "react-router-dom";
 import {ROUTES} from "../constants/routes";
-import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import PhotoCameraFrontRoundedIcon from '@mui/icons-material/PhotoCameraFrontRounded';
 import DiscFullRoundedIcon from '@mui/icons-material/DiscFullRounded';
 import WifiTetheringRoundedIcon from '@mui/icons-material/WifiTetheringRounded';
@@ -29,30 +28,31 @@ const SideMenu: FC = (props: any) => {
         <Box sx={{width: 270, alignItems:"center", justifyItems:"center", justifyContent:'center'}}>
             <Sidebar defaultCollapsed={true}>
                 <Menu>
-                    <SubMenu label={"System"} style={unSelected}
+
+                    <SubMenu label="Account" style={unSelected}
                              defaultOpen={isActive(ROUTES.account) || isActive(ROUTES.AVPOverride) || isActive(ROUTES.record_filter)}
-                             prefix={<AutoAwesomeRoundedIcon/>}>
-                        <SubMenu label="Account" style={unSelected}
-                                 defaultOpen={isActive(ROUTES.account) || isActive(ROUTES.AVPOverride) || isActive(ROUTES.record_filter)}
-                                 prefix={<PhotoCameraFrontRoundedIcon/>}>
-                            <MenuItem style={isActive(ROUTES.account) ? selected : unSelected}
-                                      component={<Link to={ROUTES.account}></Link>}>Records</MenuItem>
-                            <MenuItem style={isActive(ROUTES.AVPOverride) ? selected : unSelected}
-                                      component={<Link to={ROUTES.AVPOverride}></Link>}> AVP Override</MenuItem>
-                            <MenuItem style={isActive(ROUTES.record_filter) ? selected : unSelected}
-                                      component={<Link to={ROUTES.record_filter}></Link>}>Record Filter</MenuItem>
-                        </SubMenu>
+                             prefix={<PhotoCameraFrontRoundedIcon/>}>
+                        <MenuItem style={isActive(ROUTES.account) ? selected : unSelected}
+                                  component={<Link to={ROUTES.account}></Link>}>Records</MenuItem>
+                        <MenuItem style={isActive(ROUTES.AVPOverride) ? selected : unSelected}
+                                  component={<Link to={ROUTES.AVPOverride}></Link>}> AVP Override</MenuItem>
+                        <MenuItem style={isActive(ROUTES.record_filter) ? selected : unSelected}
+                                  component={<Link to={ROUTES.record_filter}></Link>}>Record Filter</MenuItem>
                     </SubMenu>
 
-                    <SubMenu style={unSelected} label={"Subscribers"} defaultOpen={isActive(ROUTES.manage_subscribers)}
+
+                    <SubMenu style={unSelected} label={"Subscribers"}
+                             defaultOpen={isActive(ROUTES.view_subscribers) || isActive(ROUTES.add_subscribers)}
                              prefix={<PeopleAltRoundedIcon/>}>
-                        <MenuItem style={isActive(ROUTES.manage_subscribers) ? selected : unSelected}
-                                  component={<Link to={ROUTES.manage_subscribers}></Link>}>Manage Subscribers</MenuItem>
+                        <MenuItem style={isActive(ROUTES.view_subscribers) ? selected : unSelected}
+                                  component={<Link to={ROUTES.view_subscribers}></Link>}>View Subscribers</MenuItem>
+                        <MenuItem style={isActive(ROUTES.add_subscribers) ? selected : unSelected}
+                                  component={<Link to={ROUTES.add_subscribers}></Link>}>Add Subscribers</MenuItem>
 
                     </SubMenu>
 
                     <SubMenu label={"NAS"} style={unSelected}
-                             defaultOpen={isActive(ROUTES.nas_attribute_map) || isActive(ROUTES.nas_config) || isActive(ROUTES.subscribers)}
+                             defaultOpen={isActive(ROUTES.nas_attribute_map) || isActive(ROUTES.nas_config) || isActive(ROUTES.nas_subscribers)}
                              prefix={<DiscFullRoundedIcon/>}>
                         <MenuItem style={isActive(ROUTES.nas_attribute_map) ? selected : unSelected}
                                   component={<Link to={ROUTES.nas_attribute_map}></Link>}>Attribute Group</MenuItem>

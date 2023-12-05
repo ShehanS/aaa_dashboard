@@ -49,7 +49,7 @@ export interface ISubscriber {
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
-const AttributeGroup: FC<ReduxProps> = (props: any) => {
+const ViewSubscribers: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -270,16 +270,6 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
     }
 
 
-    const handlePageChange = (event: any, page: number) => {
-        setCurrentPage(page);
-        setIsLoading(true);
-        const request = {
-            page: page - 1,
-            pageSize: 10
-        }
-        props.onGetSubscribe(request);
-
-    };
 
 
     const handlePageChangeForAtt = (event: any, page: number) => {
@@ -335,7 +325,7 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
         >
             {snackBar.message ?? ""}
         </Snackbar>
-        <HeaderText title={"Subscribers"} subTitle={"Manage Subscribers"}/>
+        <HeaderText title={"View Subscribers"} subTitle={"Manage Subscribers"}/>
         <Box sx={{
             width: "100%",
             display: 'flex',
@@ -547,4 +537,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(AttributeGroup);
+export default connector(ViewSubscribers);

@@ -16,6 +16,7 @@ export enum Context {
 
 type Props = {
     id: string
+    deleteItem?: any;
     onDelete: (id: string) => void;
     context?: Context
 }
@@ -34,7 +35,15 @@ const DeleteDialog: FC<Props> = (props) => {
             </Typography>
         </DialogContent>
         <DialogActions>
-            <Button variant="solid" color="danger" onClick={() => props.onDelete(props.id)}>
+            <Button variant="solid" color="danger" onClick={() => {
+                if (props.id !== undefined) {
+                    props.onDelete(props.id)
+                }
+
+                if (props.deleteItem !== undefined) {
+                    props.onDelete(props.deleteItem)
+                }
+            }}>
                 YES
             </Button>
             <Button variant="solid" color="neutral"

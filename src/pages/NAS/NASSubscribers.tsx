@@ -440,7 +440,7 @@ const NASSubscribers: FC<ReduxProps> = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"NAS Subscribers"} subTitle={"Manage NAS subscriber"}/>
+            <HeaderText title={"NAS Subscribers"} subTitle={"Manage NAS subscribers"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',

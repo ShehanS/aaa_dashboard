@@ -8,6 +8,11 @@ export interface ISubscriberState {
     editSubscriberResponse: any;
     deleteSubscriberResponse: any;
     getSubscriberResponse: any;
+    addNasWhitelistResponse: any;
+    editNasWhitelistResponse: any;
+    deleteNasWhitelistResponse: any;
+    getAllNasWhitelistResponse: any;
+    getNasWhitelistResponse: any;
     error: any;
 }
 
@@ -18,6 +23,11 @@ const initialState: ISubscriberState = {
     editSubscriberResponse: null,
     deleteSubscriberResponse: null,
     getSubscriberResponse: null,
+    addNasWhitelistResponse: null,
+    editNasWhitelistResponse: null,
+    deleteNasWhitelistResponse: null,
+    getAllNasWhitelistResponse: null,
+    getNasWhitelistResponse: null,
     error: null
 }
 
@@ -75,6 +85,56 @@ export const SubscriberSlice = createSlice({
             getSubscriberResponse: action.payload,
             error: null
         }),
+        addNasWhitelist: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        addNasWhitelistSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            addNasWhitelistResponse: action.payload,
+            error: null
+        }),
+        editNasWhitelist: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        editNasWhitelistSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            editNasWhitelistResponse: action.payload,
+            error: null
+        }),
+        deleteNasWhitelist: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        deleteNasWhitelistSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            deleteNasWhitelistResponse: action.payload,
+            error: null
+        }),
+        getAllNasWhitelist: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        getAllNasWhitelistSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            getAllNasWhitelistResponse: action.payload,
+            error: null
+        }),
+        getNasWhitelist: (state, action: PayloadAction<any>) => ({
+            ...state,
+            payload: action.payload,
+            error: null
+        }),
+        getNasWhitelistSuccess: (state, action: PayloadAction<any>) => ({
+            ...state,
+            getNasWhitelistResponse: action.payload,
+            error: null
+        }),
         onClearHistory: (state) => ({
             ...state,
             getAllSubscriberResponse: null,
@@ -82,6 +142,11 @@ export const SubscriberSlice = createSlice({
             editSubscriberResponse: null,
             deleteSubscriberResponse: null,
             getSubscriberResponse: null,
+            addNasWhitelistResponse: null,
+            editNasWhitelistResponse: null,
+            deleteNasWhitelistResponse: null,
+            getAllNasWhitelistResponse: null,
+            getNasWhitelistResponse: null,
             error: null
         }),
         getError: (state) => ({
@@ -92,6 +157,16 @@ export const SubscriberSlice = createSlice({
 })
 
 export const {
+    addNasWhitelist,
+    addNasWhitelistSuccess,
+    editNasWhitelist,
+    editNasWhitelistSuccess,
+    deleteNasWhitelist,
+    deleteNasWhitelistSuccess,
+    getAllNasWhitelist,
+    getAllNasWhitelistSuccess,
+    getNasWhitelist,
+    getNasWhitelistSuccess,
     onClearHistory,
     getError,
     getSubscriber,

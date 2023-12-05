@@ -39,7 +39,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 type Props = ReduxProps & OwnProps;
 
-const PlanTypeDialog: FC<Props> = (props) => {
+const SubscriberDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
@@ -151,4 +151,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(PlanTypeDialog);
+export default connector(SubscriberDialog);
