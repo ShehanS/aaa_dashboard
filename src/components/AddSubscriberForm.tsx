@@ -150,6 +150,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
     useEffect(() => {
         props.onClearHistory();
         getPlans();
+        resetAll();
         setSteps({
             user: true,
             whitelist: false,
@@ -160,9 +161,11 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
     }, []);
 
     const resetAll = () => {
+        setSnackBar({...snackBar, isOpen: false})
         setPatterns([]);
         setSubscriberParameters([]);
-        setSubscriberPlans([])
+        setSubscriberPlans([]);
+        props.onClearHistory();
         setSteps({
             user: true,
             whitelist: false,

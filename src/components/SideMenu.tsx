@@ -29,7 +29,7 @@ const SideMenu: FC = (props: any) => {
             <Sidebar defaultCollapsed={true}>
                 <Menu>
 
-                    <SubMenu label="Account" style={unSelected}
+                    <SubMenu label="Accounting" style={unSelected}
                              defaultOpen={isActive(ROUTES.account) || isActive(ROUTES.AVPOverride) || isActive(ROUTES.record_filter)}
                              prefix={<PhotoCameraFrontRoundedIcon/>}>
                         <MenuItem style={isActive(ROUTES.account) ? selected : unSelected}

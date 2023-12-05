@@ -252,7 +252,6 @@ export const SubscriberSlice = createSlice({
             editSubscriberPlanResponse: null,
             getSubscriberPlansResponse: null,
             getSubscriberPlanResponse: null,
-            error: null
         }),
         getError: (state) => ({
             ...state,

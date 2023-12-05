@@ -97,13 +97,13 @@ const Insight: FC<Props> = (props) => {
                     Data Usage Insight : {props.subscriber?.username ?? ""}
                 </Typography>
                 <Stack spacing={1} direction={"row"} sx={{ustifyContent: 'space-between', display: 'flex'}}>
-                    <Typography level="title-sm" sx={{color: '#0ca59d'}}>
-                        Date Range
-                    </Typography>
-                    <DateRangePicker
-                        ranges={[selectionRange]}
-                        onChange={(date) => console.log(date)}
-                    />
+                    {/*<Typography level="title-sm" sx={{color: '#0ca59d'}}>*/}
+                    {/*    Date Range*/}
+                    {/*</Typography>*/}
+                    {/*<DateRangePicker*/}
+                    {/*    ranges={[selectionRange]}*/}
+                    {/*    onChange={(date) => console.log(date)}*/}
+                    {/*/>*/}
                 </Stack>
                 <IconButton onClick={closeInsight}>
                     <CloseRoundedIcon/>
