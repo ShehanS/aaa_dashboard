@@ -16,7 +16,8 @@ import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import {deleteSubscriber, getAllSubscribers, onClearHistory} from "../../redux/subscriber/subscriber-slice";
 import SubscriberDialog from "../../components/Dialogs/SubscriberDialog";
 import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
-import Insight from "../../components/Insight";
+import UserLog from "../../components/UserLog";
+import {useNavigate} from "react-router-dom";
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -52,7 +53,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 const ViewSubscribers: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    const navigate = useNavigate();
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
@@ -95,7 +96,14 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
     }, []);
 
     const openInsight = (sub: any) => {
-        setAppDataContext({...appDataContext,dialogWidth:'100%', dialogHeight:'100%', dialogContent: <Insight subscriber={sub}/>, isOpenDialog: true, isFullScreen: true})
+        setAppDataContext({
+            ...appDataContext,
+            dialogWidth: '100%',
+            dialogHeight: '100%',
+            dialogContent: <UserLog subscriber={sub}/>,
+            isOpenDialog: true,
+            isFullScreen: true
+        })
     }
 
     useEffect(() => {
@@ -260,26 +268,27 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
     }
 
     const openEditSubscriberDialog = (props: any) => {
-        setAppDataContext({
-            ...appDataContext,
-            dialogWidth: 600,
-            dialogHeight: 450,
-            isOpenDialog: true,
-            dialogContent: <SubscriberDialog data={props} type={DialogType.edit}/>
-        });
+        // setAppDataContext({
+        //     ...appDataContext,
+        //     dialogWidth: 600,
+        //     dialogHeight: 450,
+        //     isOpenDialog: true,
+        //     dialogContent: <SubscriberDialog data={props} type={DialogType.edit}/>
+        // });
+        navigate(`/subscribers/add-subscribers?user=${props.subscriber_id}`, {replace: true});
     }
 
 
 
 
-    const handlePageChangeForAtt = (event: any, page: number) => {
+    const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
         setIsLoading(true);
         const request = {
             page: page - 1,
             pageSize: 10
         }
-        props.onGetAttributes(request);
+        props.onGetAllSubscribers(request);
 
     };
 
@@ -502,7 +511,7 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
                             <Pagination
                                 count={getPageCount(subscriberCount, 10)}
                                 page={currentPage}
-                                onChange={handlePageChangeForAtt}
+                                onChange={handlePageChange}
                                 renderItem={(item) => (
                                     <PaginationItem
                                         slots={{previous: ArrowBackIcon, next: ArrowForwardIcon}}
@@ -529,6 +538,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
+
         onGetAllSubscribers: (payload: any) => dispatch(getAllSubscribers(payload)),
         onDeleteSubscriber: (payload) => dispatch(deleteSubscriber(payload)),
         onClearHistory: () => dispatch(onClearHistory)

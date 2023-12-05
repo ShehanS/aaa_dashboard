@@ -6,6 +6,7 @@ import {
     deleteNasWhitelist,
     deleteSubscriberParameter,
     deleteSubscriberPlan,
+    editSubscriber,
     getAllNasWhitelist,
     getAllSubscriberParameter,
     getAllSubscriberPlan,
@@ -45,6 +46,8 @@ type StateObj = {
     getSubscriberPlansResponse: any;
     getSubscriberPlanResponse: any;
     plansGetSuccess: any;
+    editSubscriberResponse: any;
+    getSubscriberResponse: any;
 
 };
 
@@ -95,7 +98,9 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
         editSubscriberPlanResponse: null,
         getSubscriberPlansResponse: null,
         getSubscriberPlanResponse: null,
-        plansGetSuccess: null
+        plansGetSuccess: null,
+        getSubscriberResponse: null,
+        editSubscriberResponse: null
     });
     const [steps, setSteps] = useState<any>({
         user: true,
@@ -125,6 +130,31 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
         }
         props.onGetPlans(request);
     }
+
+
+    useEffect(() => {
+        if ((stateObj.getSubscriberResponse === null ||
+                props.getSubscriberResponse !== null) ||
+            (stateObj.plansGetSuccess !== props.getSubscriberResponse)
+        ) {
+            if (props.getSubscriberResponse?.code === "GET_SUBSCRIBER_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    getSubscriberResponse: props.getSubscriberResponse
+                });
+                setInput({...input, inputData: props?.getSubscriberResponse?.data?.[0]})
+            } else if (props.getSubscriberResponse?.code === "GET_SUBSCRIBER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops!! ${props.getSubscriberResponse?.error ?? ""}`,
+                });
+            }
+        }
+    }, [props.getSubscriberResponse]);
+
+
     useEffect(() => {
         if ((stateObj.plansGetSuccess === null ||
                 props.plansGetSuccess !== null) ||
@@ -216,7 +246,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             dialogWidth: 450,
             dialogHeight: 270,
             dialogContent: <PatternDialog type={DialogType.add}
-                                          subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id}/>
+                                          subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj.editSubscriberResponse?.data?.[0]?.subscriber_id}/>
         });
     }
     const openAddPlanDialog = () => {
@@ -226,7 +256,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             dialogWidth: 600,
             dialogHeight: 450,
             dialogContent: <SubscriberPlanDialog type={DialogType.add}
-                                                 subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id}/>
+                                                 subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj?.editSubscriberResponse?.data?.[0]?.subscriber_id}/>
         });
     }
 
@@ -237,8 +267,9 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             isOpenDialog: true,
             dialogWidth: 600,
             dialogHeight: 450,
-            dialogContent: <SubscriberParameterDalog subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id}
-                                                     type={DialogType.add}/>
+            dialogContent: <SubscriberParameterDalog
+                subscriberId={stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj.editSubscriberResponse?.data?.[0]?.subscriber_id}
+                type={DialogType.add}/>
         })
         ;
     }
@@ -265,7 +296,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-                props.onGetSubscriberPlans(stateObj.addSubscriberResponse?.data?.subscriber_id)
+                props.onGetSubscriberPlans(stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj.editSubscriberResponse?.data?.[0]?.subscriber_id)
 
             } else if (props.addSubscriberPlanResponse?.code === "ADD_SUBSCRIBER_PLAN_FAILED") {
                 setSnackBar({
@@ -302,7 +333,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-                props.onGetNasWhiteList(stateObj.addSubscriberResponse?.data?.subscriber_id)
+                props.onGetNasWhiteList(stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj.editSubscriberResponse?.data?.[0]?.subscriber_id)
 
             } else if (props.addNasWhitelistResponse?.code === "ADD_NAS_WIHITELIST_FAILED") {
                 setSteps({
@@ -345,7 +376,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-                props.onGetNasWhiteList(stateObj.addSubscriberResponse?.data?.subscriber_id)
+                props.onGetNasWhiteList(stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj.editSubscriberResponse?.data?.[0]?.subscriber_id)
 
             } else if (props.deleteNasWhitelistResponse?.code === "DELETE_NAS_WIHITELIST_SUCCESS") {
 
@@ -383,7 +414,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-                props.onGetSubscriberPlans(stateObj.addSubscriberResponse?.data?.subscriber_id)
+                props.onGetSubscriberPlans(stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj?.editSubscriberResponse?.data?.[0]?.subscriber_id)
 
             } else if (props.deleteSubscriberPlanResponse?.code === "DELETE_SUBSCRIBER_PLAN_FAILED") {
 
@@ -421,7 +452,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-                props.onGetSubscriberParametersList(stateObj.addSubscriberResponse?.data?.subscriber_id)
+                props.onGetSubscriberParametersList(stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj.editSubscriberResponse?.data?.[0]?.subscriber_id)
 
             } else if (props.deleteSubscriberParameterResponse?.code === "DELETE_SUBSCRIBER_PARAMETER_SUCCESS") {
 
@@ -560,8 +591,12 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
     }, [props.addSubscriberResponse]);
 
     const onCreateSubscriber = () => {
-        props.onAddSubscriber(input.inputData);
-        setPatterns([]);
+        if (input.inputData?.subscriber_id === "") {
+            props.onAddSubscriber(input.inputData);
+            setPatterns([]);
+        } else {
+            props.onEditSubscriber(input.inputData);
+        }
     }
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
@@ -589,7 +624,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     ...appDataContext,
                     isOpenDialog: false,
                 });
-                props.onGetSubscriberParametersList(stateObj.addSubscriberResponse?.data?.subscriber_id)
+                props.onGetSubscriberParametersList(stateObj.addSubscriberResponse?.data?.subscriber_id || stateObj.editSubscriberResponse?.data?.[0]?.subscriber_id)
 
             } else if (props.addSubscriberParameterResponse?.code === "ADD_SUBSCRIBER_PARAMETER_FAILED") {
                 setSteps({
@@ -634,6 +669,46 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
     const handleDeleteSubscriberPlan = (id: any) => {
         props.onDeleteSubscriberPlan(id)
     }
+
+    useEffect(() => {
+        if (
+            (stateObj.editSubscriberResponse === null ||
+                props.editSubscriberResponse !== null) ||
+            (stateObj.editSubscriberResponse !== props.editSubscriberResponse)
+        ) {
+            setStateObj({
+                ...stateObj,
+                editSubscriberResponse: props.editSubscriberResponse,
+            });
+            if (props.editSubscriberResponse?.code === "EDIT_SUBSCRIBER_SUCCESS") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "success",
+                    message: `Subscriber updated successfully!`,
+                });
+                props.onGetNasWhiteList(stateObj.getSubscriberResponse?.data?.[0]?.subscriber_id)
+                props.onGetSubscriberParametersList(stateObj.getSubscriberResponse?.data?.[0]?.subscriber_id)
+                props.onGetSubscriberPlans(stateObj.getSubscriberResponse?.data?.[0]?.subscriber_id)
+                setSteps({
+                    user: false,
+                    whitelist: true,
+                    parameter: false,
+                    plan: false,
+                    finish: false
+                });
+            } else if (props.editSubscriberResponse?.code === "EDIT_SUBSCRIBER_FAILED") {
+                setSnackBar({
+                    ...snackBar,
+                    isOpen: true,
+                    color: "danger",
+                    message: `Oops! Edit subscriber failed due to ${
+                        props.editSubscriberResponse?.error ?? ""
+                    }`,
+                });
+            }
+        }
+    }, [props.editSubscriberResponse]);
 
     const openDeleteSubscriberPlan = (data: any) => {
         setAppDataContext({
@@ -908,7 +983,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                                     <td>
                                                         <Box sx={{display: 'flex', gap: 1}}>
                                                             <IconButton
-                                                                onClick={() => openDeleteSubscriberParameter(row)}
+                                                                onClick={() => openDeleteNasWhiteList(row)}
                                                                 size="sm"
                                                                 variant="soft"
                                                                 color="danger"
@@ -1226,6 +1301,8 @@ const mapStateToProps = (state: RootState) => {
         getSubscriberPlansResponse: state.subscriber.getSubscriberPlansResponse,
         getSubscriberPlanResponse: state.subscriber.getSubscriberPlanResponse,
         plansGetSuccess: state.plan.plansGetSuccess,
+        getSubscriberResponse: state.subscriber.getSubscriberResponse,
+        editSubscriberResponse: state.subscriber.editSubscriberResponse,
 
     };
 };
@@ -1240,7 +1317,8 @@ const mapDispatchToProps = (dispatch: any) => {
         onDeleteSubscriberParameter: (payload) => dispatch(deleteSubscriberParameter(payload)),
         onGetSubscriberPlans: (payload) => dispatch(getAllSubscriberPlan({subscriberId: payload})),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
-        onDeleteSubscriberPlan: (payload: any) => dispatch(deleteSubscriberPlan({id: payload}))
+        onDeleteSubscriberPlan: (payload: any) => dispatch(deleteSubscriberPlan({id: payload})),
+        onEditSubscriber: (payload: any) => dispatch(editSubscriber(payload))
     };
 };
 

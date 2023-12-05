@@ -1,8 +1,11 @@
-import React, {FC} from "react";
+import React, {FC, useEffect} from "react";
 import HeaderText from "../../components/HeaderText";
 import {Box, Typography} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
 import AddSubscriberForm from "../../components/AddSubscriberForm";
+import {RootState} from "../../redux/store";
+import {useLocation} from 'react-router-dom';
+import {getSubscriber} from "../../redux/subscriber/subscriber-slice";
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -35,8 +38,17 @@ export interface ISubscriber {
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
-const AddSubscribers: FC<ReduxProps> = () => {
+const AddSubscribers: FC<ReduxProps> = (props) => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const user = queryParams.get('user');
 
+    useEffect(() => {
+        if (user !== null) {
+            props.onGetSubscriber(user);
+        }
+
+    }, []);
 
     return (<React.Fragment>
         <HeaderText title={"Add Subscribers"} subTitle={"Manage Subscribers"}/>
@@ -78,6 +90,25 @@ const AddSubscribers: FC<ReduxProps> = () => {
     </React.Fragment>)
 }
 
-const connector = connect(null, null);
+const mapStateToProps = (state: RootState) => {
+    return {
+        getAllSubscriberResponse: state.subscriber.getAllSubscriberResponse,
+        addSubscriberResponse: state.subscriber.addSubscriberResponse,
+        editSubscriberResponse: state.subscriber.editSubscriberResponse,
+        deleteSubscriberResponse: state.subscriber.deleteSubscriberResponse,
+
+    };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+
+        onGetSubscriber: (payload) => dispatch(getSubscriber({subscriberId: payload})),
+
+    };
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
 
 export default connector(AddSubscribers);

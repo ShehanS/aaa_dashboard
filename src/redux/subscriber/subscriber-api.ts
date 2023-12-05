@@ -26,7 +26,7 @@ const GET_ALL_SUBSCRIBER_API = {
 };
 const GET_SUBSCRIBER_API = {
     get: (payload: any) =>
-        axios.delete(`/api/subscribers/subscriber/id/${payload}`).then((response: { data: any }) => {
+        axios.get(`/api/subscribers/id/${payload.subscriberId}`).then((response: { data: any }) => {
             return response.data;
         }),
 };
