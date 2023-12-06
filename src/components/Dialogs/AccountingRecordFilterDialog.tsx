@@ -1,11 +1,15 @@
-import React, {FC, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input} from "@mui/joy";
+import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
 import {addFilter, editFilter} from "../../redux/account/account-slice";
+import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
+import {IAttribute} from "../../pages/NAS/AttributeGroup";
+import {addPlanAttribute, editPlanAttribute} from "../../redux/plan/plan-slice";
+import {RootState} from "../../redux/store";
 
 
 export enum DialogType {
@@ -13,6 +17,10 @@ export enum DialogType {
     edit
 }
 
+type StateObj = {
+    plansGetSuccess: any;
+    attrGroupsResponse: any;
+};
 
 type InputStateObj = {
     inputData: any;
@@ -28,6 +36,11 @@ type ReduxProps = ConnectedProps<typeof connector>;
 type Props = ReduxProps & OwnProps;
 
 const AccountingRecordFilterDialog: FC<Props> = (props) => {
+    const [stateObj, setStateObj] = useState<StateObj>({
+        plansGetSuccess: null,
+        attrGroupsResponse: null
+    });
+    const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
@@ -37,10 +50,52 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
             filter_for: ""
         },
     }));
+    const handleAttGroup = (event, value): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "attrgroup_id",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    }
+    const getAttributeGroup = () => {
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetAttributes(request);
+    }
+
+    useEffect(() => {
+        getAttributeGroup()
+    }, [])
     const handleCloseAndAdd = () => {
         props.onAddFilter(input.inputData);
     }
+    const getAttributeNameById = (id: number): string | undefined => {
+        const attribute = attributes.filter((attr: any) => attr?.group_id === id)?.[0];
+        if (attribute?.group_id === id) {
+            const name = attribute.group_name ?? undefined;
+            return name;
+        }
+        return undefined;
+    }
 
+    useEffect(() => {
+        if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
+            if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    attrGroupsResponse: props.attrGroupsResponse,
+                });
+                setAttributes(props.attrGroupsResponse?.data?.records ?? []);
+            } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
+            }
+        }
+    }, [props.attrGroupsResponse]);
     const handleCloseAndUpdate = () => {
         props.onEditFilter(input.inputData);
     }
@@ -71,14 +126,32 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
 
             <Stack direction={"column"}
                    sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
+                {/*<FormControl sx={{width: 300}}>*/}
+                {/*    <FormLabel sx={{color: '#e4dad0'}}>*/}
+                {/*        Attribute Group ID:*/}
+                {/*    </FormLabel>*/}
+                {/*    <Input type={"number"} name={"attrgroup_id"} value={input?.inputData?.['attrgroup_id'] ?? ""}*/}
+                {/*           onChange={handleInput}/>*/}
+
+                {/*</FormControl>*/}
+
                 <FormControl sx={{width: 300}}>
                     <FormLabel sx={{color: '#e4dad0'}}>
-                        Attribute Group ID:
+                        Attribute Group:
                     </FormLabel>
-                    <Input type={"number"} name={"attrgroup_id"} value={input?.inputData?.['attrgroup_id'] ?? ""}
-                           onChange={handleInput}/>
+                    <Select onClick={getAttributeGroup}
+                            value={input?.inputData?.['attrgroup_id']}
+                            onChange={(event, value) => handleInput(handleAttGroup(event, value))}>
+                        {attributes?.map((att: any) => (
+                            <Option value={att.group_id}>{getAttributeNameById(att?.group_id)}</Option>
+                        ))}
+
+                    </Select>
+                    {/*<Input type={"number"} name={"nas_attrgroup"} value={input?.inputData?.['nas_attrgroup'] ?? ""}*/}
+                    {/*       onChange={handleInput}/>*/}
 
                 </FormControl>
+
                 <FormControl sx={{width: 300}}>
                     <FormLabel sx={{color: '#e4dad0'}}>
                         Filter AVP:
@@ -121,15 +194,23 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
 
 }
 
-
-
-const mapDispatchToProps = (dispatch: any) => {
+const mapStateToProps = (state: RootState) => {
     return {
-        onAddFilter: (payload) => dispatch(addFilter(payload)),
-        onEditFilter: (payload) => dispatch(editFilter(payload))
+        plansGetSuccess: state.plan.plansGetSuccess,
+        attrGroupsResponse: state.nas.attrGroupsResponse,
     };
 };
 
-const connector = connect(null, mapDispatchToProps);
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        onAddPlanAttribute: (payload: any) => dispatch(addPlanAttribute(payload)),
+        onEditPlanAttribute: (payload: any) => dispatch(editPlanAttribute(payload)),
+        onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
+        onAddFilter: (payload) => dispatch(addFilter(payload)),
+        onEditFilter: (payload) => dispatch(editFilter(payload)),
+    };
+};
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
 
 export default connector(AccountingRecordFilterDialog);

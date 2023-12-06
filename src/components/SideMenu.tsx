@@ -47,7 +47,7 @@ const SideMenu: FC = (props: any) => {
                         <MenuItem style={isActive(ROUTES.view_subscribers) ? selected : unSelected}
                                   component={<Link to={ROUTES.view_subscribers}></Link>}>View Subscribers</MenuItem>
                         <MenuItem style={isActive(ROUTES.add_subscribers) ? selected : unSelected}
-                                  component={<Link to={ROUTES.add_subscribers}></Link>}>Add Subscribers</MenuItem>
+                                  component={<Link to={ROUTES.add_subscribers}></Link>}>Add/Edit Subscribers</MenuItem>
 
                     </SubMenu>
 

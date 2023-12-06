@@ -39,7 +39,7 @@ const PatternDialog: FC<Props> = (props) => {
     }
 
     const handleCloseAndUpdate = () => {
-        props.onEditAccount(input.inputData);
+        props.onEditWhiteList(input.inputData);
     }
 
     const handleInput = (event: any) => {

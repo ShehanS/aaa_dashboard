@@ -27,6 +27,8 @@ import AccountDialog from "../../components/Dialogs/AccountDialog";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {useAppDataContext} from "../../context/AppDataContext";
 import AccountingRecordFilterDialog, {DialogType} from "../../components/Dialogs/AccountingRecordFilterDialog";
+import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
+import {IAttribute} from "../NAS/ManageNAS";
 
 export interface IAccountingData {
     subscriber_id: number,
@@ -59,6 +61,7 @@ type SnackBarProps = {
 }
 
 type StateObj = {
+    attrGroupsResponse: any;
     accountCount: any;
     filterCount: any;
     accountAddResponse: any;
@@ -74,6 +77,7 @@ type StateObj = {
 }
 
 const RecordFilter: FC = (props: any) => {
+    const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageFilter, setCurrentPageFilter] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -92,6 +96,7 @@ const RecordFilter: FC = (props: any) => {
         filterEditResponse: null,
         filterDeleteResponse: null,
         filtersResponse: null,
+        attrGroupsResponse: null,
         accountCount: 0,
         filterCount: 0
 
@@ -104,6 +109,19 @@ const RecordFilter: FC = (props: any) => {
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
     };
+
+    useEffect(() => {
+        if ((stateObj.attrGroupsResponse === null && props.attrGroupsResponse !== null) || (stateObj.attrGroupsResponse !== props.attrGroupsResponse)) {
+            if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    attrGroupsResponse: props.attrGroupsResponse,
+                });
+                setAttributes(props.attrGroupsResponse?.data?.records ?? []);
+            } else if (props.attrGroupsResponse?.code === "GET_NAS_ATTRIBUTE_GROUPS_FAILED") {
+            }
+        }
+    }, [props.attrGroupsResponse]);
 
     useEffect(() => {
         if ((stateObj.accountRecordsResponse === null || props.accountRecordsResponse !== null) || (stateObj.accountRecordsResponse !== props.accountRecordsResponse)) {
@@ -361,9 +379,17 @@ const RecordFilter: FC = (props: any) => {
         }
     }, [props.filterAddResponse]);
 
+    const getAttributeGroup = () => {
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetAttributes(request);
+    }
 
     const initLoad = (id?: string) => {
         props.onClearHistory();
+        getAttributeGroup();
         setSearchId(undefined);
         setIsLoading(true);
         if (id !== undefined) {
@@ -425,16 +451,18 @@ const RecordFilter: FC = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 450,
+            dialogHeight: 200,
             dialogContent: <DeleteDialog id={props.attrgroup_id} onDelete={handleFilterDelete}/>
         });
     }
 
     const openAddAccountingFilterDialog = (props: any) => {
         setAppDataContext({
-            dialogWidth: 600,
-            dialogHeight: 450,
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 600,
+            dialogHeight: 450,
             dialogContent: <AccountingRecordFilterDialog type={DialogType.add}/>
         });
     }
@@ -464,6 +492,7 @@ const RecordFilter: FC = (props: any) => {
         props.onGetAccounts(request);
 
     };
+
 
     const handlePageChangeFilter = (event: any, page: number) => {
         setCurrentPageFilter(page);
@@ -617,7 +646,7 @@ const RecordFilter: FC = (props: any) => {
                                     >
                                         <thead>
                                         <tr>
-                                            <th style={{width: 120}}>Att.Group ID</th>
+                                            <th style={{width: 120}}>Att.Group</th>
                                             <th style={{width: 150}}>Filter AVP</th>
                                             <th style={{width: 150}}>Filter For</th>
                                             <th style={{width: 150}}>Filter Regexp</th>
@@ -627,7 +656,7 @@ const RecordFilter: FC = (props: any) => {
                                         <tbody>
                                         {accountFilters?.map((row) => (
                                             <tr key={row.attrgroup_id}>
-                                                <td>{row.attrgroup_id ?? ""}</td>
+                                                <td>{attributes?.filter((att: any) => att?.group_id === row.attrgroup_id)?.[0]?.group_name ?? ""}</td>
                                                 <td>{row.filter_avp ?? ""}</td>
                                                 <td>{row.filter_for ?? ""}</td>
                                                 <td>{row.filter_regexp ?? ""}</td>
@@ -695,6 +724,7 @@ const RecordFilter: FC = (props: any) => {
 }
 const mapStateToProps = (state: RootState) => {
     return {
+        attrGroupsResponse: state.nas.attrGroupsResponse,
         accountAddResponse: state.account.accountAddResponse,
         accountEditResponse: state.account.accountEditResponse,
         accountDeleteResponse: state.account.accountDeleteResponse,
@@ -717,6 +747,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onFilterDelete: (payload: any) => dispatch(deleteFilter(payload)),
         onGetFilters: (payload: any) => dispatch(getAllFilters(payload)),
         onClearHistory: () => dispatch(onClearHistory()),
+        onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
     };
 };
 

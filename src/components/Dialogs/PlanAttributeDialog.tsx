@@ -18,7 +18,6 @@ export enum DialogType {
 type StateObj = {
     plansGetSuccess: any;
     attrGroupsResponse: any;
-    attrGroupsResponse: any;
 };
 
 type InputStateObj = {

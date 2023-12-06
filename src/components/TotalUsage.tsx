@@ -51,7 +51,7 @@ const TotalUploadWidget: FC<Props> = ({data}) => {
         data.forEach(entry => {
             const [date, time] = Object.keys(entry)[0].split(':');
             const value = Object.values(entry)[0];
-            total += value;
+            // total += value;
             dates.push(`${date}:${time}`);
             values.push(value);
         });
@@ -116,7 +116,7 @@ const TotalUploadWidget: FC<Props> = ({data}) => {
                     </CircularProgress>
                     <CardContent>
                         <Typography level="body-md">TOTAL USAGE</Typography>
-                        <Typography level="h2">{total} GB</Typography>
+                        {/*<Typography level="h2">{total} GB</Typography>*/}
                         <Box sx={{marginTop: -5, marginLeft: -10}}>
                             <ReactEcharts
                                 option={options}

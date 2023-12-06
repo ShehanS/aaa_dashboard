@@ -4,11 +4,11 @@ import Stack from "@mui/joy/Stack";
 import {useAppDataContext} from "../../context/AppDataContext";
 import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
-import {IPlan} from "../../pages/Plans/Plan";
 import {IParameterMeta} from "../../pages/Parameters/ParameterSetting";
 import {getMetaParams} from "../../redux/parameter/parameter-slice";
 import {RootState} from "../../redux/store";
 import {addSubscriberParameter} from "../../redux/subscriber/subscriber-slice";
+import {editPlanParameter} from "../../redux/plan/plan-slice";
 
 export enum DialogType {
     add,
@@ -214,6 +214,7 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         onGetMetaParameters: (payload: any) => dispatch(getMetaParams(payload)),
         onAddSubscriberParameter: (payload: any) => dispatch(addSubscriberParameter(payload)),
+        onEditPlanParameter: (payload: any) => dispatch(editPlanParameter(payload))
     };
 };
 

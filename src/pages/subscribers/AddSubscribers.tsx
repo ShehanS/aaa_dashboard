@@ -51,7 +51,7 @@ const AddSubscribers: FC<ReduxProps> = (props) => {
     }, []);
 
     return (<React.Fragment>
-        <HeaderText title={"Add Subscribers"} subTitle={"Manage Subscribers"}/>
+        <HeaderText title={"Add/Edit Subscribers"} subTitle={"Manage Subscribers"}/>
         <Box sx={{
             width: "100%",
             display: 'flex',

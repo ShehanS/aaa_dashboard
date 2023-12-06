@@ -778,8 +778,8 @@ const AttributeGroup: FC<ReduxProps> = (props: any) => {
 
             }}>
                 <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
-                    <SearchBar displayAttr={"subscriber_id"} onSearchClear={initLoad} table={"bb_accounting_data"}
-                               columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
+                    <SearchBar displayAttr={"description"} onSearchClear={initLoad} table={"bb_nas_attrgroup"}
+                               columns={"group_description"}
                                onSelectSearch={onSelectSearch}/>
                     <Stack direction={"row"} spacing={2}>
                         <Button onClick={openAddNASGroupDialog}>Add Attribute</Button>

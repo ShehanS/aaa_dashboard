@@ -352,11 +352,11 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
 
             }}>
                 <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
-                    <SearchBar displayAttr={"subscriber_id"} onSearchClear={initLoad} table={"bb_accounting_data"}
-                               columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
+                    <SearchBar displayAttr={"username"} onSearchClear={initLoad} table={"bb_subscriber"}
+                               columns={"subscriber_id,username"}
                                onSelectSearch={onSelectSearch}/>
-                    <Stack direction={"row"} spacing={2}>
-                        <Button onClick={openSubscriberDialog}>Add Subscriber</Button>
+                    <Stack direction={"row"} spacing={2} sx={{height:30}}>
+
 
 
                     </Stack>

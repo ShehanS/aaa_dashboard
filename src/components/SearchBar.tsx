@@ -45,6 +45,11 @@ const SearchBar: FC<Props> = (props: any) => {
         props.onSelectSearch(record);
     }
 
+
+    useEffect(() => {
+        props.onClear();
+    }, []);
+
     const handleSearch = (event: any) => {
         setIsLoading(true);
         setQuery(event.nativeEvent.target.value);
@@ -78,7 +83,7 @@ const SearchBar: FC<Props> = (props: any) => {
                         left: 63,
                         height: 200,
                         position: "absolute",
-                        width: 277,
+                        width: 230,
                         borderRadius: '0px 0px 10px 10px',
                         zIndex: 9999
                     }}>
@@ -108,7 +113,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onSearch: (payload: any) => dispatch(search(payload)),
-        onClear: () => dispatch(clearSearch)
+        onClear: () => dispatch(clearSearch())
 
     };
 };

@@ -15,7 +15,7 @@ export enum Context {
 }
 
 type Props = {
-    id: string
+    id?: string
     deleteItem?: any;
     onDelete: (id: string) => void;
     context?: Context

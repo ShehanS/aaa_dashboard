@@ -5,7 +5,7 @@ import {useAppDataContext} from "../../context/AppDataContext";
 import {Button, DialogActions, DialogTitle, Divider, FormControl, FormLabel, Option, Select} from "@mui/joy";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../redux/store";
-import {addPlanAttribute, editPlanAttribute, getPlans} from "../../redux/plan/plan-slice";
+import {editPlanAttribute, getPlans} from "../../redux/plan/plan-slice";
 import {IPlan} from "../../pages/Plans/Plan";
 import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
 import {IAttribute} from "../../pages/NAS/AttributeGroup";
@@ -18,7 +18,6 @@ export enum DialogType {
 
 type StateObj = {
     plansGetSuccess: any;
-    attrGroupsResponse: any;
     attrGroupsResponse: any;
 };
 
@@ -224,6 +223,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onAddSubscriberPlan: (payload: any) => dispatch(addSubscriberPlan(payload)),
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
+        onEditPlanAttribute: (payload: any) => dispatch(editPlanAttribute(payload))
     };
 };
 

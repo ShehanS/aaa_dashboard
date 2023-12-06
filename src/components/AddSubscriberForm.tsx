@@ -219,12 +219,6 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
 
     const finishSteps = () => {
         resetAll();
-        setSnackBar({
-            ...snackBar,
-            isOpen: true,
-            color: "success",
-            message: `User adding success!!!`,
-        });
         setSteps({user: true, whitelist: false, parameter: false, plan: false})
     }
 
@@ -977,7 +971,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            {patterns?.map((row, index) => (
+                                            {patterns?.map((row:any, index: number) => (
                                                 <tr key={index}>
                                                     <td>{row?.nas_id_pattern ?? ""}</td>
                                                     <td>
@@ -1289,7 +1283,6 @@ const mapStateToProps = (state: RootState) => {
     return {
         addSubscriberResponse: state.subscriber.addSubscriberResponse,
         addNasWhitelistResponse: state.subscriber.addNasWhitelistResponse,
-        addNasWhitelistSuccess: state.subscriber.addNasWhitelistSuccess,
         getAllNasWhitelistResponse: state.subscriber.getAllNasWhitelistResponse,
         deleteNasWhitelistResponse: state.subscriber.deleteNasWhitelistResponse,
         addSubscriberParameterResponse: state.subscriber.addSubscriberParameterResponse,

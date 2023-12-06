@@ -446,8 +446,8 @@ const ManageNAS: FC<ReduxProps> = (props: any) => {
 
             }}>
                 <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
-                    <SearchBar displayAttr={"subscriber_id"} onSearchClear={initLoad} table={"bb_accounting_data"}
-                               columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
+                    <SearchBar displayAttr={"nas_name"} onSearchClear={initLoad} table={"bb_nas"}
+                               columns={"nas_name"}
                                onSelectSearch={onSelectSearch}/>
                     <Stack direction={"row"} spacing={2}>
                         <Button onClick={openAddNasDialog}>Add NAS</Button>

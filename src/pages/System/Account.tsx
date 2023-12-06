@@ -384,6 +384,7 @@ const Account: FC = (props: any) => {
     }, []);
 
     const onSelectSearch = (record: any) => {
+        console.log(record)
         setSearchId(record.subscriber_id);
         props.onGetAccount(record.subscriber_id);
     }
@@ -484,7 +485,7 @@ const Account: FC = (props: any) => {
 
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
-                        <SearchBar displayAttr={"subscriber_id"} onSearchClear={initLoad} table={"bb_accounting_data"}
+                        <SearchBar displayAttr={"username"} onSearchClear={initLoad} table={"bb_accounting_data"}
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
