@@ -3,17 +3,7 @@ import Box from "@mui/joy/Box";
 import Stack from "@mui/joy/Stack";
 import Button from "@mui/joy/Button";
 import {useAppDataContext} from "../../context/AppDataContext";
-import {
-    CircularProgress,
-    DialogActions,
-    DialogTitle,
-    Divider,
-    FormControl,
-    FormLabel,
-    Input,
-    Option,
-    Select
-} from "@mui/joy";
+import {DialogActions, DialogTitle, Divider, FormControl, FormLabel, Input, Option, Select} from "@mui/joy";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
 import {addMetaParams, editMetaParams, getSqlParams} from "../../redux/parameter/parameter-slice";
@@ -174,17 +164,17 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Method Symbol:
                         </FormLabel>
-                        {/*<Input type={"number"} name={"nas_attrgroup"} value={input?.inputData?.['nas_attrgroup'] ?? ""}*/}
-                        {/*       onChange={handleInput}/>*/}
-                        <Select onClick={loadSqlParams}
-                                endDecorator={sqlParams === null && <CircularProgress size={"sm"}/>}
-                                value={input?.inputData?.['parameter_method_symbol'] ?? ""}
-                                onChange={(event, value) => handleInput(handleParameterSqlAction(event, value))}>
-                            {sqlParams?.map((params: any) => (
-                                <Option value={params?.action_sql ?? ""}>{params?.action_sql ?? ""}</Option>
-                            ))}
+                        <Input name={"parameter_method_symbol"} value={input?.inputData?.['parameter_method_symbol'] ?? ""}
+                               onChange={handleInput}/>
+                        {/*<Select onClick={loadSqlParams}*/}
+                        {/*        endDecorator={sqlParams === null && <CircularProgress size={"sm"}/>}*/}
+                        {/*        value={input?.inputData?.['parameter_method_symbol'] ?? ""}*/}
+                        {/*        onChange={(event, value) => handleInput(handleParameterSqlAction(event, value))}>*/}
+                        {/*    {sqlParams?.map((params: any) => (*/}
+                        {/*        <Option value={params?.action_sql ?? ""}>{params?.action_sql ?? ""}</Option>*/}
+                        {/*    ))}*/}
 
-                        </Select>
+                        {/*</Select>*/}
                     </FormControl>
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>

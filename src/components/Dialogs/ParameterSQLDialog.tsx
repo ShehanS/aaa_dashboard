@@ -14,7 +14,7 @@ import {
     IconButton,
     Input,
     Sheet,
-    Table,
+    Table, Textarea,
     Typography
 } from "@mui/joy";
 import {RootState} from "../../redux/store";
@@ -294,7 +294,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Action SQL:
                         </FormLabel>
-                        <Input name={"action_sql"} value={input?.inputData?.['action_sql'] ?? ""}
+                        <Textarea minRows={3} name={"action_sql"} value={input?.inputData?.['action_sql'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
                     <FormControl sx={{width: 300}}>
@@ -397,6 +397,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                         >
                             <Box>
                                 <Table
+                                    noWrap
                                     borderAxis="bothBetween"
                                     stripe="odd"
                                     hoverRow
@@ -423,7 +424,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                                         <th style={{width: 120}}>Phase</th>
                                         <th style={{width: 150}}>Action Name</th>
                                         <th style={{width: 150}}>Action SQL</th>
-                                        <th style={{width: 120}}>Action SEQ</th>
+                                        <th style={{width: 150}}>Action SEQ</th>
                                         <th style={{width: 120}}>Match Return</th>
                                         <th style={{width: 120}}>Entity</th>
                                         <th style={{width: 'var(--Table-lastColumnWidth)'}}/>

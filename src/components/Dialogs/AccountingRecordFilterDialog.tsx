@@ -61,6 +61,20 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
         };
         return data;
     }
+
+    const handlingFilterFor = (event, value): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "filter_for",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    }
+
+
     const getAttributeGroup = () => {
         const request = {
             page: 0,
@@ -120,7 +134,7 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
     return (<React.Fragment>
         <Box sx={{height: 350}}>
             <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                Filter Record
+                Record Filter
             </DialogTitle>
             <Divider/>
 
@@ -173,9 +187,18 @@ const AccountingRecordFilterDialog: FC<Props> = (props) => {
                     <FormLabel sx={{color: '#e4dad0'}}>
                         Filter For:
                     </FormLabel>
-                    <Input name={"filter_for"}
-                           value={input?.inputData?.['filter_for'] ?? ""}
-                           onChange={handleInput}/>
+                    {/*<Input name={"filter_for"}*/}
+                    {/*       value={input?.inputData?.['filter_for'] ?? ""}*/}
+                    {/*       onChange={handleInput}/>*/}
+
+                    <Select onClick={getAttributeGroup}
+                            value={input?.inputData?.['filter_for'] ?? ""}
+                            onChange={(event, value) => handleInput(handlingFilterFor(event, value))}>
+                        <Option value={"ACCOUNTING"}>ACCOUNTING</Option>
+                        <Option value={"USAGE"}>USAGE</Option>
+
+                    </Select>
+
                 </FormControl>
             </Stack>
 

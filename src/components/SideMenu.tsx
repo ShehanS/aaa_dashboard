@@ -48,6 +48,8 @@ const SideMenu: FC = (props: any) => {
                                   component={<Link to={ROUTES.view_subscribers}></Link>}>View Subscribers</MenuItem>
                         <MenuItem style={isActive(ROUTES.add_subscribers) ? selected : unSelected}
                                   component={<Link to={ROUTES.add_subscribers}></Link>}>Add/Edit Subscribers</MenuItem>
+                        <MenuItem style={isActive(ROUTES.nas_subscribers) ? selected : unSelected}
+                                  component={<Link to={ROUTES.nas_subscribers}></Link>}>Manage Subscribers AVP</MenuItem>
 
                     </SubMenu>
 
@@ -58,8 +60,7 @@ const SideMenu: FC = (props: any) => {
                                   component={<Link to={ROUTES.nas_attribute_map}></Link>}>Attribute Group</MenuItem>
                         <MenuItem style={isActive(ROUTES.nas_config) ? selected : unSelected}
                                   component={<Link to={ROUTES.nas_config}></Link>}>Manage NAS</MenuItem>
-                        <MenuItem style={isActive(ROUTES.nas_subscribers) ? selected : unSelected}
-                                  component={<Link to={ROUTES.nas_subscribers}></Link>}>Manage Subscribers</MenuItem>
+
 
                     </SubMenu>
                     <SubMenu style={unSelected} label={"COA/DM"}

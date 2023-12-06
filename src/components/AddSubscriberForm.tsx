@@ -56,7 +56,7 @@ type InputStateObj = {
         subscriber_id: "";
         username: "";
         password: "";
-        status: "";
+        status: string;
         created_date: "";
         updated_time: "";
         contact_no: "";
@@ -114,7 +114,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             subscriber_id: "",
             username: "",
             password: "",
-            status: "",
+            status: "ACTIVE",
             created_date: "",
             updated_time: "",
             contact_no: "",
@@ -846,13 +846,13 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                        onChange={handleInput}/>
                             </FormControl>
 
-                            <FormControl sx={{width: 300}}>
-                                <FormLabel sx={{color: '#0bb1aa'}}>
-                                    Status:
-                                </FormLabel>
-                                <Input name={"status"} value={input?.inputData?.['status'] ?? ""}
-                                       onChange={handleInput}/>
-                            </FormControl>
+                            {/*<FormControl sx={{width: 300}}>*/}
+                            {/*    <FormLabel sx={{color: '#0bb1aa'}}>*/}
+                            {/*        Status:*/}
+                            {/*    </FormLabel>*/}
+                            {/*    <Input name={"status"} value={input?.inputData?.['status'] ?? ""}*/}
+                            {/*           onChange={handleInput}/>*/}
+                            {/*</FormControl>*/}
 
                             <FormControl sx={{width: 300}}>
                                 <FormLabel sx={{color: '#0bb1aa'}}>

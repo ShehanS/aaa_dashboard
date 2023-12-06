@@ -546,7 +546,7 @@ const Account: FC = (props: any) => {
                     >
                         <Box>
                             <Table
-
+                                noWrap
                                 borderAxis="bothBetween"
                                 stripe="odd"
                                 hoverRow

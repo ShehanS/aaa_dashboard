@@ -395,6 +395,7 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                         }}
                 >
                     <Table
+                        noWrap
                         borderAxis="bothBetween"
                         stripe="odd"
                         hoverRow
