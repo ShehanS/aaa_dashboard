@@ -8,6 +8,7 @@ import {addSubscriber, editSubscriber, getAllAttributeGroups} from "../../redux/
 import {useAppDataContext} from "../../context/AppDataContext";
 import {IAttribute} from "../../pages/NAS/AttributeGroup";
 import {RootState} from "../../redux/store";
+import {getAllSubscribers} from "../../redux/subscriber/subscriber-slice";
 
 export enum DialogType {
     add,
@@ -26,17 +27,20 @@ type OwnProps = {
 type StateObj = {
     attrGroupsResponse: any;
     recordAddResponse: any;
+    getAllSubscriberResponse: any;
 };
 
 type ReduxProps = ConnectedProps<typeof connector>;
 
 type Props = ReduxProps & OwnProps;
 
-const NASSubscriberDialog: FC<Props> = (props) => {
+const SubscriberAVPDialog: FC<Props> = (props) => {
     const [stateObj, setStateObj] = useState<StateObj>({
         attrGroupsResponse: null,
-        recordAddResponse: null
+        recordAddResponse: null,
+        getAllSubscriberResponse: null
     });
+    const [subscribers, setSubscribers] = useState<any[]>([]);
     const [attributes, setAttributes] = useState<IAttribute[]>([]);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [input, setInput] = useState<InputStateObj>(() => ({
@@ -54,6 +58,18 @@ const NASSubscriberDialog: FC<Props> = (props) => {
             nativeEvent: {
                 target: {
                     name: "attribute_group",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    }
+
+    const handleSelectUser = (event, value): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "subscriber_id",
                     value: value,
                 },
             },
@@ -97,7 +113,30 @@ const NASSubscriberDialog: FC<Props> = (props) => {
     }
     useEffect(() => {
         getAttributeGroup();
+        const request = {
+            page: 0,
+            pageSize: 1000
+        }
+        props.onGetAllSubscribers(request);
     }, []);
+
+    useEffect(() => {
+        if (
+            (stateObj.getAllSubscriberResponse === null ||
+                props.getAllSubscriberResponse !== null) ||
+            (stateObj.getAllSubscriberResponse !== props.getAllSubscriberResponse)
+        ) {
+            if (props.getAllSubscriberResponse?.code === "GET_ALL_SUBSCRIBER_SUCCESS") {
+                setStateObj({
+                    ...stateObj,
+                    getAllSubscriberResponse: props.getAllSubscriberResponse
+                });
+                setSubscribers(props.getAllSubscriberResponse?.data?.records ?? [])
+            } else if (props.getAllSubscriberResponse?.code === "GET_ALL_SUBSCRIBER_FAILED") {
+
+            }
+        }
+    }, [props.getAllSubscriberResponse]);
 
     const handleInput = (event: any) => {
         setInput((prevInput) => ({
@@ -115,16 +154,44 @@ const NASSubscriberDialog: FC<Props> = (props) => {
             isOpenDialog: false,
         });
     };
+    const handleNASType = (event: any, value: any) => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "operation",
+                    value: value
+                }
+            }
+        }
+        return data;
+    }
 
     return (
         <React.Fragment>
-            <Box sx={{ height: 350 }}>
+            <Box sx={{height: 350}}>
                 <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                    Subscribers
+                    Subscriber AVP
                 </DialogTitle>
                 <Divider/>
 
                 <Stack direction={"column"} sx={{alignItems: 'center', pt: 3, width: '100%'}}>
+
+                    <FormControl sx={{width: 300}}>
+                        <FormLabel sx={{color: '#e4dad0'}}>
+                            Subscriber:
+                        </FormLabel>
+                        <Select onClick={getAttributeGroup}
+                                value={input?.inputData?.['subscriber_id'] ?? ""}
+                                onChange={(event, value) => handleInput(handleSelectUser(event, value))}>
+                            {subscribers?.map((sub: any) => (
+                                <Option value={sub?.subscriber_id}>{sub?.username ?? ""}</Option>
+                            ))}
+
+                        </Select>
+                        {/*<Input type={"number"} name={"nas_attrgroup"} value={input?.inputData?.['nas_attrgroup'] ?? ""}*/}
+                        {/*       onChange={handleInput}/>*/}
+
+                    </FormControl>
 
                     {/*<FormControl sx={{width: 300}}>*/}
                     {/*    <FormLabel sx={{color: '#e4dad0'}}>*/}
@@ -156,12 +223,24 @@ const NASSubscriberDialog: FC<Props> = (props) => {
                         <Input name={"attribute"} value={input?.inputData?.['attribute'] ?? ""}
                                onChange={handleInput}/>
                     </FormControl>
+                    {/*<FormControl sx={{width: 300}}>*/}
+                    {/*    <FormLabel sx={{color: '#e4dad0'}}>*/}
+                    {/*        Operation:*/}
+                    {/*    </FormLabel>*/}
+                    {/*    <Input name={"operation"} value={input?.inputData?.['operation'] ?? ""}*/}
+                    {/*           onChange={handleInput}/>*/}
+                    {/*</FormControl>*/}
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Operation:
                         </FormLabel>
-                        <Input name={"operation"} value={input?.inputData?.['operation'] ?? ""}
-                               onChange={handleInput}/>
+                        {/*<Input name={"nas_type"} value={input?.inputData?.['nas_type'] ?? ""} onChange={handleInput}/>*/}
+                        <Select value={input?.inputData?.['operation'] ?? ""}
+                                onChange={(event, value) => handleInput(handleNASType(event, value))}>
+                            <Option value={"CHECK"}>CHECK</Option>
+                            <Option value={"REPLY"}>REPLY</Option>
+
+                        </Select>
                     </FormControl>
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
@@ -189,6 +268,7 @@ const NASSubscriberDialog: FC<Props> = (props) => {
 
 const mapStateToProps = (state: RootState) => {
     return {
+        getAllSubscriberResponse: state.subscriber.getAllSubscriberResponse,
         plansGetSuccess: state.plan.plansGetSuccess,
         attrGroupsResponse: state.nas.attrGroupsResponse,
     };
@@ -200,9 +280,10 @@ const mapDispatchToProps = (dispatch: any) => {
         onAddSubscriber: (payload: any) => dispatch(addSubscriber(payload)),
         onEditSubscriber: (payload: any) => dispatch(editSubscriber(payload)),
         onGetAttributes: (payload: any) => dispatch(getAllAttributeGroups(payload)),
+        onGetAllSubscribers: (payload: any) => dispatch(getAllSubscribers(payload)),
     };
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(NASSubscriberDialog);
+export default connector(SubscriberAVPDialog);

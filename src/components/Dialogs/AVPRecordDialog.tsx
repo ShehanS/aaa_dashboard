@@ -118,7 +118,7 @@ const AVPRecordDialog: FC<Props> = (props) => {
     return (<React.Fragment>
         <Box sx={{height: 350}}>
             <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                AVP Records
+                Manage AVP Override
             </DialogTitle>
             <Divider/>
             <Stack direction={"column"}

@@ -11,7 +11,7 @@ import ModelTrainingRoundedIcon from '@mui/icons-material/ModelTrainingRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 
 const selected = {
-    borderBottom: '3px solid #e85153', color: 'white', fontWeight: 'bold', backgroundColor: '#0aa59e'
+    borderBottom: '3px solid #e85153', color: 'white', fontWeight: 'bold', backgroundColor: '#7dc7c5'
 }
 const unSelected = {
     borderBottom: 'none', color: '#334357', fontWeight: 'normal', backgroundColor: undefined
@@ -50,6 +50,7 @@ const SideMenu: FC = (props: any) => {
                                   component={<Link to={ROUTES.add_subscribers}></Link>}>Add/Edit Subscribers</MenuItem>
                         <MenuItem style={isActive(ROUTES.nas_subscribers) ? selected : unSelected}
                                   component={<Link to={ROUTES.nas_subscribers}></Link>}>Manage Subscribers AVP</MenuItem>
+
 
                     </SubMenu>
 

@@ -13,13 +13,22 @@ import {
     FormLabel,
     IconButton,
     Input,
+    Option,
+    Select,
     Sheet,
-    Table, Textarea,
+    Table,
+    Textarea,
     Typography
 } from "@mui/joy";
 import {RootState} from "../../redux/store";
 import {connect, ConnectedProps} from "react-redux";
-import {addSqlParams, deleteSqlParams, editSqlParams, getSqlParams} from "../../redux/parameter/parameter-slice";
+import {
+    addSqlParams,
+    deleteSqlParams,
+    editSqlParams,
+    getMetaParams,
+    getSqlParams
+} from "../../redux/parameter/parameter-slice";
 import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -27,6 +36,7 @@ import DeleteDialog, {Context} from "./DeleteDialog";
 import {useDialogDataContext} from "../../context/DialogDataContext";
 import {useAppDataContext} from "../../context/AppDataContext";
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
+import {IParameterMeta} from "../../pages/Parameters/ParameterSetting";
 
 export enum DialogType {
     add,
@@ -59,6 +69,7 @@ type StateObj = {
     sqlParameterEditResponse: any;
     sqlParameterDeleteResponse: any;
     sqlParametersGetResponse: any;
+    metaParamGetResponse: any;
     count: number;
 }
 
@@ -74,11 +85,13 @@ const ParameterMetaDialog: FC<Props> = (props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
+    const [metaParameters, setMetaParameters] = useState<IParameterMeta[]>([]);
     const [stateObj, setStateObj] = useState<StateObj>({
         sqlParameterAddResponse: null,
         sqlParameterEditResponse: null,
         sqlParameterDeleteResponse: null,
         sqlParametersGetResponse: null,
+        metaParamGetResponse: null,
         count: 0
     });
     const [sqlPrams, setSqlParams] = useState<IParameterSQL[]>([]);
@@ -98,6 +111,19 @@ const ParameterMetaDialog: FC<Props> = (props) => {
     useEffect(() => {
         setInput({...input, inputData: selectedParam});
     }, [selectedParam]);
+
+
+    useEffect(() => {
+        if ((stateObj.metaParamGetResponse === null || props.metaParamGetResponse !== null) || (stateObj.metaParamGetResponse !== props.metaParamGetResponse)) {
+            setStateObj({
+                ...stateObj,
+                metaParamGetResponse: props.metaParamGetResponse,
+            });
+            if (props.metaParamGetResponse?.code === "GET_PARAMETER_META_SUCCESS") {
+                setMetaParameters(props.metaParamGetResponse?.data)
+            }
+        }
+    }, [props.metaParamGetResponse]);
 
 
     useEffect(() => {
@@ -140,6 +166,8 @@ const ParameterMetaDialog: FC<Props> = (props) => {
             dialogHeight: 450,
         });
     }
+
+
     const initLoad = () => {
         setIsLoading(true);
         const request = {
@@ -147,6 +175,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
             pageSize: 10
         }
         props.onGetSQLParameters(request);
+        props.onGetMetaParameters(request)
     }
 
     const updateParameter = () => {
@@ -238,6 +267,17 @@ const ParameterMetaDialog: FC<Props> = (props) => {
         }
     }, [props.sqlParameterDeleteResponse]);
 
+    const handleExecPhase = (event: any, value: any): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "action_phase",
+                    value: value
+                }
+            }
+        }
+        return data;
+    }
     const handlePageChange = (event: any, page: number) => {
         setCurrentPage(page);
         setIsLoading(true);
@@ -256,7 +296,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
         <React.Fragment>
             <Box sx={{height: 350}}>
                 <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                    Parameter SQL Dialog
+                    SQL Action
                 </DialogTitle>
                 <Divider/>
                 <Stack direction={"column"}
@@ -273,8 +313,16 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Name:
                         </FormLabel>
-                        <Input name={"parameter_name"} value={input?.inputData?.['parameter_name'] ?? ""}
-                               onChange={handleInput}/>
+                        {/*<Input name={"parameter_name"} value={input?.inputData?.['parameter_name'] ?? ""}*/}
+                        {/*       onChange={handleInput}/>*/}
+                        <Select value={input?.inputData?.['action_phase'] ?? ""}
+                                onChange={(event, value) => handleInput(handleExecPhase(event, value))}>
+                            {metaParameters?.map((parms: any) => (
+                                <Option value={"AUTHORIZE"}>AUTHORIZE</Option>
+                            ))}
+
+
+                        </Select>
                     </FormControl>
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
@@ -287,15 +335,25 @@ const ParameterMetaDialog: FC<Props> = (props) => {
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Action Phase:
                         </FormLabel>
-                        <Input name={"action_phase"} value={input?.inputData?.['action_phase'] ?? ""}
-                               onChange={handleInput}/>
+                        {/*<Input name={"action_phase"} value={input?.inputData?.['action_phase'] ?? ""}*/}
+                        {/*       onChange={handleInput}/>*/}
+                        <Select value={input?.inputData?.['action_phase'] ?? ""}
+                                onChange={(event, value) => handleInput(handleExecPhase(event, value))}>
+                            <Option value={"AUTHORIZE"}>AUTHORIZE</Option>
+                            <Option value={"AUTHENTICATE"}>AUTHENTICATE</Option>
+                            <Option value={"ACCOUNTING_UPDATE"}>ACCOUNTING UPDATE</Option>
+                            <Option value={"ACCOUNTING_STOP"}>ACCOUNTING STOP</Option>
+                            <Option value={"ACCOUNTING_START"}>ACCOUNTING START</Option>
+                            <Option value={"ACCOUNTING_ON"}>ACCOUNTING ON</Option>
+                            <Option value={"ACCOUNTING_OFF"}>ACCOUNTING OFF</Option>
+                        </Select>
                     </FormControl>
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Action SQL:
                         </FormLabel>
                         <Textarea minRows={3} name={"action_sql"} value={input?.inputData?.['action_sql'] ?? ""}
-                               onChange={handleInput}/>
+                                  onChange={handleInput}/>
                     </FormControl>
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>
@@ -526,7 +584,8 @@ const mapStateToProps = (state: RootState) => {
         sqlParametersGetResponse: state.param.sqlParametersGetResponse,
         sqlParameterEditResponse: state.param.sqlParameterEditResponse,
         sqlParameterAddResponse: state.param.sqlParameterAddResponse,
-        sqlParameterDeleteResponse: state.param.sqlParameterDeleteResponse
+        sqlParameterDeleteResponse: state.param.sqlParameterDeleteResponse,
+        metaParamGetResponse: state.param.metaParamGetResponse
     };
 };
 
@@ -536,7 +595,9 @@ const mapDispatchToProps = (dispatch: any) => {
         onEditSqlParams: (payload: any) => dispatch(editSqlParams(payload)),
         onGetSQLParameters: (payload: any) => dispatch(getSqlParams(payload)),
         onUpdateSqlParameter: (payload: any) => dispatch(editSqlParams(payload)),
-        onDeleteSqlParameter: (payload: any) => dispatch(deleteSqlParams(payload))
+        onDeleteSqlParameter: (payload: any) => dispatch(deleteSqlParams(payload)),
+        onGetMetaParameters: (payload: any) => dispatch(getMetaParams(payload)),
+
     };
 };
 

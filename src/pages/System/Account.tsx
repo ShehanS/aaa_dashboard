@@ -23,6 +23,7 @@ import {Pagination, PaginationItem, useMediaQuery} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AccountDialog from "../../components/Dialogs/AccountDialog";
+import ManageRecordDialog from "../../components/Dialogs/AccountDialog";
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
 import {useAppDataContext} from "../../context/AppDataContext";
 import {DialogType} from "../../components/Dialogs/AccountingRecordFilterDialog";
@@ -397,7 +398,7 @@ const Account: FC = (props: any) => {
             isOpenDialog: true,
             dialogWidth: 600,
             dialogHeight: 450,
-            dialogContent: <AccountDialog type={DialogType.edit} data={record}/>
+            dialogContent: <ManageRecordDialog type={DialogType.edit} data={record}/>
         });
     }
 
@@ -467,7 +468,7 @@ const Account: FC = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"Records"} subTitle={"Manage Records"}/>
+            <HeaderText title={"View Records"} subTitle={""}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',
@@ -484,13 +485,10 @@ const Account: FC = (props: any) => {
                     justifyContent: 'start',
 
                 }}>
-                    <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
+                    <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%", height: 50}}>
                         <SearchBar displayAttr={"username"} onSearchClear={initLoad} table={"bb_accounting_data"}
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
-                        <Stack direction={"row"} spacing={2}>
-                            <IconButton onClick={openNewAccountDialog}>Add Account</IconButton>
-                        </Stack>
                     </Stack>
                     <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
                     </Typography>
@@ -533,13 +531,13 @@ const Account: FC = (props: any) => {
                 rgba(0, 0, 0, 0)
               )
               0 100%`,
-                            backgroundSize:
-                                '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundAttachment: 'local, local, scroll, scroll',
-                            backgroundPosition:
-                                'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
-                            backgroundColor: 'background.surface',
+                            // backgroundSize:
+                            //     '40px calc(100% - var(--TableCell-height)), 40px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height)), 14px calc(100% - var(--TableCell-height))',
+                            // backgroundRepeat: 'no-repeat',
+                            // backgroundAttachment: 'local, local, scroll, scroll',
+                            // backgroundPosition:
+                            //     'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
+                            // backgroundColor: 'background.surface',
                             maxWidth: "100%",
                             height: '450px'
                         }}
@@ -550,19 +548,19 @@ const Account: FC = (props: any) => {
                                 borderAxis="bothBetween"
                                 stripe="odd"
                                 hoverRow
-                                sx={{
-                                    '& tr > *:first-child': {
-                                        position: 'sticky',
-                                        left: 0,
-                                        boxShadow: '1px 0 var(--TableCell-borderColor)',
-                                        bgcolor: 'background.surface',
-                                    },
-                                    '& tr > *:last-child': {
-                                        position: 'sticky',
-                                        right: 0,
-                                        bgcolor: 'var(--TableCell-headBackground)',
-                                    },
-                                }}
+                                // sx={{
+                                //     '& tr > *:first-child': {
+                                //         position: 'sticky',
+                                //         left: 0,
+                                //         boxShadow: '1px 0 var(--TableCell-borderColor)',
+                                //         bgcolor: 'background.surface',
+                                //     },
+                                //     '& tr > *:last-child': {
+                                //         position: 'sticky',
+                                //         right: 0,
+                                //         bgcolor: 'var(--TableCell-headBackground)',
+                                //     },
+                                // }}
                             >
                                 <thead>
                                 <tr>
@@ -579,7 +577,7 @@ const Account: FC = (props: any) => {
                                     <th style={{width: 150}}>Frame IP</th>
                                     <th style={{width: 150}}>Frame Protocol</th>
                                     <th style={{width: 200}}>Date</th>
-                                    <th style={{width: 'var(--Table-lastColumnWidth)'}}/>
+                                    {/*<th style={{width: 'var(--Table-lastColumnWidth)'}}/>*/}
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -598,27 +596,27 @@ const Account: FC = (props: any) => {
                                         <td>{row.framed_ip_address ?? ""}</td>
                                         <td>{row.framed_protocol ?? ""}</td>
                                         <td>{row.accunting_datetime ?? ""}</td>
-                                        <td>
-                                            <Box sx={{display: 'flex', gap: 1}}>
-                                                <IconButton
-                                                    size="sm"
-                                                    variant="soft"
-                                                    color="primary"
-                                                    onClick={() => openAccountEditDialog(row)}
+                                        {/*<td>*/}
+                                        {/*    <Box sx={{display: 'flex', gap: 1}}>*/}
+                                        {/*        <IconButton*/}
+                                        {/*            size="sm"*/}
+                                        {/*            variant="soft"*/}
+                                        {/*            color="primary"*/}
+                                        {/*            onClick={() => openAccountEditDialog(row)}*/}
 
-                                                >
-                                                    <CreateRoundedIcon/>
-                                                </IconButton>
-                                                <IconButton
-                                                    onClick={() => openDeleteDialog(row)}
-                                                    size="sm"
-                                                    variant="soft"
-                                                    color="danger"
-                                                >
-                                                    <DeleteRoundedIcon/>
-                                                </IconButton>
-                                            </Box>
-                                        </td>
+                                        {/*        >*/}
+                                        {/*            <CreateRoundedIcon/>*/}
+                                        {/*        </IconButton>*/}
+                                        {/*        <IconButton*/}
+                                        {/*            onClick={() => openDeleteDialog(row)}*/}
+                                        {/*            size="sm"*/}
+                                        {/*            variant="soft"*/}
+                                        {/*            color="danger"*/}
+                                        {/*        >*/}
+                                        {/*            <DeleteRoundedIcon/>*/}
+                                        {/*        </IconButton>*/}
+                                        {/*    </Box>*/}
+                                        {/*</td>*/}
                                     </tr>
                                 ))}
                                 </tbody>

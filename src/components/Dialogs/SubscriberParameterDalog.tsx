@@ -140,6 +140,27 @@ const SubscriberParameterDalog: FC<Props> = (props) => {
         };
         return data;
     }
+    const getParameterNameById = (id: number): string | undefined => {
+        const param = metaParameters.filter((attr: any) => attr?.parameter_id === id)?.[0];
+        if (param?.parameter_id === id) {
+            const name = param.parameter_name ?? undefined;
+            return name;
+        }
+        return undefined;
+    }
+
+
+    const handleParameter = (event: any, value: any): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "parameter_name",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    };
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
@@ -154,18 +175,18 @@ const SubscriberParameterDalog: FC<Props> = (props) => {
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Parameter Name:
                         </FormLabel>
-                        {/*<Select onClick={getMetaParameters}*/}
-                        {/*        value={Number.parseInt(input?.inputData?.['parameter_name']) ?? ""}*/}
-                        {/*        onChange={(event, value) => handleInput((handleParameter(event, value)))}>*/}
-                        {/*    {metaParameters?.map((parm: any) => (*/}
-                        {/*        <Option*/}
-                        {/*            value={parm?.parameter_id}>{`${getParameterNameById(parm?.parameter_id)}/${parm?.exec_phase}`}</Option>*/}
-                        {/*    ))}*/}
+                        <Select onClick={getMetaParameters}
+                                value={input?.inputData?.['parameter_name'] ?? ""}
+                                onChange={(event, value) => handleInput((handleParameter(event, value)))}>
+                            {metaParameters?.map((parm: any) => (
+                                <Option
+                                    value={parm?.parameter_name}>{`${parm?.parameter_name}/${parm?.exec_phase}`}</Option>
+                            ))}
 
-                        {/*</Select>*/}
-                        <Input name={"parameter_name"}
-                               value={input?.inputData?.['parameter_name'] ?? ""}
-                               onChange={handleInput}/>
+                        </Select>
+                        {/*<Input name={"parameter_name"}*/}
+                        {/*       value={input?.inputData?.['parameter_name'] ?? ""}*/}
+                        {/*       onChange={handleInput}/>*/}
                     </FormControl>
                     <FormControl sx={{width: 300}}>
                         <FormLabel sx={{color: '#e4dad0'}}>

@@ -79,7 +79,7 @@ const ADD_PARAMETER_API = {
 
 const DELETE_PARAMETER_API = {
     delete: (payload: any) =>
-        axios.post(`/api/subscribers/parameter/delete`, payload).then((response: { data: any }) => {
+        axios.delete(`/api/subscribers/parameter/delete/id/${payload.id}`, payload).then((response: { data: any }) => {
             return response.data;
         }),
 };

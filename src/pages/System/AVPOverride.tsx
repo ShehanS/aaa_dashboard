@@ -23,6 +23,7 @@ import {getAllAttributeGroups} from "../../redux/nas/nas-slice";
 import {IAttribute} from "../NAS/ManageNAS";
 
 export interface IAVPAttribute {
+    override_id: number;
     attrgroup_id: number;
     vp_name: string;
     substitute_vp: string;
@@ -290,13 +291,13 @@ const AVPOverride: FC<ReduxProps> = (props) => {
         props.onGetAttributes(request);
     }
 
-    const openDeleteDelete = (props: any) => {
+    const openDeleteDelete = (item: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
             dialogWidth: 450,
             dialogHeight: 200,
-            dialogContent: <DeleteDialog id={props.attrgroup_id} onDelete={handleDelete}/>
+            dialogContent: <DeleteDialog id={item?.override_id} onDelete={handleDelete}/>
         });
     }
 
@@ -338,9 +339,10 @@ const AVPOverride: FC<ReduxProps> = (props) => {
                     justifyContent: 'start',
                 }}>
                     <Stack direction={"row"} sx={{justifyContent: "space-between", width: "100%"}}>
-                        <SearchBar displayAttr={"vp_name"} onSearchClear={initLoad} table={"bb_attrgroup_accounting_avp_override"}
+                        <SearchBar displayAttr={"vp_name"} onSearchClear={initLoad}
+                                   table={"bb_attrgroup_accounting_avp_override"}
                                    columns={"vp_name,extract_sscanf,attrgroup_id"} onSelectSearch={onSelectSearch}/>
-                        <Button onClick={openAvpAddDialog}>Add Record</Button>
+                        <Button onClick={openAvpAddDialog}>Add AVP Record</Button>
                     </Stack>
                     <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>
                     </Typography>

@@ -29,7 +29,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 type Props = ReduxProps & OwnProps;
 
-const AccountDialog: FC<Props> = (props) => {
+const ManageRecordDialog: FC<Props> = (props) => {
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
@@ -87,7 +87,7 @@ const AccountDialog: FC<Props> = (props) => {
     return (<React.Fragment>
         <Box sx={{height: 350}}>
             <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                Account
+                Manage Record
             </DialogTitle>
             <Divider/>
             <Stack direction={"column"}
@@ -221,4 +221,4 @@ const mapDispatchToProps = (dispatch: any) => {
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
-export default connector(AccountDialog);
+export default connector(ManageRecordDialog);

@@ -32,6 +32,7 @@ function App() {
                         <BrowserRouter>
                             <Home>
                                 <Routes>
+
                                     <Route path={ROUTES.home} element={<LandingPage/>}/>
                                     <Route path={ROUTES.root} element={<LandingPage/>}/>
                                     <Route path={ROUTES.AVPOverride} element={<AVPOverride/>}/>

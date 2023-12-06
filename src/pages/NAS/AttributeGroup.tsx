@@ -13,7 +13,7 @@ import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import NASAttributeGroupDialog, {DialogType} from "../../components/Dialogs/NASAttributGroupDialog";
-import NASSubscriberDialog from "../../components/Dialogs/NASSubscriberDialog";
+import NASSubscriberDialog from "../../components/Dialogs/SubscriberAVPDialog";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 

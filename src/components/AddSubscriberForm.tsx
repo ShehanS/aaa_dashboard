@@ -1,6 +1,7 @@
 import React, {FC, useEffect, useState} from "react";
 import Box from "@mui/joy/Box";
 import {connect, ConnectedProps} from "react-redux";
+import {useNavigate} from "react-router-dom";
 import {
     addSubscriber,
     deleteNasWhitelist,
@@ -20,7 +21,19 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
 import ExtensionRoundedIcon from '@mui/icons-material/ExtensionRounded';
-import {Button, FormControl, FormLabel, IconButton, Input, Sheet, Snackbar, Stack, Table} from "@mui/joy";
+import {
+    Button,
+    FormControl,
+    FormLabel,
+    IconButton,
+    Input,
+    Option,
+    Select,
+    Sheet,
+    Snackbar,
+    Stack,
+    Table
+} from "@mui/joy";
 import ManageHistoryRoundedIcon from '@mui/icons-material/ManageHistoryRounded';
 import PlaylistAddCheckCircleRoundedIcon from '@mui/icons-material/PlaylistAddCheckCircleRounded';
 import {useAppDataContext} from "../context/AppDataContext";
@@ -31,6 +44,8 @@ import SubscriberPlanDialog from "./Dialogs/SubscriberPlanDialog";
 import {IPlan} from "../pages/Plans/Plan";
 import {getPlans} from "../redux/plan/plan-slice";
 import {Fade} from "@mui/material";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 type StateObj = {
     addSubscriberResponse: any;
@@ -75,11 +90,14 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 
 const AddSubscriberForm: FC<ReduxProps> = (props) => {
+    const [isShow, setShow] = useState<boolean>(true);
     const {appDataContext, setAppDataContext} = useAppDataContext();
     const [patterns, setPatterns] = useState<string[]>([]);
     const [subscriberParameters, setSubscriberParameters] = useState<any[]>([]);
     const [subscribersPlans, setSubscriberPlans] = useState<any[]>([]);
     const [plans, setPlans] = useState<IPlan[]>([]);
+    const navigate = useNavigate();
+    const [subscriber, setSubscriber] = useState<any>(null)
     const [snackBar, setSnackBar] = useState<SnackBarProps>({
         isOpen: false,
         color: "",
@@ -114,7 +132,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             subscriber_id: "",
             username: "",
             password: "",
-            status: "ACTIVE",
+            status: "",
             created_date: "",
             updated_time: "",
             contact_no: "",
@@ -142,7 +160,8 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     ...stateObj,
                     getSubscriberResponse: props.getSubscriberResponse
                 });
-                setInput({...input, inputData: props?.getSubscriberResponse?.data?.[0]})
+                setInput({...input, inputData: props?.getSubscriberResponse?.data?.[0]});
+                setSubscriber(props?.getSubscriberResponse?.data?.[0] ?? {})
             } else if (props.getSubscriberResponse?.code === "GET_SUBSCRIBER_FAILED") {
                 setSnackBar({
                     ...snackBar,
@@ -219,7 +238,8 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
 
     const finishSteps = () => {
         resetAll();
-        setSteps({user: true, whitelist: false, parameter: false, plan: false})
+        setSteps({user: true, whitelist: false, parameter: false, plan: false});
+        navigate("/subscribers/view-subscribers", {replace: true});
     }
 
 
@@ -592,6 +612,9 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             props.onEditSubscriber(input.inputData);
         }
     }
+    const gotoNext = () => {
+        setSteps({user: false, whitelist: true, parameter: false, plan: false})
+    }
     const handleClose = () => {
         setSnackBar({...snackBar, isOpen: false});
     };
@@ -640,6 +663,13 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
         }
     }, [props.addSubscriberParameterResponse]);
 
+    const showPassword = () => {
+        if (!isShow) {
+            setShow(true);
+        } else {
+            setShow(false)
+        }
+    }
 
     const handleDelete = (deleteItem: any) => {
         props.onDeleteNasWhiteList(deleteItem);
@@ -674,16 +704,11 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                 ...stateObj,
                 editSubscriberResponse: props.editSubscriberResponse,
             });
+            setSubscriber(props.editSubscriberResponse?.data?.[0]);
+
+            console.log(props.editSubscriberResponse?.data?.[0])
+
             if (props.editSubscriberResponse?.code === "EDIT_SUBSCRIBER_SUCCESS") {
-                setSnackBar({
-                    ...snackBar,
-                    isOpen: true,
-                    color: "success",
-                    message: `Subscriber updated successfully!`,
-                });
-                props.onGetNasWhiteList(stateObj.getSubscriberResponse?.data?.[0]?.subscriber_id)
-                props.onGetSubscriberParametersList(stateObj.getSubscriberResponse?.data?.[0]?.subscriber_id)
-                props.onGetSubscriberPlans(stateObj.getSubscriberResponse?.data?.[0]?.subscriber_id)
                 setSteps({
                     user: false,
                     whitelist: true,
@@ -691,6 +716,11 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     plan: false,
                     finish: false
                 });
+                props.onGetNasWhiteList(props.editSubscriberResponse?.data?.[0]?.subscriber_id ?? "")
+                props.onGetSubscriberParametersList(props.editSubscriberResponse?.data?.[0]?.subscriber_id ?? "")
+                props.onGetSubscriberPlans(props.editSubscriberResponse?.data?.[0]?.subscriber_id ?? "");
+                getPlans();
+
             } else if (props.editSubscriberResponse?.code === "EDIT_SUBSCRIBER_FAILED") {
                 setSnackBar({
                     ...snackBar,
@@ -715,7 +745,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
     }
 
     const handleDeleteSubscriberParameter = (deleteItem: any) => {
-        props.onDeleteSubscriberParameter(deleteItem);
+        props.onDeleteSubscriberParameter(deleteItem?.parameter_id);
     }
 
     const openDeleteSubscriberParameter = (data: any) => {
@@ -726,6 +756,19 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
             dialogHeight: 200,
             dialogContent: <DeleteDialog deleteItem={data} onDelete={handleDeleteSubscriberParameter}/>
         });
+    }
+
+
+    const handleAccountStatus = (event: any, value: string): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "status",
+                    value: value
+                }
+            }
+        }
+        return data;
     }
 
 
@@ -749,6 +792,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     </Button>
                 }
             >
+
                 {snackBar.message ?? ""}
             </Snackbar>
             <Box sx={{width: "100%", justifyContent: 'center', alignItems: 'center', justifyItems: 'center'}}>
@@ -827,7 +871,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
 
                 {steps.user && <Fade in={!steps.use}><Box>
 
-                    <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
+                    <Stack direction={"row"} sx={{width: "80%", justifyContent: 'center'}}>
                         <Stack direction={"column"}
                                sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
                             <FormControl sx={{width: 300}}>
@@ -840,10 +884,25 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
 
                             <FormControl sx={{width: 300}}>
                                 <FormLabel sx={{color: '#0bb1aa'}}>
-                                    password:
+                                    Password:
                                 </FormLabel>
-                                <Input name={"password"} value={input?.inputData?.['password'] ?? ""}
-                                       onChange={handleInput}/>
+                                <Input name={"password"} type={isShow ? "password" : "text"}
+                                       value={input?.inputData?.['password'] ?? ""}
+                                       onChange={handleInput}
+                                       endDecorator={<IconButton onClick={showPassword}>{!isShow ? <VisibilityIcon/> :
+                                           <VisibilityOffIcon/>}</IconButton>}/>
+                            </FormControl>
+
+                            <FormControl sx={{width: 300}}>
+                                <FormLabel sx={{color: '#0bb1aa'}}>
+                                    Account Status:
+                                </FormLabel>
+                                <Select value={input?.inputData?.['status'] ?? ""}
+                                        onChange={(event, value) => handleInput(handleAccountStatus(event, value))}>
+                                    <Option value={"ACTIVE"}>ACTIVE</Option>
+                                    <Option value={"INACTIVE"}>INACTIVE</Option>
+                                </Select>
+
                             </FormControl>
 
                             {/*<FormControl sx={{width: 300}}>*/}
@@ -866,13 +925,13 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                 <FormLabel sx={{color: '#0bb1aa'}}>
                                     Email:
                                 </FormLabel>
-                                <Input name={"email"} value={input?.inputData?.['email'] ?? ""}
+                                <Input type={"email"} name={"email"} value={input?.inputData?.['email'] ?? ""}
                                        onChange={handleInput}/>
                             </FormControl>
 
                         </Stack>
                     </Stack>
-                    <Stack direction={"row"} sx={{justifyContent: 'end', width: '60%'}}>
+                    <Stack direction={"row"} sx={{justifyContent: 'space-around', width: '100%', paddingTop: 1}}>
                         <Button onClick={onCreateSubscriber}>
                             NEXT
                         </Button>
@@ -889,8 +948,8 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
                         <Stack direction={"column"}
                                sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
-                            <Stack direction="row" sx={{width: "100%", justifyContent: 'end'}}>
-                                <Button onClick={openAddPatternDialog}>Add Pattern</Button>
+                            <Stack direction="row" sx={{width: "100%", justifyContent: 'center'}}>
+                                <Button onClick={openAddPatternDialog}>Add NAS Pattern</Button>
                             </Stack>
 
 
@@ -900,7 +959,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                paddingTop: 10
+                                paddingTop: 3
 
                             }}>
                                 <Sheet
@@ -938,8 +997,8 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                             'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                                         backgroundColor: 'background.surface',
                                         overflowX: 'auto',
-                                        maxWidth: '40%',
-                                        height: "250px"
+                                        maxWidth: '70%',
+                                        height: "350px"
                                     }}
                                 >
                                     <Box sx={{width: "100%"}}>
@@ -965,7 +1024,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                         >
                                             <thead>
                                             <tr>
-                                                <th style={{width: 50}}>Pattern</th>
+                                                <th style={{width: 50}}>NAS Pattern</th>
 
                                                 <th style={{width: 50}}/>
                                             </tr>
@@ -1020,10 +1079,10 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     justifyContent: 'start',
 
                 }}>
-                    <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
+                    <Stack direction={"row"} sx={{width: "100%", justifyContent: 'end'}}>
                         <Stack direction={"column"}
                                sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
-                            <Stack direction="row" sx={{width: "100%", justifyContent: 'end'}}>
+                            <Stack direction="row" sx={{width: "100%", justifyContent: 'center'}}>
                                 <Button onClick={openAddParameterDialog}>Add Parameter</Button>
                             </Stack>
                         </Stack>
@@ -1034,7 +1093,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        paddingTop: 10
+                        paddingTop: 3
 
                     }}>
                         <Sheet
@@ -1072,8 +1131,8 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                     'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                                 backgroundColor: 'background.surface',
                                 overflowX: 'auto',
-                                maxWidth: '50%',
-                                height: "250px"
+                                maxWidth: '70%',
+                                height: "350px"
                             }}
                         >
                             <Box sx={{width: "100%"}}>
@@ -1110,7 +1169,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                         <tr key={index}>
                                             <td>{row.parameter_name ?? ""}</td>
                                             <td>{row.parameter_value ?? ""}</td>
-                                            <td>{row.reject_on_failure ? "ACTIVE" : "INACTIVE"}</td>
+                                            <td>{row.reject_on_failure ? "YES" : "NO"}</td>
                                             <td>
                                                 <Box sx={{display: 'flex', gap: 1}}>
                                                     <IconButton
@@ -1153,10 +1212,10 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                     justifyContent: 'start',
 
                 }}>
-                    <Stack direction={"row"} sx={{width: "80%", justifyContent: 'end'}}>
+                    <Stack direction={"row"} sx={{width: "100%", justifyContent: 'end'}}>
                         <Stack direction={"column"}
-                               sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
-                            <Stack direction="row" sx={{width: "100%", justifyContent: 'end'}}>
+                               sx={{alignItems: 'center', pt: 3, width: '100%', height: "100%", overflowY: 'auto'}}>
+                            <Stack direction="row" sx={{width: "100%", justifyContent: 'center'}}>
                                 <Button onClick={openAddPlanDialog}>Add Plan</Button>
                             </Stack>
                         </Stack>
@@ -1167,7 +1226,7 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        paddingTop: 10
+                        paddingTop: 3
 
                     }}>
                         <Sheet
@@ -1205,8 +1264,8 @@ const AddSubscriberForm: FC<ReduxProps> = (props) => {
                                     'var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height), var(--Table-firstColumnWidth) var(--TableCell-height), calc(100% - var(--Table-lastColumnWidth)) var(--TableCell-height)',
                                 backgroundColor: 'background.surface',
                                 overflowX: 'auto',
-                                maxWidth: '50%',
-                                height: "250px"
+                                maxWidth: '70%',
+                                height: "350px"
                             }}
                         >
                             <Box sx={{width: "100%"}}>
@@ -1307,7 +1366,7 @@ const mapDispatchToProps = (dispatch: any) => {
         onGetSubscriberParametersList: (subscribeId: number) => dispatch(getAllSubscriberParameter({subscriberId: subscribeId})),
         onGetNasWhiteList: (subscribeId: number) => dispatch(getAllNasWhitelist({subscriberId: subscribeId})),
         onDeleteNasWhiteList: (payload: any) => dispatch(deleteNasWhitelist(payload)),
-        onDeleteSubscriberParameter: (payload) => dispatch(deleteSubscriberParameter(payload)),
+        onDeleteSubscriberParameter: (payload) => dispatch(deleteSubscriberParameter({id: payload})),
         onGetSubscriberPlans: (payload) => dispatch(getAllSubscriberPlan({subscriberId: payload})),
         onGetPlans: (payload: any) => dispatch(getPlans(payload)),
         onDeleteSubscriberPlan: (payload: any) => dispatch(deleteSubscriberPlan({id: payload})),

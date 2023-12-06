@@ -43,7 +43,6 @@ const NASManageDialog: FC<Props> = (props) => {
     })
     const [input, setInput] = useState<InputStateObj>(() => ({
         inputData: props?.data || {
-            nas_id: "",
             nas_name: "",
             nas_type: "",
             nas_attrgroup: "",
@@ -61,6 +60,9 @@ const NASManageDialog: FC<Props> = (props) => {
     }
 
     const handleCloseAndAdd = () => {
+        let {inputData} = input;
+        const attGroup = attributes?.filter((att: any) => att?.group_id === inputData?.nas_attrgroup)?.[0];
+        inputData.nas_attrgroup = attGroup;
         props.onAddNASRecord(input.inputData);
     }
 
@@ -178,7 +180,7 @@ const NASManageDialog: FC<Props> = (props) => {
                             NAS Attribute Group:
                         </FormLabel>
                         <Select onClick={onGetAttributes}
-                                value={input?.inputData?.['nas_attrgroup']}
+                                value={input?.inputData?.['nas_attrgroup']?.group_id}
                                 onChange={(event, value) => handleInput(handleAttGroup(event, value))}>
                             {attributes?.map((att: any) => (
                                 <Option value={att.group_id}>{getAttributeNameById(att?.group_id)}</Option>

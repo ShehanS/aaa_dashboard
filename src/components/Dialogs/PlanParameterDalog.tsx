@@ -210,11 +210,12 @@ const PlanTypeDialog: FC<Props> = (props) => {
                             Parameter Name:
                         </FormLabel>
                         <Select onClick={getMetaParameters}
-                                value={Number.parseInt(input?.inputData?.['parameter_name']) ?? ""}
+                                value={input?.inputData?.['parameter_name'] ?? ""}
                                 onChange={(event, value) => handleInput((handleParameter(event, value)))}>
                             {metaParameters?.map((parm: any) => (
+                                // getParameterNameById(parm?.parameter_id)
                                 <Option
-                                    value={parm?.parameter_id}>{`${getParameterNameById(parm?.parameter_id)}/${parm?.exec_phase}`}</Option>
+                                    value={parm?.parameter_name}>{`${parm?.parameter_name}/${parm?.exec_phase}`}</Option>
                             ))}
 
                         </Select>

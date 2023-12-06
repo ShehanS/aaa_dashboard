@@ -453,7 +453,7 @@ const RecordFilter: FC = (props: any) => {
             isOpenDialog: true,
             dialogWidth: 450,
             dialogHeight: 200,
-            dialogContent: <DeleteDialog id={props.attrgroup_id} onDelete={handleFilterDelete}/>
+            dialogContent: <DeleteDialog id={props.id} onDelete={handleFilterDelete}/>
         });
     }
 
@@ -550,7 +550,7 @@ const RecordFilter: FC = (props: any) => {
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openAddAccountingFilterDialog}>Add Filter</Button>
+                            <Button onClick={openAddAccountingFilterDialog}>Add Record Filter</Button>
                         </Stack>
                     </Stack>
                     <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>

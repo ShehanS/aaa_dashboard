@@ -10,7 +10,7 @@ import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {DialogType} from "../../components/Dialogs/NASAttributGroupDialog";
-import NASSubscriberDialog from "../../components/Dialogs/NASSubscriberDialog";
+import NASSubscriberDialog from "../../components/Dialogs/SubscriberAVPDialog";
 import {RootState} from "../../redux/store";
 import SearchBar from "../../components/SearchBar";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
@@ -440,7 +440,7 @@ const NASSubscribers: FC<ReduxProps> = (props: any) => {
             >
                 {snackBar.message ?? ""}
             </Snackbar>
-            <HeaderText title={"NAS Subscribers"} subTitle={"Manage NAS subscribers"}/>
+            <HeaderText title={"NAS Subscribers"} subTitle={"Manage network access server's subscribers"}/>
             <Box sx={{
                 width: "100%",
                 display: 'flex',
@@ -462,7 +462,7 @@ const NASSubscribers: FC<ReduxProps> = (props: any) => {
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
                         <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openNASSubscribeDialog}>Add Subscriber</Button>
+                            <Button onClick={openNASSubscribeDialog}>Add Subscriber AVP</Button>
                         </Stack>
                     </Stack>
                     <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>

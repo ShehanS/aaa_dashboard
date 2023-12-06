@@ -13,9 +13,7 @@ import {getInsight} from "../redux/insight/insight-slice";
 import Table from '@mui/joy/Table';
 import {saveAs} from 'file-saver';
 import Papa from 'papaparse';
-import {DateRangePicker} from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+
 type OwnProps = {
     subscriber?: any;
 }
@@ -75,14 +73,9 @@ const Insight: FC<Props> = (props) => {
 
     const saveInsight = () => {
         const csv = Papa.unparse(reports);
-        const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
         saveAs(blob, `insight_report_${new Date().toDateString()}.csv`)
 
-    }
-    const selectionRange = {
-        startDate: new Date(),
-        endDate: new Date(),
-        key: 'selection',
     }
 
     useEffect(() => {
@@ -96,14 +89,11 @@ const Insight: FC<Props> = (props) => {
                 <Typography level="title-lg" sx={{color: '#0ca59d'}}>
                     Data Usage Insight : {props.subscriber?.username ?? ""}
                 </Typography>
-                <Stack spacing={1} direction={"row"} sx={{ustifyContent: 'space-between', display: 'flex'}}>
-                    {/*<Typography level="title-sm" sx={{color: '#0ca59d'}}>*/}
-                    {/*    Date Range*/}
-                    {/*</Typography>*/}
-                    {/*<DateRangePicker*/}
-                    {/*    ranges={[selectionRange]}*/}
-                    {/*    onChange={(date) => console.log(date)}*/}
-                    {/*/>*/}
+                <Stack spacing={1} direction={"row"} sx={{ustifyContent:'space-between', display:'flex'}}>
+                    <Typography level="title-sm" sx={{color: '#0ca59d'}}>
+                        Date Range
+                    </Typography>
+                    <p>Test</p>
                 </Stack>
                 <IconButton onClick={closeInsight}>
                     <CloseRoundedIcon/>
@@ -114,18 +104,18 @@ const Insight: FC<Props> = (props) => {
             </Box>
             <Grid container spacing={2} sx={{flexGrow: 1, paddingTop: 2}}>
 
-                <Grid xs={12} sm={12} md={3}>
-                    <TotalDownloadWidget data={totalDownloads ?? []}/>
-                </Grid>
-                <Grid xs={12} sm={12} md={3}>
-                    <TotalUploadWidget data={totalUpload ?? []}/>
-                </Grid>
-                <Grid xs={12} sm={12} md={3}>
-                    <TotalUsage data={totalUsage ?? []}/>
-                </Grid>
-                <Grid xs={12} sm={12} md={3}>
-                    <TotalUsageDonut/>
-                </Grid>
+                {/*<Grid xs={12} sm={12} md={3}>*/}
+                {/*    <TotalDownloadWidget data={totalDownloads ?? []}/>*/}
+                {/*</Grid>*/}
+                {/*<Grid xs={12} sm={12} md={3}>*/}
+                {/*    <TotalUploadWidget data={totalUpload ?? []}/>*/}
+                {/*</Grid>*/}
+                {/*<Grid xs={12} sm={12} md={3}>*/}
+                {/*    <TotalUsage data={totalUsage ?? []}/>*/}
+                {/*</Grid>*/}
+                {/*<Grid xs={12} sm={12} md={3}>*/}
+                {/*    <TotalUsageDonut/>*/}
+                {/*</Grid>*/}
 
                 <Stack direction={"column"} sx={{width: '100%', height: 150}}>
                     <Stack direction={"row"} sx={{width: "100%", zIndex: 100, justifyContent: 'end'}}>

@@ -470,8 +470,8 @@ const ParameterSetting: FC<ReduxProps> = (props: any) => {
                                columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                onSelectSearch={onSelectSearch}/>
                     <Stack direction={"row"} spacing={2}>
-                        <Button onClick={openAddMetaParameter}>Add MetaParameter</Button>
-                        <Button onClick={openAddSQLParameter}>Add SQL Parameter</Button>
+                        <Button onClick={openAddMetaParameter}>Add Parameter</Button>
+                        <Button onClick={openAddSQLParameter}>Add SQL Action</Button>
                     </Stack>
                 </Stack>
                 <Typography level="body-sm" textAlign="center" sx={{pb: 2}}>

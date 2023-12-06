@@ -18,6 +18,9 @@ import SubscriberDialog from "../../components/Dialogs/SubscriberDialog";
 import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
 import UserLog from "../../components/UserLog";
 import {useNavigate} from "react-router-dom";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Insight from "../../components/Insight";
 
 type SnackBarProps = {
     isOpen: boolean;
@@ -53,6 +56,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 const ViewSubscribers: FC<ReduxProps> = (props: any) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isShow, setIsShow] = useState<boolean>(false);
     const navigate = useNavigate();
     const [searchId, setSearchId] = useState<string | undefined>(undefined);
     const {appDataContext, setAppDataContext} = useAppDataContext();
@@ -61,7 +65,7 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
         color: "",
         message: "",
     });
-
+    const [index, setIndex] = useState<number>(9999);
     const [subscriberCount, setSubscriberCount] = useState<number>(0);
     const [subscribers, setSubscribers] = useState<ISubscriber[]>([]);
     const [stateObj, setStateObj] = useState<StateObj>({
@@ -95,12 +99,21 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
         initLoad();
     }, []);
 
+    const handleIsShow = (i: number) => {
+        setIndex(i);
+        if (!isShow) {
+            setIsShow(true);
+        } else {
+            setIsShow(false);
+        }
+    }
+
     const openInsight = (sub: any) => {
         setAppDataContext({
             ...appDataContext,
             dialogWidth: '100%',
             dialogHeight: '100%',
-            dialogContent: <UserLog subscriber={sub}/>,
+            dialogContent: <Insight subscriber={sub}/>,
             isOpenDialog: true,
             isFullScreen: true
         })
@@ -450,11 +463,19 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {subscribers?.map((row) => (
+                                    {subscribers?.map((row, i: number) => (
                                         <tr key={row.subscriber_id}>
                                             <td>{row.subscriber_id ?? ""}</td>
                                             <td>{row.username ?? ""}</td>
-                                            <td>{row.password ?? ""}</td>
+                                            <td>{<Stack sx={{
+                                                justifyContent: "space-between",
+                                                justifyItems: 'center',
+                                                alignItems: 'center'
+                                            }}
+                                                        direction={"row"}>{isShow && index === i ? row.password : "******"}<IconButton
+                                                onClick={() => handleIsShow(i)}
+                                                size={"sm"}>{isShow && index === i ? <VisibilityIcon/> :
+                                                <VisibilityOffIcon/>}</IconButton></Stack>}</td>
                                             <td>{row.status ?? ""}</td>
                                             <td>{row.contact_no ?? ""}</td>
                                             <td>{row.email ?? ""}</td>
@@ -471,14 +492,14 @@ const ViewSubscribers: FC<ReduxProps> = (props: any) => {
                                                     >
                                                         <CreateRoundedIcon/>
                                                     </IconButton>
-                                                    <IconButton
-                                                        onClick={() => openInsight(row)}
-                                                        size="sm"
-                                                        variant="soft"
-                                                        color="success"
-                                                    >
-                                                        <AssessmentRoundedIcon/>
-                                                    </IconButton>
+                                                    {/*<IconButton*/}
+                                                    {/*    onClick={() => openInsight(row)}*/}
+                                                    {/*    size="sm"*/}
+                                                    {/*    variant="soft"*/}
+                                                    {/*    color="success"*/}
+                                                    {/*>*/}
+                                                    {/*    <AssessmentRoundedIcon/>*/}
+                                                    {/*</IconButton>*/}
                                                     <IconButton
                                                         onClick={() => openDeleteSubscribeDialog(row)}
                                                         size="sm"

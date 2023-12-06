@@ -528,12 +528,12 @@ const ManageNAS: FC<ReduxProps> = (props: any) => {
                             </tr>
                             </thead>
                             <tbody>
-                            {nasEvents?.map((row, i) => (
+                            {nasEvents?.map((row: any, i) => (
                                 <tr key={row.nas_id}>
                                     <td>{row.nas_id ?? ""}</td>
                                     <td>{row.nas_name ?? ""}</td>
                                     <td>{row.nas_type ?? ""}</td>
-                                    <td>{attributes?.filter((att: any) => att?.group_id === row.nas_attrgroup)?.[0]?.group_name ?? ""}</td>
+                                    <td>{row.nas_attrgroup?.group_name ?? ""}</td>
                                     <td>
                                         <Stack direction={"row"} display={"flex"}
                                                sx={{alignItems: "center", justifyContent: "space-between"}}>
@@ -545,7 +545,7 @@ const ManageNAS: FC<ReduxProps> = (props: any) => {
                                         </Stack>
 
                                     </td>
-                                    <td>{row.create_date ?? ""}</td>
+                                    <td>{row?.created_date ?? ""}</td>
                                     <td>
                                         <Box sx={{display: 'flex', gap: 1}}>
                                             <IconButton

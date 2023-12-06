@@ -47,9 +47,9 @@ const Home: FC<Props> = ({children}) => {
                          transform: 'translateX(-50%)',
                          paddingBottom: 5
                      }}>
-                         <Typography level="title-sm" sx={{color: '#7e7e7e', textAlign: 'center'}}>
-                             {"Powered by NCINGA"}
-                         </Typography>
+                         {/*<Typography level="title-sm" sx={{color: '#7e7e7e', textAlign: 'center'}}>*/}
+                         {/*    {"Powered by NCINGA"}*/}
+                         {/*</Typography>*/}
                      </Box>
 
                  </Box>

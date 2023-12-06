@@ -159,6 +159,20 @@ const PlanAttributeDialog: FC<Props> = (props) => {
         };
         return data;
     };
+
+
+    const handlinePlanState = (event: any, value: any): any => {
+        const data = {
+            nativeEvent: {
+                target: {
+                    name: "include_plan_state",
+                    value: value,
+                },
+            },
+        };
+        return data;
+    };
+
     const handleAttGroup = (event, value): any => {
         const data = {
             nativeEvent: {
@@ -183,7 +197,7 @@ const PlanAttributeDialog: FC<Props> = (props) => {
     return (
         <React.Fragment>
             <Box sx={{height: 350}}>
-                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Plan Attribute Group</DialogTitle>
+                <DialogTitle sx={{color: 'white', paddingBottom: 2}}>Plan Attribute</DialogTitle>
                 <Divider/>
                 <Stack direction={"column"}
                        sx={{alignItems: 'center', pt: 3, width: '100%', height: "80%", overflowY: 'auto'}}>
@@ -247,8 +261,16 @@ const PlanAttributeDialog: FC<Props> = (props) => {
                         <FormLabel sx={{color: '#e4dad0'}}>
                             Include Plan State:
                         </FormLabel>
-                        <Input name={"include_plan_state"} value={input?.inputData?.['include_plan_state'] ?? ""}
-                               onChange={handleInput}/>
+                        {/*<Input name={"include_plan_state"} value={input?.inputData?.['include_plan_state'] ?? ""}*/}
+                        {/*       onChange={handleInput}/>*/}
+                        <Select value={input?.inputData?.['include_plan_state'] ?? ""}
+                                onChange={(event, value) => handleInput(handlinePlanState(event, value))}>
+                            <Option value={"ACTIVE"}>ACTIVE</Option>
+                            <Option value={"INACTIVE"}>INACTIVE</Option>
+                            <Option value={"NORMAL"}>NORMAL</Option>
+                            <Option value={"SUSPENDED"}>SUSPENDED</Option>
+                            <Option value={"THROTTLED"}>THROTTLED</Option>
+                        </Select>
                     </FormControl>
 
                     <FormControl sx={{width: 300}}>

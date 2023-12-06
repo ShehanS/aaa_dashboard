@@ -11,12 +11,7 @@ import {Pagination, PaginationItem} from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteDialog from "../../components/Dialogs/DeleteDialog";
-import {
-    deletePlanParameter,
-    getPlans,
-    getPlansParameter,
-    onClearHistory
-} from "../../redux/plan/plan-slice";
+import {deletePlanParameter, getPlans, getPlansParameter, onClearHistory} from "../../redux/plan/plan-slice";
 import PlanParameterDalog from "../../components/Dialogs/PlanParameterDalog";
 import {IPlan} from "./Plan";
 import CreateRoundedIcon from '@mui/icons-material/CreateRounded';
@@ -130,7 +125,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
             isOpenDialog: true,
             dialogWidth: 450,
             dialogHeight: 200,
-            dialogContent: <DeleteDialog id={props.plan_id} onDelete={handleDelete}/>
+            dialogContent: <DeleteDialog id={props.parameter_id} onDelete={handleDelete}/>
         });
     }
 
@@ -138,6 +133,8 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
         setAppDataContext({
             ...appDataContext,
             isOpenDialog: true,
+            dialogWidth: 600,
+            dialogHeight: 450,
             dialogContent: <PlanParameterDalog type={DialogType.add}/>
         });
     }
@@ -477,7 +474,7 @@ const PlanParameter: FC<ReduxProps> = (props: any) => {
                                 {planParameters?.map((row) => (
                                     <tr key={row.plan_id}>
                                         <td>{mapPlanIdToPlanTypeName(row.plan_id)}</td>
-                                        <td>{mapMetParamIdToName(row.parameter_name)}</td>
+                                        <td>{row.parameter_name}</td>
                                         <td>{row.parameter_value ?? ""}</td>
                                         <td>{row.reject_on_failure === 1 ? "YES" : "NO"}</td>
                                         <td>

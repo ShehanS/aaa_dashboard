@@ -133,7 +133,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
         <React.Fragment>
             <Box sx={{height: 350}}>
                 <DialogTitle sx={{color: 'white', paddingBottom: 2}}>
-                    Parameter Meta Dialog
+                    Parameter
                 </DialogTitle>
                 <Divider/>
                 <Stack direction={"column"}
@@ -185,7 +185,7 @@ const ParameterMetaDialog: FC<Props> = (props) => {
 
                         <Select value={input?.inputData?.['exec_phase'] ?? ""}
                                 onChange={(event, value) => handleInput(handleExecPhase(event, value))}>
-                            <Option value={"AUTHORIZE"}>AUTHORIZED</Option>
+                            <Option value={"AUTHORIZE"}>AUTHORIZE</Option>
                             <Option value={"AUTHENTICATE"}>AUTHENTICATE</Option>
                             <Option value={"ACCOUNTING_UPDATE"}>ACCOUNTING UPDATE</Option>
                             <Option value={"ACCOUNTING_STOP"}>ACCOUNTING STOP</Option>

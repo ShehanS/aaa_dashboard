@@ -133,6 +133,7 @@ export const ParameterSlice = createSlice({
             sqlParameterAddResponse: null,
             sqlParameterEditResponse: null,
             sqlParameterDeleteResponse: null,
+            metaParamGetResponse: null
         }),
 
         getError: (state) => ({

@@ -106,8 +106,8 @@ const COAEventDialog: FC<Props> = (props) => {
                         </FormLabel>
                         <Select onChange={(event, value) => handleInput(handleStatus(event, value))}
                                 value={input?.inputData?.['status'] ?? ""}>
-                            <Option value={"1"}>Enabled</Option>
-                            <Option value={"2"}>Disabled</Option>
+                            <Option value={"PENDING"}>PENDING</Option>
+                            <Option value={"COMPLECTED"}>COMPLECTED</Option>
                         </Select>
 
 

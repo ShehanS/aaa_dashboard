@@ -330,8 +330,8 @@ const DM: FC<ReduxProps> = (props: any) => {
                         <SearchBar displayAttr={"subscriber_id"} onSearchClear={initLoad} table={"bb_accounting_data"}
                                    columns={"subscriber_id,username,acct_session_id,nas_ip_address"}
                                    onSelectSearch={onSelectSearch}/>
-                        <Stack direction={"row"} spacing={2}>
-                            <Button onClick={openAddDMRecordDialog}>Add DM Event</Button>
+                        <Stack direction={"row"} spacing={2} sx={{height: 50}}>
+
 
                         </Stack>
                     </Stack>
@@ -412,7 +412,7 @@ const DM: FC<ReduxProps> = (props: any) => {
                                 {dmEvents?.map((row) => (
                                     <tr key={row.event_id}>
                                         <td>{row.event_id ?? ""}</td>
-                                        <td>{row.status ==="1" ? "Enabled" :"Disabled"}</td>
+                                        <td>{row.status}</td>
                                         <td>{row.username ?? ""}</td>
                                         <td>{row.event_response ?? ""}</td>
                                         <td>{row.request_datetime ?? ""}</td>
